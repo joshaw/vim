@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Tue 25 Aug 2015
+" Modified: Tue 01 Sep 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -120,23 +120,8 @@ nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:noh<cr>`w
 
 " Symbols {{{1
 
-function! Dirvishfindcur()
-	if isdirectory(expand('%:p'))
-		let curfname = expand('%:s#^.*/\(.*/\)#\1#')
-	else
-		let curfname = expand('%:t')
-	endif
-	Dirvish %:p:h
-	if ! search(curfname)
-		silent normal gh
-		if ! search(curfname)
-			normal! gg
-		endif
-	endif
-endfunction
-" nnoremap - :call Dirvishfindcur()<CR>
 " nnoremap - :Dirvish<cr>
-nnoremap - :Navd<cr>
+nnoremap <silent> - :Navd<cr>
 
 augroup my_dirvish_events
 	au!
@@ -205,13 +190,18 @@ if executable('dmenu')
 endif
 
 " Visual increment numbers
-xnoremap <c-a> :call functions#BlockIncr(1)<cr>gv
-xnoremap <c-x> :call functions#BlockIncr(-1)<cr>gv
+if has("patch823")
+	xnoremap <c-a> <c-a>gv
+	xnoremap <c-x> <c-a>gv
+else
+	xnoremap <c-a> :call functions#BlockIncr(1)<cr>gv
+	xnoremap <c-x> :call functions#BlockIncr(-1)<cr>gv
+endif
 nnoremap <silent> <c-a> :<c-u>call incremental#incremental(expand('<cword>'), 1)<cr>
 nnoremap <silent> <c-x> :<c-u>call incremental#incremental(expand('<cword>'), -1)<cr>
 
 " GrepString
-nnoremap <c-g> :call functions#GrepString()<cr>:grep<space><space>.<left><left>
+nnoremap <c-g> :call functions#GrepString()<cr>:grep<space>
 
 " Jump to start and end of line in insert mode
 inoremap <C-a> <esc>I

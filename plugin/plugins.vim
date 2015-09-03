@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Tue 04 Aug 2015
+" Modified: Tue 01 Sep 2015
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -15,15 +15,6 @@ autocmd! BufRead * :call timestamp#Timestamp()
 "Whitespace
 command! -range=% -nargs=0 StripTrailing :call whitespace#StripTrailing(<line1>,<line2>)
 command! -nargs=0 TrimEndLines :call whitespace#TrimEndLines()
-
-" Auto remove when saving
-if $USERNAME != "JoshWainwright"
-	augroup Clean
-		autocmd!
-		autocmd BufWritePre * StripTrailing
-		autocmd BufWritePre * TrimEndLines
-	augroup END
-endif
 
 "
 " DisplayMode

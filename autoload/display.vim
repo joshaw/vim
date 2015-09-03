@@ -1,5 +1,5 @@
 " Created:  Sat 18 Oct 2014
-" Modified: Tue 04 Aug 2015
+" Modified: Thu 03 Sep 2015
 " Author:   Josh Wainwright
 " Filename: display.vim
 
@@ -23,7 +23,7 @@ let s:reading_mode_def = {
 
 let s:display_mode_def = {
 			\ 'Name': 'Display',
-			\ 'guioptions': &guioptions.'mbr',
+			\ 'guioptions': &guioptions.'br',
 			\ 'colorcolumn': 0,
 			\ 'list': 0,
 			\ 'relativenumber': 0,
