@@ -1,11 +1,9 @@
 " Created:  Fri 12 Jun 2015
-" Modified: Thu 09 Jul 2015
+" Modified: Tue 01 Sep 2015
 " Author:   Josh Wainwright
 " Filename: eunuch.vim
 
-function! s:separator()
-	return !exists('+shellslash') || &shellslash ? '/' : '\\'
-endfunction
+let s:sep = has("win32") ? '\' : '/'
 
 function! eunuch#RemoveFile(bang, args)
 	let s:file = fnamemodify(bufname(a:args),':p')
@@ -24,13 +22,13 @@ function! eunuch#MoveFile(bang, args)
 		let s:dst = expand(a:args)
 	endif
 	if isdirectory(s:dst) || s:dst[-1:-1] =~# '[\\/]'
-		let s:dst .= (s:dst[-1:-1] =~# '[\\/]' ? '' : s:separator()) .
+		let s:dst .= (s:dst[-1:-1] =~# '[\\/]' ? '' : s:sep) .
 		fnamemodify(s:src, ':t')
 	endif
 	if !isdirectory(fnamemodify(s:dst, ':h'))
 		call mkdir(fnamemodify(s:dst, ':h'), 'p')
 	endif
-	let s:dst = substitute(simplify(s:dst), '^\.\'.s:separator(), '', '')
+	let s:dst = substitute(simplify(s:dst), '^\.\'.s:sep, '', '')
 	if !a:bang && filereadable(s:dst)
 		exe 'keepalt saveas '.fnameescape(s:dst)
 	elseif rename(s:src, s:dst)
@@ -77,16 +75,16 @@ function! eunuch#Mkdir(bang, args)
 endfunction
 
 function! eunuch#MaxLine()
-		let maxcol = 0
-		let lnum = 1
-		while lnum <= line("$")
-				call cursor(lnum, 0)
-				if col("$") > maxcol
-						let maxcol = col("$")
-						let maxline = lnum
-				endif
-				let lnum += 1
-		endwhile
-		exec maxline
-		echo "Line" maxline "has" maxcol - 1 "characters"
+	let maxcol = 0
+	let lnum = 1
+	while lnum <= line("$")
+		call cursor(lnum, 0)
+		if col("$") > maxcol
+			let maxcol = col("$")
+			let maxline = lnum
+		endif
+		let lnum += 1
+	endwhile
+	exec maxline
+	echo "Line" maxline "has" maxcol - 1 "characters"
 endfunction
