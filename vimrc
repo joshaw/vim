@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Wed 26 Aug 2015
+" Modified: Thu 03 Sep 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -68,6 +68,7 @@ let loaded_rrhelper        = 1
 let loaded_vimballPlugin   = 1
 let loaded_getscriptPlugin = 1
 let loaded_logipat         = 1
+let did_install_default_menus = 1
 
 """" Syntastic
 let g:syntastic_check_on_wq              = 0
@@ -277,9 +278,9 @@ set virtualedit+=block " when to use virtual editing: "block", "insert" and/or "
 set viminfo^=!         " list that specifies what to write in the viminfo file
 set viminfo+='2000
 if has('gui_running')
-	set viminfo+=n$VIMHOME/tmp/win.viminfo
+	set viminfo+=n$HOME/.win.viminfo
 else
-	set viminfo+=n$VIMHOME/tmp/.viminfo
+	set viminfo+=n$HOME/.viminfo
 endif
 
 " go to last cursor position when opening files
