@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Thu 20 Aug 2015
+" Modified: Thu 03 Sep 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -166,9 +166,15 @@ endfun
 
 " N/P file in dir {{{1
 function! functions#nextFileInDir(direction)
-	let files = glob(expand('%:p:h') . '/*', 0, 1)
+	let sep = has("win32") ? '\' : '/'
+	let fn = expand('%:p:h')
+	let files = extend(glob(fn.'/*', 0, 1), glob(fn.'/.[^.]*', 0, 1))
+	call map(files, "fnamemodify(v:val, ':p')")
+	call filter(files, "v:val[-1:] !=# sep")
+
 	let tot = len(files)
 	if tot > 0
+		call sort(files)
 		let index = index(files, expand('%:p'))
 		exe 'edit' files[(index + a:direction) % tot]
 	endif
