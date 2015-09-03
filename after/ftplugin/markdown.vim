@@ -1,9 +1,10 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Wed 24 Jun 2015
+" Modified: Tue 01 Sep 2015
 " Author:   Josh Wainwright
 " Filename: markdown.vim
 
 exe 'setlocal dict+='.dictfile
+setlocal keywordprg=define
 
 " Automatic formating of paragraphs whenever text is inserted
 setlocal formatoptions=tcqwan1

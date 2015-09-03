@@ -1,5 +1,5 @@
 " Created:  Fri 06 Feb 2015
-" Modified: Tue 23 Jun 2015
+" Modified: Tue 01 Sep 2015
 " Author:   Josh Wainwright
 " Filename: bible.vim
 
@@ -35,6 +35,7 @@ setlocal nocursorline
 setlocal textwidth=65
 setlocal formatoptions+=a
 setlocal scrolloff=999
+setlocal keywordprg=define
 
 if executable('par')
 	setlocal formatprg=par\ -w65j

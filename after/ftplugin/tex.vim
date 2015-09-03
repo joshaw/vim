@@ -1,11 +1,12 @@
 " Created:  Thu 24 Jul 2014
-" Modified: Sat 24 Jan 2015
+" Modified: Tue 01 Sep 2015
 " Author:   Josh Wainwright
 " Filename: tex.vim
 
 " setlocal iskeyword+=:,-,_
 let g:tex_isk="48-57,a-z,A-Z,192-255,:,-,_"
 setlocal makeprg=make
+setlocal keywordprg=define
 
 " Standard error message formats
 " Note: We consider statements that starts with "!" as errors
