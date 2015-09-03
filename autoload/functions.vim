@@ -6,21 +6,28 @@
 " GrepString {{{1
 " Set the grepprg depending on context
 function! functions#GrepString()
-	if exists("b:git_dir") && b:git_dir != '' || isdirectory('.git') || isdirectory('../.git')
-		setlocal grepprg=git\ --no-pager\ grep\ -H\ -n\ --no-color\ --ignore-case
+	if ( exists("b:git_dir") && b:git_dir != '')
+				\ || isdirectory('.git')
+				\ || isdirectory('../.git')
+				\ || isdirectory('../../.git')
+				\ || isdirectory('../../../.git')
+				\ || isdirectory('../../../../.git')
+		setlocal grepformat=%f:%l:%m
+		setlocal grepprg=git\ --no-pager\ grep\ -H\ --line-number\ --no-color
+					\\ --ignore-case\ -I\ -e
 	elseif executable('ag')
+		setlocal grepformat=%f:%l:%c:%m
 		setlocal grepprg=ag\ --vimgrep\ --smart-case
-	elseif executable('ack')
-		setlocal grepprg=ack\ -H\ --nogroup\ --nocolor\ --smart-case
 	else
-		setlocal grepprg=grep\ --dereference-recursive\ --ignore-case\ --line-number\ --with-filename\ $*
+		setlocal grepformat=%f:%l:%m
+		setlocal grepprg=grep\ --binary-files=without-match\ --with-filename
+					\\ --line-number\ --dereference-recursive\ --ignore-case\ $*
 	endif
 endfunction
 
 " BufGrep {{{1
 " Search and Replace through all buffers
 function! functions#BufGrep(search)
-	echo a:search
 	cclose
 	call setqflist([])
 	silent! exe "bufdo vimgrepadd " . a:search . " %"
