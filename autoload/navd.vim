@@ -1,11 +1,12 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Wed 26 Aug 2015
+" Modified: Thu 03 Sep 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
 " A great deal of credit to justinmk for vim-dirvish, on which several parts of
 " this are heavily based (read blatantly copied)
 
+let s:navd_fname = '__Navd__'
 let s:sep = has("win32") ? '\' : '/'
 let g:navd = {}
 
@@ -23,20 +24,11 @@ endfunction
 function! s:get_paths(path, inc_hidden)
 	let l:paths = glob(a:path.'/*', 1, 1)
 	if a:inc_hidden == 1
-		let l:hidden = glob(a:path.'/.*', 1, 1)
-
-		" Remove '.' and '..' from listing
-		let l:hidden = len(l:hidden) > 2 ? remove(l:hidden, 2, -1) : []
+		" Include hidden files except '.' and '..'
+		let l:hidden = glob(a:path.'/.[^.]*', 1, 1)
 		let l:paths = extend(l:paths, l:hidden)
 	endif
 	return sort(map(l:paths, "fnamemodify(v:val, ':p')"), '<sid>sort_paths')
-endfunction
-
-function! s:norm_path(path)
-	let sep = escape(s:sep, '/\')
-	let ret = a:path
-	let ret = ret[-1:] ==# s:sep ? ret : ret.s:sep
-	return ret
 endfunction
 
 function! s:new_obj()
@@ -60,25 +52,45 @@ function! s:new_obj()
 	call search(new_name, 'cW')
 endfunction
 
-function! s:toggle_hidden()
-	let hid = !g:navd['hidden']
-	call s:display_paths(g:navd['cur'], hid)
+function! s:toggle_hidden(curline)
+	call s:display_paths(g:navd['cur'], !g:navd['hidden'])
+	call cursor(1,1)
+	call search(a:curline, 'cW')
+endfunction
+
+function! s:enter_handle()
+	let cur_line = getline('.')
+	if isdirectory(cur_line)
+		call s:display_paths(cur_line, g:navd['hidden'])
+	elseif filereadable(cur_line)
+		exe 'edit' fnameescape(cur_line)
+	endif
+endfunction
+
+function! s:q_handle()
+	let alt = expand('#')
+	if alt ==# s:navd_fname
+		enew
+	else
+		exe 'edit' alt
+	endif
 endfunction
 
 function! s:setup_navd_buf(paths)
 	if &filetype !=# 'navd'
-		silent! edit __Navd__
+		exe 'silent! edit '.s:navd_fname
 		setlocal concealcursor=nc conceallevel=3
 		setlocal filetype=navd
 		setlocal bufhidden=hide undolevels=-1 nobuflisted
 		setlocal buftype=nofile noswapfile nowrap nolist cursorline
 
 		" Keybindings in navd buffer
-		nnoremap <silent> <buffer> - :call <SID>display_paths('<parent>', g:navd['hidden'])<cr>
-		nnoremap <silent> <buffer> <cr> :call <SID>enter_handle()<cr>
-		nnoremap <silent> <buffer> R :call <SID>display_paths(g:navd['cur'], g:navd['hidden'])<cr>
-		nnoremap <silent> <buffer> gh :call <SID>toggle_hidden()<cr>
-		nnoremap <silent> <buffer> + :call <SID>new_obj()<cr>
+		nnoremap <silent><buffer> -    :call <SID>display_paths('<parent>', g:navd['hidden'])<cr>
+		nnoremap <silent><buffer> <cr> :call <SID>enter_handle()<cr>
+		nnoremap <silent><buffer> q    :call <SID>q_handle()<cr>
+		nnoremap <silent><buffer> R    :call <SID>display_paths(g:navd['cur'], g:navd['hidden'])<cr>
+		nnoremap <silent><buffer> gh   :call <SID>toggle_hidden(getline('.'))<cr>
+		nnoremap <silent><buffer> +    :call <SID>new_obj()<cr>
 
 		" Syntax highlighting of folders
 		let sep = escape(s:sep, '/\')
@@ -95,34 +107,30 @@ function! s:setup_navd_buf(paths)
 	setlocal nomodifiable
 endfunction
 
-function! s:enter_handle()
-	let cur_line = getline('.')
-	if isdirectory(cur_line)
-		call s:display_paths(cur_line, g:navd['hidden'])
-	elseif filereadable(cur_line)
-		exe 'edit' fnameescape(cur_line)
-	endif
-endfunction
-
 function! s:display_paths(path, hidden)
-	let g:navd['prev'] = has_key(g:navd, 'cur') ? g:navd['cur'] : ''
+	let g:navd['prev'] = has_key(g:navd, 'cur') ? g:navd['cur'] : a:path
 	let g:navd['hidden'] = a:hidden
 
 	if a:path ==# ''
-		let target_fname = expand('%:t')
 		let target_path = expand('%:p:h')
+		let target_fname = expand('%:t')
 	elseif a:path ==# '<parent>'
-		let target_fname = g:navd['prev']
 		let target_path = fnamemodify(g:navd['cur'], ':p:h:h')
-	else
 		let target_fname = g:navd['prev']
-		let target_path = a:path
+	else
+		if isdirectory(a:path)
+			let target_path = a:path
+			let target_fname = g:navd['prev']
+		else
+			let target_path = fnamemodify(a:path, ':p:h')
+			let target_fname = fnamemodify(a:path, ':p:t')
+		endif
 	endif
-	let target_path = s:norm_path(target_path)
 	let g:navd['cur'] = target_path
 
 	if isdirectory(target_path)
-		let paths = s:get_paths(target_path, a:hidden)
+		let hid = fnamemodify(target_fname, ':t')[0] ==# '.' ? 1 : a:hidden
+		let paths = s:get_paths(target_path, hid)
 		call s:setup_navd_buf(paths)
 	else
 		echoerr "Not a valid directory: ".target_path
@@ -130,12 +138,13 @@ function! s:display_paths(path, hidden)
 	endif
 
 	call cursor(1,1)
-	if target_fname !=# ''
-		if search(target_fname, 'cW') <= 0
-			call search(target_path, 'cW')
+	if !empty(target_fname)
+		let sep = target_fname[0] ==# s:sep ? '' : s:sep
+		if search(sep . escape(target_fname, '\\'), 'cW') <= 0
+			call search(escape(target_path, '\\'), 'cW')
 		endif
-	elseif has_key(g:navd, 'prev') && g:navd['prev'] !=# ''
-		call search(g:navd['prev'], 'cW')
+	elseif has_key(g:navd, 'prev') && !empty(g:navd['prev'])
+		call search(escape(g:navd['prev'], '\\'), 'cW')
 	endif
 endfunction
 
