@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Tue 01 Sep 2015
+" Modified: Thu 03 Sep 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -120,14 +120,7 @@ nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:noh<cr>`w
 
 " Symbols {{{1
 
-" nnoremap - :Dirvish<cr>
 nnoremap <silent> - :Navd<cr>
-
-augroup my_dirvish_events
-	au!
-	au User DirvishEnter let b:dirvish.showhidden = 1
-	au User DirvishEnter nmap <buffer> <expr> N feedkeys(':e ' . bufname("%"))
-augroup END
 
 nnoremap ; :
 nnoremap , ;

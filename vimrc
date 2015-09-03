@@ -68,6 +68,14 @@ let loaded_rrhelper        = 1
 let loaded_vimballPlugin   = 1
 let loaded_getscriptPlugin = 1
 let loaded_logipat         = 1
+let loaded_matchparen      = 1
+let loaded_2html_plugin    = 1
+let loaded_rrhelper        = 1
+" let loaded_zipPlugin       = 1
+" let loaded_tarPlugin       = 1
+" let loaded_gzip            = 1
+let g:skip_loading_mswin   = 1
+let loaded_spellfile_plugin = 1
 let did_install_default_menus = 1
 
 """" Syntastic
@@ -298,10 +306,13 @@ augroup END
 "
 
 if has("autocmd") && exists("+omnifunc")
-autocmd Filetype *
-		\	if &omnifunc == "" |
-		\		setlocal omnifunc=syntaxcomplete#Complete |
-		\	endif
+	augroup Vimrc
+		au!
+		autocmd Filetype *
+					\	if &omnifunc == "" |
+					\		setlocal omnifunc=syntaxcomplete#Complete |
+					\	endif
+	augroup END
 endif
 
 if has('win32') || has('win32unix')
