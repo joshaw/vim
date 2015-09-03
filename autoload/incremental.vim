@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Thu 20 Aug 2015
+" Modified: Tue 01 Sep 2015
 " Author:   Josh Wainwright
 " Filename: incremental.vim
 
@@ -47,11 +47,7 @@ function! incremental#incremental(arg, direction)
 	endfor
 
 	if retval == ''
-		if a:direction == 1
-			silent execute "normal! ".v:count1."\<C-a>"
-		else
-			silent execute "normal! ".v:count1."\<C-x>"
-		endif
+		silent exe "normal! ".v:count1.(a:direction==1 ? "\<C-a>" : "\<C-x>")
 	else
 		let idx = match(getline('.'), a:arg, col('.')-len(a:arg), 1)
 		let line = getline('.')
