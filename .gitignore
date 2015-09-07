@@ -5,3 +5,4 @@ custom/spell/*
 plugged/
 undodir/
 tmp/
+errors.log
