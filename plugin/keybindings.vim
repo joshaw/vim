@@ -131,6 +131,8 @@ else
 endif
 nnoremap <silent> <c-a> :<c-u>call incremental#incremental(expand('<cword>'), 1)<cr>
 nnoremap <silent> <c-x> :<c-u>call incremental#incremental(expand('<cword>'), -1)<cr>
+nnoremap g<c-a> :<c-u>call incremental#incrementalGlobal(getline(".")[col(".")-1], 1)<cr>
+nnoremap g<c-x> :<c-u>call incremental#incrementalGlobal(getline(".")[col(".")-1], -1)<cr>
 
 " GrepString
 nnoremap <c-g> :call functions#GrepString()<cr>:grep<space>
