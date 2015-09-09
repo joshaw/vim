@@ -96,38 +96,6 @@ nnoremap <silent> - :Navd<cr>
 nnoremap ; :
 nnoremap , ;
 
-function! Get_visual_selection()
-  let [lnum1, col1] = getpos("'<")[1:2]
-  let [lnum2, col2] = getpos("'>")[1:2]
-  let lines = getline(lnum1, lnum2)
-  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
-  let lines[0] = lines[0][col1 - 1:]
-  return join(lines, "\n")
-endfunction
-
-function! StarSearch(type, cword)
-	let winsave = winsaveview()
-	redir => tmpvar
-	exe 'silent %s/'.a:cword.'//gnc'
-	redir END
-	let g:status_var = matchstr(tmpvar, '\d\+')
-
-	call winrestview(winsave)
-	call setreg('/', a:cword)
-	if a:type ==# 'star'
-		normal! *N
-	elseif a:type ==# 'hash'
-		normal! #N
-	endif
-	set hlsearch
-	redraw
-endfunction
-
-nnoremap <silent> * :call StarSearch('star', '\<'.expand('<cword>').'\>')<cr>
-nnoremap <silent> # :call StarSearch('hash', '\<'.expand('<cword>').'\>')<cr>
-xnoremap <silent> * :<c-u>call StarSearch('star', Get_visual_selection())<cr>
-xnoremap <silent> # :<c-u>call StarSearch('hash', Get_visual_selection())<cr>
-
 " N/P File in dir
 nnoremap ]f :call functions#nextFileInDir(1)<cr>
 nnoremap [f :call functions#nextFileInDir(-1)<cr>
