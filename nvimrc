@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Mon 24 Aug 2015
+" Modified: Wed 09 Sep 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -7,8 +7,10 @@
 "
 
 let g:vimhome = '~/.vim/'
+let $VIMHOME = '~/.vim/'
 if has('win32')
 	let g:vimhome = $HOME.'/vimfiles/'
+	let $VIMHOME = $HOME.'/vimfiles/'
 	let $PATH=$PATH.';C:/cygwin/bin/;'.$HOME.'/Tools/'
 endif
 
@@ -52,7 +54,7 @@ function! s:lod(path)
 	exe 'source ' . g:vimhome . 'plugged/' . a:path . '/plugin/*.vim'
 endfunction
 
-call s:lod('vim-dirvish')
+" call s:lod('vim-dirvish')
 call s:lod('vim-buftabline')
 call s:lod('tabular')
 call s:lod('tgpg_vim')
@@ -66,6 +68,15 @@ let loaded_rrhelper        = 1
 let loaded_vimballPlugin   = 1
 let loaded_getscriptPlugin = 1
 let loaded_logipat         = 1
+let loaded_matchparen      = 1
+let loaded_2html_plugin    = 1
+let loaded_rrhelper        = 1
+" let loaded_zipPlugin       = 1
+" let loaded_tarPlugin       = 1
+" let loaded_gzip            = 1
+let g:skip_loading_mswin   = 1
+let loaded_spellfile_plugin = 1
+let did_install_default_menus = 1
 
 """" Syntastic
 let g:syntastic_check_on_wq              = 0
@@ -274,7 +285,11 @@ set encoding=utf-8 " character encoding used in Vim: "latin1", "utf-8"
 set virtualedit+=block " when to use virtual editing: "block", "insert" and/or "all"
 set viminfo^=!         " list that specifies what to write in the viminfo file
 set viminfo+='2000
-set viminfo+=n$HOME/.viminfo
+if has('gui_running')
+	set viminfo+=n$HOME/.win.viminfo
+else
+	set viminfo+=n$HOME/.viminfo
+endif
 
 " go to last cursor position when opening files
 augroup vimrc_line_return
@@ -291,10 +306,13 @@ augroup END
 "
 
 if has("autocmd") && exists("+omnifunc")
-autocmd Filetype *
-		\	if &omnifunc == "" |
-		\		setlocal omnifunc=syntaxcomplete#Complete |
-		\	endif
+	augroup Vimrc
+		au!
+		autocmd Filetype *
+					\	if &omnifunc == "" |
+					\		setlocal omnifunc=syntaxcomplete#Complete |
+					\	endif
+	augroup END
 endif
 
 if has('win32') || has('win32unix')
@@ -306,16 +324,24 @@ endif
 " Objects                        {{{2
 
 " Line object
-vnoremap il :<c-u>normal! 0vg_<cr>
-vnoremap al :<c-u>normal! 0v$<cr>
-omap il :normal vil<cr>
-omap al :normal val<cr>
+xnoremap il :<c-u>normal! ^vg_<cr>
+xnoremap al :<c-u>normal! 0v$<cr>
+onoremap il :normal vil<cr>
+onoremap al :normal val<cr>
 
 " Whole file object
-vnoremap if :<c-u>normal! gg0VG<cr>
-vnoremap af :<c-u>normal! gg0VG<cr>
-omap if :normal vif<cr>
-omap af :normal vaf<cr>
+xnoremap if :<c-u>normal! gg0VG<cr>
+xnoremap af :<c-u>normal! gg0VG<cr>
+onoremap if :normal vif<cr>
+onoremap af :normal vaf<cr>
+
+" custom text-objects
+for char in [ '_', '.', ':', ',', ';', '<bar>', '/', '<bslash>', '*', '+', '%', '`' ]
+    execute 'xnoremap i' . char . ' :<C-u>normal! T' . char . 'vt' . char . '<CR>'
+    execute 'onoremap i' . char . ' :normal vi' . char . '<CR>'
+    execute 'xnoremap a' . char . ' :<C-u>normal! F' . char . 'vf' . char . '<CR>'
+    execute 'onoremap a' . char . ' :normal va' . char . '<CR>'
+endfor
 
 " Abbreviations                  {{{1
 "
@@ -364,7 +390,7 @@ iabbrev <expr> Weeklyr "Weekly Report<CR>
 
 command! TBini :e C:\ProgramData\LDRA\TESTBED.ini
 nnoremap <F11> :<C-U>e ~/Documents/Details/ldra-learnt.md<cr>
-command! -range=% FormatWikiEntry :Tabularize /\(\( \|^\)\zs|\)\|\^
+command! FormatWikiEntry :Tabularize /\(\( \|^\)\zs|\)\|\^
 
 if has("gui_running") && !exists("g:vim_started")
 	set lines=40
