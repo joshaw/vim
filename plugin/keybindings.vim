@@ -20,36 +20,7 @@ map <S-F9> :w <bar> silent make<cr>
 nnoremap <F12> :EditReport<cr>
 nnoremap <S-F12> :EditReport!<cr>
 
-" Smart completion on tab {{{
-function! Smart_TabComplete()
-	" Check for existing completion menu
-	if pumvisible()
-		return "\<c-n>"
-	endif
-
-	" Check for start of line, or just whitespace
-	let linestart = strpart(getline('.'), -1, col('.'))
-	let substr = matchstr(linestart, "[^ \t]*$")
-	if (strlen(substr)==0)
-		return "\<tab>"
-	endif
-
-	" Check for abbreviations
-	let cword = split(linestart)[-1]
-	if maparg(cword.'#', 'i', 1) != ''
-		return "#\<c-]>"
-	endif
-
-	" Check for filenames
-	let has_slash = match(substr, '\/\|\\') != -1
-	if (has_slash)
-		return "\<c-x>\<c-f>"
-	endif
-
-	" Otherwise, default completion
-	return "\<c-n>"
-endfunction " }}}
-inoremap <expr> <tab> Smart_TabComplete()
+inoremap <expr> <tab> functions#smart_TabComplete()
 inoremap <s-tab> <c-p>
 
 " Jump to file under cursor with cr, leader cr edits a non existing file

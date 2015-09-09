@@ -197,3 +197,32 @@ function! functions#html2nroff(...)
 	silent %!nroff
 	silent StripTrailing
 endfunction
+" Smart completion on tab {{{1
+function! functions#smart_TabComplete()
+	" Check for existing completion menu
+	if pumvisible()
+		return "\<c-n>"
+	endif
+
+	" Check for start of line, or whitespace
+	let linestart = strpart(getline('.'), -1, col('.'))
+	let substr = matchstr(linestart, "[^ \t]*$")
+	if strlen(substr) == 0
+		return "\<tab>"
+	endif
+
+	" Check for abbreviations
+	let cword = split(linestart)[-1]
+	if maparg(cword.'#', 'i', 1) != ''
+		return "#\<c-]>"
+	endif
+
+	" Check for filenames
+	let pat = '\v(^|[0-9A-Za-z_.~])(\/|\\){-1,2}([0-9A-Za-z_.~]|$)'
+	if match(substr, pat) != -1
+		return "\<c-x>\<c-f>"
+	endif
+
+	" Otherwise, default completion
+	return "\<c-n>"
+endfunction
