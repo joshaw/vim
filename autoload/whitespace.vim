@@ -1,25 +1,28 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Wed 10 Jun 2015
+" Modified: Mon 07 Sep 2015
 " Author:   Josh Wainwright
 " Filename: whitespace.vim
 "
 " Remove trailing spaces
 function! whitespace#StripTrailing(firstl, lastl) range
-	if &ft == 'markdown' || &ft == 'dat'
+" 	if &ft == 'markdown' || &ft == 'dat'
+" 		return
+" 	endif
+	if stridx(&formatoptions, 'a') > 0
 		return
 	endif
-	let save_cursor = getpos(".")
+	let w = winsaveview()
 	let old_query = getreg("/")
-	execute printf('%d,%ds/\s\+$//e', a:firstl, a:lastl)
-	execute printf('%d,%ds/\n\{3,}/\r\r/e', a:firstl, a:lastl-1)
+	exe 'keeppatterns' a:firstl . ',' . a:lastl . 's/\s\+$//e'
+	exe 'keeppatterns' a:firstl . ',' . (a:lastl-1) . 's/\n\{3,}/\r\r/e'
 	call whitespace#TrimEndLines()
-	call setpos('.', save_cursor)
 	call setreg('/', old_query)
+	call winrestview(w)
 endfunction
 
 " Remove empty line at the end of file
 function! whitespace#TrimEndLines()
 	let w = winsaveview()
-	silent! %s#\($\n\s*\)\+\%$##
+	keeppatterns %s#\($\n\s*\)\+\%$##e
 	call winrestview(w)
 endfunction
