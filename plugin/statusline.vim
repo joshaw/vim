@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Thu 20 Aug 2015
+" Modified: Wed 09 Sep 2015
 " Author:   Josh Wainwright
 " Filename: statusline.vim
 
@@ -73,7 +73,7 @@ let g:stl = s:stl
 augroup statusline
 	" whenever the color scheme changes re-apply the colors
 	au ColorScheme,VimEnter * call statusline#colour()
-	au BufEnter,Filetype * call setwinvar(0, "&statusline", s:stl)
+	au WinEnter,BufEnter,Filetype * call setwinvar(0, "&statusline", s:stl)
 " 	au WinEnter,BufEnter * call setwinvar(0, "&statusline", s:stl)
 	au WinLeave *  exec "hi StatusLineNC guifg=#BBBBBB guibg=#111111" |
 				\ call setwinvar(0, "&statusline", "")
