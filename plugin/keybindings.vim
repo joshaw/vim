@@ -65,9 +65,9 @@ xnoremap gl :Tabularize /
 inoremap jk <Esc>
 inoremap kj <Esc>
 
-" Center search result
-nnoremap n nzz
-nnoremap N Nzz
+" Open folds and center search result
+nnoremap n nzvzz
+nnoremap N Nzvzz
 
 xnoremap u <nop>
 xnoremap gu u
