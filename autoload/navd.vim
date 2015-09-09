@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Thu 03 Sep 2015
+" Modified: Mon 07 Sep 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -21,6 +21,7 @@ function! s:sort_paths(p1, p2)
   return a:p1 ==# a:p2 ? 0 : a:p1 ># a:p2 ? 1 : -1
 endfunction
 
+" Get the list of files and folders to display in the buffer.
 function! s:get_paths(path, inc_hidden)
 	let l:paths = glob(a:path.'/*', 1, 1)
 	if a:inc_hidden == 1
@@ -31,6 +32,7 @@ function! s:get_paths(path, inc_hidden)
 	return sort(map(l:paths, "fnamemodify(v:val, ':p')"), '<sid>sort_paths')
 endfunction
 
+" Create a new file or folder depending on the name given.
 function! s:new_obj()
 	let new_name = input('Name: ')
 	redraw
@@ -76,6 +78,8 @@ function! s:q_handle()
 	endif
 endfunction
 
+" Setup the navd buffer, write the paths and filenames to it and make it
+" unwritable.
 function! s:setup_navd_buf(paths)
 	if &filetype !=# 'navd'
 		exe 'silent! edit '.s:navd_fname
@@ -107,6 +111,8 @@ function! s:setup_navd_buf(paths)
 	setlocal nomodifiable
 endfunction
 
+" Call the nessessary functions, sort out where we've come from and highlight
+" to right line.
 function! s:display_paths(path, hidden)
 	let g:navd['prev'] = has_key(g:navd, 'cur') ? g:navd['cur'] : a:path
 	let g:navd['hidden'] = a:hidden
