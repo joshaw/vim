@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Tue 01 Sep 2015
+" Modified: Mon 07 Sep 2015
 " Author:   Josh Wainwright
 " Filename: incremental.vim
 
@@ -42,16 +42,13 @@ function! incremental#incremental(arg, direction)
 		if idx >= 0
 			let retval = lst[(idx + v:count1*a:direction) % len(lst)]
 			if a:arg =~# '^\l*$'
-				let reptype = 0
 			elseif a:arg =~# '^\u*$'
-				let reptype = 1
 				let retval = toupper(retval)
 			elseif a:arg =~# '^\u\l*$'
-				let reptype = 2
 				let retval = toupper(retval[0]) . retval[1:]
 			else
-				let reptype = 3
-				let retval = ''
+				echoerr "Error encountered with argument:" a:arg
+				return
 			endif
 			break
 		endif
@@ -62,4 +59,12 @@ function! incremental#incremental(arg, direction)
 	else
 		call s:replace_word(getline('.'), col('.'), a:arg, retval)
 	endif
+endfunction
+
+function! incremental#incrementalGlobal(arg, direction)
+	let w = ''
+	for char in split(a:arg, '.\zs')
+		let w = w . nr2char(char2nr(char) + a:direction)
+	endfor
+	call s:replace_word(getline('.'), col('.'), a:arg, w)
 endfunction
