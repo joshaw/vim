@@ -22,6 +22,17 @@ let s:mods =
 				\ 'august', 'september', 'october', 'november', 'december'],
 		\ ]
 
+function! s:replace_word(line, col, word, replace)
+	let idx = match(a:line, a:word, a:col-len(a:word), 1)
+	let after = a:line[idx + len(a:word):]
+	if idx == 0
+		call setline('.', a:replace . after)
+	else
+		let before = a:line[:idx-1]
+		call setline('.', before . a:replace . after)
+	endif
+endfunction
+
 function! incremental#incremental(arg, direction)
 	let retval = ''
 	let w = tolower(a:arg)
@@ -49,14 +60,6 @@ function! incremental#incremental(arg, direction)
 	if retval == ''
 		silent exe "normal! ".v:count1.(a:direction==1 ? "\<C-a>" : "\<C-x>")
 	else
-		let idx = match(getline('.'), a:arg, col('.')-len(a:arg), 1)
-		let line = getline('.')
-		let after = line[idx + len(a:arg):]
-		if idx == 0
-			call setline('.', retval . after)
-		else
-			let before = line[:idx-1]
-			call setline('.', before . retval . after)
-		endif
+		call s:replace_word(getline('.'), col('.'), a:arg, retval)
 	endif
 endfunction
