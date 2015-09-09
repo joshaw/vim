@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Thu 03 Sep 2015
+" Modified: Wed 09 Sep 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -171,6 +171,10 @@ augroup vimrc_reload
 				\ | echo "vimrc is sourced"
 				\ | doautocmd colourscheme VimEnter %
 augroup END
+
+" Get count of word under cursor
+nnoremap <leader>gc :<c-u>call functions#count('normal')<cr>
+xnoremap <leader>gc :<c-u>call functions#count('visual')<cr>
 
 " Fast saving
 nnoremap <leader>w :w!<cr>

@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Thu 03 Sep 2015
+" Modified: Wed 09 Sep 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -197,6 +197,39 @@ function! functions#html2nroff(...)
 	silent %!nroff
 	silent StripTrailing
 endfunction
+
+" Count occurances {{{1
+function! s:get_visual_selection()
+  " Why is this not a built-in Vim script function?!
+  let [lnum1, col1] = getpos("'<")[1:2]
+  let [lnum2, col2] = getpos("'>")[1:2]
+  let lines = getline(lnum1, lnum2)
+  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
+  let lines[0] = lines[0][col1 - 1:]
+  return join(lines, "\n")
+endfunction
+
+function! functions#count(mode) range
+	let w = winsaveview()
+
+	if a:mode ==# 'normal'
+		let word = expand('<cword>')
+		let word = '\<' . escape(word, '#\\') . '\>'
+	elseif a:mode ==# 'visual'
+		let word = s:get_visual_selection()
+		let word = escape(word, '#\\')
+	endif
+
+	redir => soutput
+		exe 'silent %s#\V' . word . '##nge'
+	redir END
+	let soutput = soutput[1:]
+	let g:status_var = soutput + 0
+	echo '"' . word . '": ' . soutput
+	call histdel('/', -1)
+	call winrestview(w)
+endfunction
+
 " Smart completion on tab {{{1
 function! functions#smart_TabComplete()
 	" Check for existing completion menu
