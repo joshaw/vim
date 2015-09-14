@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Fri 11 Sep 2015
+" Modified: Mon 14 Sep 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -167,7 +167,7 @@ augroup vimrc_reload
 	autocmd!
 	autocmd BufWritePost $MYVIMRC source $MYVIMRC
 				\ | echo "vimrc is sourced"
-				\ | doautocmd colourscheme VimEnter %
+				\ | call statusline#colour()
 augroup END
 
 " Get count of word under cursor
