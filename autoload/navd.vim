@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Sat 12 Sep 2015
+" Modified: Mon 14 Sep 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -9,6 +9,7 @@
 let s:navd_fname = '__Navd__'
 let s:sep = has("win32") ? '\' : '/'
 let g:navd = {}
+let g:match = {'unreadable': [], 'unwritable': [], 'modified': []}
 
 function! s:sort_paths(p1, p2)
   let isdir1 = (a:p1[-1:] ==# s:sep) "3x faster than isdirectory().
@@ -29,7 +30,18 @@ function! s:get_paths(path, inc_hidden)
 		let l:hidden = glob(a:path.'/.[^.]*', 1, 1)
 		let l:paths = extend(l:paths, l:hidden)
 	endif
-	return sort(map(l:paths, "fnamemodify(v:val, ':p')"), '<sid>sort_paths')
+	call map(l:paths, "fnamemodify(v:val, ':p')")
+	call sort(l:paths, '<sid>sort_paths')
+	let counter = 0
+	for path in l:paths
+		let counter += 1
+		if !isdirectory(path) && !filereadable(path)
+			call add(g:match['unreadable'], counter)
+		elseif !filewritable(path)
+			call add(g:match['unwritable'], counter)
+		endif
+	endfor
+	return l:paths
 endfunction
 
 " Create a new file or folder depending on the name given.
@@ -47,10 +59,10 @@ function! s:new_obj()
 		else
 			echo "Directory already exists: ".new_name
 		endif
+		call search(new_name, 'cW')
 	else
 		exe 'edit '.g:navd['cur'].new_name
 	endif
-	call search(new_name, 'cW')
 endfunction
 
 function! s:toggle_hidden(curline)
@@ -59,14 +71,14 @@ function! s:toggle_hidden(curline)
 endfunction
 
 function! s:enter_handle()
+	call clearmatches()
 	let cur_line = getline('.')
-	if cur_line =~# '^[+R]\+ '
-		let cur_line = substitute(cur_line, '^[+R]\+ ', '', '')
-	endif
 	if isdirectory(cur_line)
 		call s:display_paths(cur_line, g:navd['hidden'])
 	elseif filereadable(cur_line)
 		exe 'edit' fnameescape(cur_line)
+	else
+		echoerr 'Cannot access file:' cur_line
 	endif
 endfunction
 
@@ -102,12 +114,11 @@ function! s:setup_navd_buf(paths)
 		let sep = escape(s:sep, '/\')
 		exe 'syntax match NavdPathHead ''\v.*'.sep.'\ze[^'.sep.']+'.sep.'?$'' conceal'
 		exe 'syntax match NavdPathTail ''\v[^'.sep.']+'.sep.'$'''
-		syntax match NavdModified '^+ .*$' contains=NavdPathHead
-		syntax match NavdReadOnly '^R .*$' contains=NavdPathHead
 		highlight! link NavdPathTail Directory
-		highlight! link NavdModified Keyword
-		highlight! link NavdReadOnly SpecialKey
 	endif
+	call matchaddpos('Comment', g:match['unreadable'])
+	call matchaddpos('String', g:match['unwritable'])
+	call matchaddpos('Keyword', g:match['modified'])
 
 	setlocal modifiable
 	silent %delete _
@@ -163,12 +174,17 @@ endfunction
 function! s:buffer_paths()
 	let tot_bufs = bufnr('$')
 	let buf_list = []
+	let buf_count = 0
 	for buff in range(1, tot_bufs)
 		let buf_name = bufname(buff)
 		if bufexists(buff) && buf_name !~# s:navd_fname
-			let buf_prop = ( getbufvar(buff, '&mod') ? '+' : '' )
-			let buf_prop .= ( getbufvar(buff, '&ma') ? '' : 'R' )
-			let buf_name = (len(buf_prop) == 0 ? '' : buf_prop . ' ') . buf_name
+			let buf_count += 1
+			if getbufvar(buff, '&modified')
+				call add(g:match['modified'], buf_count)
+			endif
+			if !getbufvar(buff, '&modifiable')
+				call add(g:match['unwritable'], buf_count)
+			endif
 			call add(buf_list, buf_name)
 		endif
 	endfor
