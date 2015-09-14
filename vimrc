@@ -99,9 +99,7 @@ syntax on
 augroup colourscheme
 	au!
 	au VimEnter * colorscheme molokaiV
-	au VimEnter,Colorscheme * hi! link ColorColumn CursorLine
 augroup END
-" doautocmd colourscheme VimEnter %
 if !has('nvim')
 	set encoding=utf-8 " character encoding used in Vim: "latin1", "utf-8"
 endif
