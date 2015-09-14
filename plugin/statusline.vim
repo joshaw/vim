@@ -1,23 +1,20 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Wed 09 Sep 2015
+" Modified: Mon 14 Sep 2015
 " Author:   Josh Wainwright
 " Filename: statusline.vim
 
 set ls=2 " Always show status line
 
 function! s:statuslineconvert(n, orig)
-	if has("gui_running")
-		let p = 'gui'
-	else
-		let p = 'cterm'
-	endif
-		exec 'hi User'.a:n p.'fg='.synIDattr(synIDtrans(hlID(a:orig)), 'fg')
-					\ p.'bg='.synIDattr(synIDtrans(hlID('ColorColumn')), 'bg')
+	let p = has('gui_running') ? 'gui' : 'cterm'
+	exec 'hi User' . a:n p . 'fg=' . synIDattr(synIDtrans(hlID(a:orig)), 'fg')
+				\ p . 'bg=' . s:ccbg
 endfunction
 
 " Set up the colors for the status bar
 function! statusline#colour()
 	" Basic color presets
+	let s:ccbg = synIDattr(synIDtrans(hlID('ColorColumn')), 'bg')
 	call s:statuslineconvert(5, 'Comment')
 	call s:statuslineconvert(7, 'Operator')
 	call s:statuslineconvert(8, 'Identifier')
@@ -68,13 +65,10 @@ let s:stl.="%3.c:"                               " column number
 let s:stl.="%7*%3.l%8*/%-2.L\ "                  " line number / total lines
 let s:stl.="%3.p%% "                             " percentage done
 
-let g:stl = s:stl
-
 augroup statusline
 	" whenever the color scheme changes re-apply the colors
 	au ColorScheme,VimEnter * call statusline#colour()
 	au WinEnter,BufEnter,Filetype * call setwinvar(0, "&statusline", s:stl)
-" 	au WinEnter,BufEnter * call setwinvar(0, "&statusline", s:stl)
 	au WinLeave *  exec "hi StatusLineNC guifg=#BBBBBB guibg=#111111" |
 				\ call setwinvar(0, "&statusline", "")
 augroup END
