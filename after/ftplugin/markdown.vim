@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Wed 09 Sep 2015
+" Modified: Fri 11 Sep 2015
 " Author:   Josh Wainwright
 " Filename: markdown.vim
 
@@ -14,6 +14,7 @@ if !filereadable("makefile")
 	setlocal makeprg=md.py\ %
 endif
 
+syntax match markdownOrderedListMarker "\%(\t\| \{0,4}\)\<\%(\d\+\|\a\)\.\%(\s\+\S\)\@=" contained
 
 function! FormatTable()
 	let w = winsaveview()

@@ -36,8 +36,6 @@ augroup filetypesettings
 	autocmd!
 	"au FileType * exe 'setlocal dict+='.fnameescape($VIMRUNTIME).'/syntax/'.&filetype.'.vim'
 	autocmd Filetype * exe 'setlocal dict+=$VIMHOME/spell/dicts/'.&filetype.'.dict'
-	autocmd Filetype markdown syn match markdownOrderedListMarker "\%(\t\| \{0,4}\)\<\%(\d\+\|\a\)\.\%(\s\+\S\)\@=" contained
-	autocmd Filetype netrw setlocal bufhidden=wipe
 augroup END
 
 augroup vimp
