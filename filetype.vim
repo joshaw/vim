@@ -1,36 +1,45 @@
 " Created:  Thu 07 Aug 2014
-" Modified: Mon 17 Aug 2015
+" Modified: Fri 11 Sep 2015
 " Author:   Josh Wainwright
 " Filename: filetype.vim
 
 if exists("did_load_filetypes")
 	finish
 endif
+
+function! s:FT(pattern, filetype)
+	exe 'autocmd BufRead,BufNewFile' a:pattern 'setf' a:filetype
+endfunction
+command! -nargs=+ FT :call s:FT(<f-args>)
+
 augroup filetypedetect
 	autocmd!
 	autocmd! BufNewFile,BufRead *.dat,*.txt
 				\ if search("^SERVER ", "n") > 0 && search("^VENDOR ", "n") > 0 |
 				\     setfiletype flexlm |
 				\ endif
-	autocmd BufRead,BufNewFile *.tex setf tex
-	autocmd BufRead,BufNewFile *.rout,*.Rout setf r
-	autocmd BufRead,BufNewFile *.md setf markdown
-	autocmd BufRead,BufNewFile README setf markdown
-	autocmd BufRead,BufNewFile *.bible setf bible
-	autocmd BufRead,BufNewFile three-year.txt setf biblereading
-	autocmd BufRead,BufNewFile times.txt setf times.conf
+	FT *.tex tex
+	FT *.rout,*.Rout r
+	FT *.md markdown
+	FT README markdown
+	FT *.bible bible
+	FT three-year.txt biblereading
+	FT times.txt times.conf
 	" Remove spaces at the end of header lines when starting new mail in mutt.
 	autocmd BufRead,BufNewFile /tmp/*/mutt* :1,/^$/s/\s\+$//
-	autocmd BufRead,BufNewFile *.mail setf mail
-	autocmd BufRead,BufNewFile *.tcf,*.tct setf tcf
-	autocmd BufRead,BufNewFile *vals.dat setf vals
-	autocmd BufRead,BufNewFile *tbend.dat setf tbend
-	autocmd BufRead,BufNewFile *[sS]ysearch.dat setf sysearch
-	autocmd BufRead,BufNewFile *[sS]ysppvar.dat setf sysppvar
-	autocmd BufRead,BufNewFile *[mM]etpen.dat setf metpen
-	autocmd BufRead,BufNewFile *.gnu setf gnuplot
-	autocmd BufRead,BufNewFile *.cmm set filetype=practice
+	FT *.mail mail
+	FT *.tcf,*.tct tcf
+	FT *vals.dat vals
+	FT *tbend.dat tbend
+	FT *[sS]ysearch.dat sysearch
+	FT *[sS]ysppvar.dat sysppvar
+	FT *[mM]etpen.dat metpen
+	FT *.gnu gnuplot
+	FT *.cmm practice
 augroup END
+
+delfunction s:FT
+delcommand FT
 
 augroup filetypesettings
 	autocmd!
