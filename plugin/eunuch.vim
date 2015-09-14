@@ -15,13 +15,4 @@ command! -bar -bang -complete=file -nargs=+ GGrep :call eunuch#Grep(<q-bang>, <q
 command! -bar -bang -nargs=? -complete=dir Mkdir :call eunuch#Mkdir(<q-bang>, <q-args>)
 command! MaxLine call eunuch#MaxLine()
 
-augroup shebang_chmod
-  autocmd!
-  autocmd BufWritePost,FileWritePost *
-        \ if executable('chmod') && getline(1) =~ '^#!' |
-        \   silent! execute '!chmod +x "<afile>"' |
-        \   edit |
-        \ endif
-augroup END
-
 " vim:set sw=2 sts=2:
