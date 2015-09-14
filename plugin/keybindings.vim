@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Wed 09 Sep 2015
+" Modified: Fri 11 Sep 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -90,8 +90,6 @@ nnoremap Q :normal! n.<CR>
 nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:noh<cr>`w
 
 " Symbols {{{1
-
-nnoremap <silent> - :Navd<cr>
 
 nnoremap ; :
 nnoremap , ;

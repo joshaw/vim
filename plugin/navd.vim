@@ -1,9 +1,13 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Wed 26 Aug 2015
+" Modified: Fri 11 Sep 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
 command! -nargs=? -bang Navd :call navd#navd(<q-args>, <bang>0)
+command! -bang NavdBuf :call navd#navdbuf()
+
+nnoremap <silent> - :Navd<cr>
+nnoremap <silent> _ :NavdBuf<cr>
 
 augroup navd_bufevents
   au!
