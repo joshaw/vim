@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Thu 03 Sep 2015
+" Modified: Fri 11 Sep 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -273,7 +273,7 @@ endif
 set keywordprg="" " program used for the "K" command
 
 "23 running make and jumping to errors {{{2
-set makeprg=make " program used for the ":make" command
+set makeprg=make\ >\ /dev/null " program used for the ":make" command
 
 "24 system specific {{{2
 
