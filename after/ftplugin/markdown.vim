@@ -10,7 +10,10 @@ setlocal keywordprg=define
 setlocal formatoptions=tcqwan1
 setlocal nosmartindent
 
-setlocal makeprg=md.py\ %
+if !filereadable("makefile")
+	setlocal makeprg=md.py\ %
+endif
+
 
 function! FormatTable()
 	let w = winsaveview()
