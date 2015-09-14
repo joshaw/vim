@@ -55,6 +55,7 @@ hi Number guifg=#AE81FF guibg=NONE guisp=NONE gui=NONE ctermfg=141 ctermbg=NONE 
 hi Boolean guifg=#AE81FF guibg=NONE guisp=NONE gui=NONE ctermfg=141 ctermbg=NONE cterm=NONE
 hi Operator guifg=#F92672 guibg=NONE guisp=NONE gui=NONE ctermfg=197 ctermbg=NONE cterm=NONE
 hi CursorLine guifg=NONE guibg=#3B3A32 guisp=#3B3A32 gui=NONE ctermfg=NONE ctermbg=237 cterm=NONE
+hi ColorColumn guifg=NONE guibg=#3B3A32 guisp=#3B3A32 gui=NONE ctermfg=NONE ctermbg=237 cterm=NONE
 "hi Union -- no settings --
 "hi TabLineFill -- no settings --
 hi Question guifg=#66D9EF guibg=NONE guisp=NONE gui=NONE ctermfg=81 ctermbg=NONE cterm=NONE
