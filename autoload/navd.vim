@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Mon 07 Sep 2015
+" Modified: Sat 12 Sep 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -60,6 +60,9 @@ endfunction
 
 function! s:enter_handle()
 	let cur_line = getline('.')
+	if cur_line =~# '^[+R]\+ '
+		let cur_line = substitute(cur_line, '^[+R]\+ ', '', '')
+	endif
 	if isdirectory(cur_line)
 		call s:display_paths(cur_line, g:navd['hidden'])
 	elseif filereadable(cur_line)
@@ -85,6 +88,7 @@ function! s:setup_navd_buf(paths)
 		setlocal filetype=navd
 		setlocal bufhidden=hide undolevels=-1 nobuflisted
 		setlocal buftype=nofile noswapfile nowrap nolist cursorline
+		setlocal colorcolumn=""
 
 		" Keybindings in navd buffer
 		nnoremap <silent><buffer> -    :call <SID>display_paths('<parent>', g:navd['hidden'])<cr>
@@ -98,7 +102,11 @@ function! s:setup_navd_buf(paths)
 		let sep = escape(s:sep, '/\')
 		exe 'syntax match NavdPathHead ''\v.*'.sep.'\ze[^'.sep.']+'.sep.'?$'' conceal'
 		exe 'syntax match NavdPathTail ''\v[^'.sep.']+'.sep.'$'''
+		syntax match NavdModified '^+ .*$' contains=NavdPathHead
+		syntax match NavdReadOnly '^R .*$' contains=NavdPathHead
 		highlight! link NavdPathTail Directory
+		highlight! link NavdModified Keyword
+		highlight! link NavdReadOnly SpecialKey
 	endif
 
 	setlocal modifiable
@@ -152,6 +160,28 @@ function! s:display_paths(path, hidden)
 	endif
 endfunction
 
+function! s:buffer_paths()
+	let tot_bufs = bufnr('$')
+	let buf_list = []
+	for buff in range(1, tot_bufs)
+		let buf_name = bufname(buff)
+		if bufexists(buff) && buf_name !~# s:navd_fname
+			let buf_prop = ( getbufvar(buff, '&mod') ? '+' : '' )
+			let buf_prop .= ( getbufvar(buff, '&ma') ? '' : 'R' )
+			let buf_name = (len(buf_prop) == 0 ? '' : buf_prop . ' ') . buf_name
+			call add(buf_list, buf_name)
+		endif
+	endfor
+
+	let cur_buf = bufname('%')
+	call s:setup_navd_buf(buf_list)
+	call search(cur_buf, 'cW')
+endfunction
+
 function! navd#navd(path, hidden)
 	call s:display_paths(a:path, a:hidden)
+endfunction
+
+function! navd#navdbuf()
+	call s:buffer_paths()
 endfunction
