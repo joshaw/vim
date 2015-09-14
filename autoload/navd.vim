@@ -50,13 +50,11 @@ function! s:new_obj()
 	else
 		exe 'edit '.g:navd['cur'].new_name
 	endif
-	call cursor(1,1)
 	call search(new_name, 'cW')
 endfunction
 
 function! s:toggle_hidden(curline)
 	call s:display_paths(g:navd['cur'], !g:navd['hidden'])
-	call cursor(1,1)
 	call search(a:curline, 'cW')
 endfunction
 
@@ -82,7 +80,7 @@ endfunction
 " unwritable.
 function! s:setup_navd_buf(paths)
 	if &filetype !=# 'navd'
-		exe 'silent! edit '.s:navd_fname
+		exe 'silent! edit ' . s:navd_fname
 		setlocal concealcursor=nc conceallevel=3
 		setlocal filetype=navd
 		setlocal bufhidden=hide undolevels=-1 nobuflisted
@@ -109,6 +107,7 @@ function! s:setup_navd_buf(paths)
 	$delete _
 	silent! %s/\([/\\]\)\{2,}/\1/g
 	setlocal nomodifiable
+	call cursor(1,1)
 endfunction
 
 " Call the nessessary functions, sort out where we've come from and highlight
@@ -143,7 +142,6 @@ function! s:display_paths(path, hidden)
 		return
 	endif
 
-	call cursor(1,1)
 	if !empty(target_fname)
 		let sep = target_fname[0] ==# s:sep ? '' : s:sep
 		if search(sep . escape(target_fname, '\\'), 'cW') <= 0
