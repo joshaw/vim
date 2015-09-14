@@ -9,17 +9,24 @@
 let s:navd_fname = '__Navd__'
 let s:sep = has("win32") ? '\' : '/'
 let g:navd = {}
-let g:match = {'unreadable': [], 'unwritable': [], 'modified': []}
+
+function! s:isdir(path)
+	return (a:path[-1:] ==# s:sep) "3x faster than isdirectory().
+endfunction
 
 function! s:sort_paths(p1, p2)
-  let isdir1 = (a:p1[-1:] ==# s:sep) "3x faster than isdirectory().
-  let isdir2 = (a:p2[-1:] ==# s:sep)
+  let isdir1 = s:isdir(a:p1)
+  let isdir2 = s:isdir(a:p2)
   if isdir1 && !isdir2
 	return -1
   elseif !isdir1 && isdir2
 	return 1
   endif
   return a:p1 ==# a:p2 ? 0 : a:p1 ># a:p2 ? 1 : -1
+endfunction
+
+function! s:init_match()
+	let s:match = {'noread': [], 'nowrite': [], 'mod': []}
 endfunction
 
 " Get the list of files and folders to display in the buffer.
@@ -33,12 +40,13 @@ function! s:get_paths(path, inc_hidden)
 	call map(l:paths, "fnamemodify(v:val, ':p')")
 	call sort(l:paths, '<sid>sort_paths')
 	let counter = 0
+	call s:init_match()
 	for path in l:paths
 		let counter += 1
-		if !isdirectory(path) && !filereadable(path)
-			call add(g:match['unreadable'], counter)
+		if !s:isdir(path) && !filereadable(path)
+			call add(s:match['noread'], counter)
 		elseif !filewritable(path)
-			call add(g:match['unwritable'], counter)
+			call add(s:match['nowrite'], counter)
 		endif
 	endfor
 	return l:paths
@@ -49,15 +57,16 @@ function! s:new_obj()
 	let new_name = input('Name: ')
 	redraw
 	if new_name[-1:] =~# '[/\\]'
-		if !isdirectory(g:navd['cur'].'/'.new_name)
-			if !mkdir(g:navd['cur'].'/'.new_name)
+		if s:isdir(g:navd['cur'].'/'.new_name)
+			echo "Directory already exists: ".new_name
+		else
+			if mkdir(g:navd['cur'].'/'.new_name)
+				let paths = s:get_paths(g:navd['cur'], 1)
+				call s:setup_navd_buf(paths)
+			else
 				echoerr "Failed to create directory: ".new_name
 				return
 			endif
-			let paths = s:get_paths(g:navd['cur'], 1)
-			call s:setup_navd_buf(paths)
-		else
-			echo "Directory already exists: ".new_name
 		endif
 		call search(new_name, 'cW')
 	else
@@ -78,7 +87,7 @@ function! s:enter_handle()
 	elseif filereadable(cur_line)
 		exe 'edit' fnameescape(cur_line)
 	else
-		echoerr 'Cannot access file:' cur_line
+		echoerr 'Cannot access' cur_line
 	endif
 endfunction
 
@@ -96,10 +105,9 @@ endfunction
 function! s:setup_navd_buf(paths)
 	if &filetype !=# 'navd'
 		exe 'silent! edit ' . s:navd_fname
-		setlocal concealcursor=nc conceallevel=3
 		setlocal filetype=navd
-		setlocal bufhidden=hide undolevels=-1 nobuflisted
-		setlocal buftype=nofile noswapfile nowrap nolist cursorline
+		setlocal concealcursor=nc conceallevel=3 bufhidden=hide undolevels=-1
+		setlocal nobuflisted buftype=nofile noswapfile nowrap nolist cursorline
 		setlocal colorcolumn=""
 
 		" Keybindings in navd buffer
@@ -116,9 +124,12 @@ function! s:setup_navd_buf(paths)
 		exe 'syntax match NavdPathTail ''\v[^'.sep.']+'.sep.'$'''
 		highlight! link NavdPathTail Directory
 	endif
-	call matchaddpos('Comment', g:match['unreadable'])
-	call matchaddpos('String', g:match['unwritable'])
-	call matchaddpos('Keyword', g:match['modified'])
+	for i in s:match['noread']  | call matchadd('Comment', '\%'.i.'l') | endfor
+	for i in s:match['nowrite'] | call matchadd('String', '\%'.i.'l')  | endfor
+	for i in s:match['mod']     | call matchadd('Keyword', '\%'.i.'l') | endfor
+" 	call matchaddpos('Comment', s:match['noread'])
+" 	call matchaddpos('String', s:match['nowrite'])
+" 	call matchaddpos('Keyword', s:match['mod'])
 
 	setlocal modifiable
 	silent %delete _
@@ -142,7 +153,7 @@ function! s:display_paths(path, hidden)
 		let target_path = fnamemodify(g:navd['cur'], ':p:h:h')
 		let target_fname = g:navd['prev']
 	else
-		if isdirectory(a:path)
+		if s:isdir(a:path)
 			let target_path = a:path
 			let target_fname = g:navd['prev']
 		else
@@ -175,15 +186,16 @@ function! s:buffer_paths()
 	let tot_bufs = bufnr('$')
 	let buf_list = []
 	let buf_count = 0
+	call s:init_match()
 	for buff in range(1, tot_bufs)
 		let buf_name = bufname(buff)
 		if bufexists(buff) && buf_name !~# s:navd_fname
 			let buf_count += 1
 			if getbufvar(buff, '&modified')
-				call add(g:match['modified'], buf_count)
+				call add(s:match['mod'], buf_count)
 			endif
 			if !getbufvar(buff, '&modifiable')
-				call add(g:match['unwritable'], buf_count)
+				call add(s:match['nowrite'], buf_count)
 			endif
 			call add(buf_list, buf_name)
 		endif
