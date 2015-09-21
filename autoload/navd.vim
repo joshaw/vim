@@ -206,10 +206,22 @@ function! s:buffer_paths()
 	call search(cur_buf, 'cW')
 endfunction
 
+function! s:all_paths()
+	let cmd = 'find . \( -type d -printf "%P/\n" , -type f -printf "%P\n" \)'
+	let cmd = 'ag --nogroup --hidden -g .'
+	call s:init_match()
+	let output = systemlist(cmd)
+	call remove(output, 0)
+	call s:setup_navd_buf(output)
+endfunction
 function! navd#navd(path, hidden)
 	call s:display_paths(a:path, a:hidden)
 endfunction
 
 function! navd#navdbuf()
 	call s:buffer_paths()
+endfunction
+
+function! navd#navdall()
+	call s:all_paths()
 endfunction
