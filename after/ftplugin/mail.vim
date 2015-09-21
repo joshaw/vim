@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Fri 11 Sep 2015
+" Modified: Mon 21 Sep 2015
 " Author:   Josh Wainwright
 " Filename: mail.vim
 
@@ -8,7 +8,7 @@ setlocal comments+=mb:*
 setlocal comments+=n:\|
 setlocal comments+=n:)
 setlocal formatoptions=tcqwan21
-setlocal textwidth=71
+setlocal textwidth=68
 exe 'setlocal dictionary+='.dictfile
 setlocal keywordprg=define
 setlocal spell
