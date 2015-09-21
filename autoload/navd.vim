@@ -9,6 +9,7 @@
 let s:navd_fname = '__Navd__'
 let s:sep = has("win32") ? '\' : '/'
 let g:navd = {}
+let s:display_info = 0
 
 function! s:isdir(path)
 	return (a:path[-1:] ==# s:sep) "3x faster than isdirectory().
@@ -77,11 +78,26 @@ endfunction
 function! s:toggle_hidden(curline)
 	call s:display_paths(g:navd['cur'], !g:navd['hidden'])
 	call search(a:curline, 'cW')
+
+function! s:toggle_info(curline)
+	if has_key(g:navd, 'cur')
+		if s:display_info
+			let curline = substitute(a:curline, '\v\s+[rwx-]{9}\s+\d+$', '', '')
+		else
+			let curline = a:curline
+		endif
+		let s:display_info = !s:display_info
+		call s:display_paths(g:navd['cur'])
+		call search(curline, 'cW')
+	endif
 endfunction
 
 function! s:enter_handle()
 	call clearmatches()
 	let cur_line = getline('.')
+	if s:display_info
+		let cur_line = substitute(cur_line, '\v\s+[rwx-]{9}\s+\d+$', '', '')
+	endif
 	if isdirectory(cur_line)
 		call s:display_paths(cur_line, g:navd['hidden'])
 	elseif filereadable(cur_line)
@@ -116,6 +132,7 @@ function! s:setup_navd_buf(paths)
 		nnoremap <silent><buffer> q    :call <SID>q_handle()<cr>
 		nnoremap <silent><buffer> R    :call <SID>display_paths(g:navd['cur'], g:navd['hidden'])<cr>
 		nnoremap <silent><buffer> gh   :call <SID>toggle_hidden(getline('.'))<cr>
+		nnoremap <silent><buffer> gs   :call <SID>toggle_info(getline('.'))<cr>
 		nnoremap <silent><buffer> +    :call <SID>new_obj()<cr>
 
 		" Syntax highlighting of folders
@@ -133,9 +150,28 @@ function! s:setup_navd_buf(paths)
 
 	setlocal modifiable
 	silent %delete _
-	call append(0, a:paths)
-	$delete _
-	silent! %s/\([/\\]\)\{2,}/\1/g
+	if s:display_info
+		let pathsize = []
+		for path in a:paths
+			if path[-1:] ==# s:sep
+				call add(pathsize, path . '||')
+			else
+				let size = getfsize(path)
+				let perm = getfperm(path)
+				call add(pathsize, printf('%s | %s | %s', path, perm, size))
+			endif
+		endfor
+		call append(0, pathsize)
+		$delete _
+		silent! %s/\([/\\]\)\{2,}/\1/g
+		Tabularize /|
+		silent! %s/|//ge
+		silent! %s/\s*$//e
+	else
+		call append(0, a:paths)
+		$delete _
+		silent! %s/\([/\\]\)\{2,}/\1/g
+	endif
 	setlocal nomodifiable
 	call cursor(1,1)
 endfunction
