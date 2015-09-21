@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Mon 14 Sep 2015
+" Modified: Wed 16 Sep 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -76,8 +76,12 @@ function! s:new_obj()
 endfunction
 
 function! s:toggle_hidden(curline)
-	call s:display_paths(g:navd['cur'], !g:navd['hidden'])
-	call search(a:curline, 'cW')
+	if has_key(g:navd, 'cur')
+		let g:navd['hidden'] = !g:navd['hidden']
+		call s:display_paths(g:navd['cur'])
+		call search(a:curline, 'cW')
+	endif
+endfunction
 
 function! s:toggle_info(curline)
 	if has_key(g:navd, 'cur')
@@ -93,14 +97,15 @@ function! s:toggle_info(curline)
 endfunction
 
 function! s:enter_handle()
-	call clearmatches()
 	let cur_line = getline('.')
 	if s:display_info
 		let cur_line = substitute(cur_line, '\v\s+[rwx-]{9}\s+\d+$', '', '')
 	endif
 	if isdirectory(cur_line)
-		call s:display_paths(cur_line, g:navd['hidden'])
+		call clearmatches()
+		call s:display_paths(cur_line)
 	elseif filereadable(cur_line)
+		call clearmatches()
 		exe 'edit' fnameescape(cur_line)
 	else
 		echoerr 'Cannot access' cur_line
@@ -127,10 +132,10 @@ function! s:setup_navd_buf(paths)
 		setlocal colorcolumn=""
 
 		" Keybindings in navd buffer
-		nnoremap <silent><buffer> -    :call <SID>display_paths('<parent>', g:navd['hidden'])<cr>
+		nnoremap <silent><buffer> -    :call <SID>display_paths('<parent>')<cr>
 		nnoremap <silent><buffer> <cr> :call <SID>enter_handle()<cr>
 		nnoremap <silent><buffer> q    :call <SID>q_handle()<cr>
-		nnoremap <silent><buffer> R    :call <SID>display_paths(g:navd['cur'], g:navd['hidden'])<cr>
+		nnoremap <silent><buffer> R    :call <SID>display_paths(g:navd['cur'])<cr>
 		nnoremap <silent><buffer> gh   :call <SID>toggle_hidden(getline('.'))<cr>
 		nnoremap <silent><buffer> gs   :call <SID>toggle_info(getline('.'))<cr>
 		nnoremap <silent><buffer> +    :call <SID>new_obj()<cr>
@@ -178,9 +183,8 @@ endfunction
 
 " Call the nessessary functions, sort out where we've come from and highlight
 " to right line.
-function! s:display_paths(path, hidden)
+function! s:display_paths(path)
 	let g:navd['prev'] = has_key(g:navd, 'cur') ? g:navd['cur'] : a:path
-	let g:navd['hidden'] = a:hidden
 
 	if a:path ==# ''
 		let target_path = expand('%:p:h')
@@ -200,7 +204,7 @@ function! s:display_paths(path, hidden)
 	let g:navd['cur'] = target_path
 
 	if isdirectory(target_path)
-		let hid = fnamemodify(target_fname, ':t')[0] ==# '.' ? 1 : a:hidden
+		let hid = fnamemodify(target_fname, ':t')[0] ==# '.' ? 1 : g:navd['hidden']
 		let paths = s:get_paths(target_path, hid)
 		call s:setup_navd_buf(paths)
 	else
@@ -250,8 +254,10 @@ function! s:all_paths()
 	call remove(output, 0)
 	call s:setup_navd_buf(output)
 endfunction
+
 function! navd#navd(path, hidden)
-	call s:display_paths(a:path, a:hidden)
+	let g:navd['hidden'] = a:hidden
+	call s:display_paths(a:path)
 endfunction
 
 function! navd#navdbuf()
