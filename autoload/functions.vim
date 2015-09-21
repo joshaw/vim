@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Wed 09 Sep 2015
+" Modified: Fri 18 Sep 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -184,14 +184,14 @@ endfunction
 function! functions#html2nroff(...)
 	let l:tw = a:0 > 0 ? a:1 : &tw
 	silent StripTrailing
-	silent! %s/<\(h\d\).\{-}>\(.\{-}\)<\/\1>/.tl '\2'''/
-	silent! %s/<\(title\).\{-}>\(.\{-}\)<\/\1>/.ce 1\r\2/
-	silent! %s/<.\{-}>//ge
-	silent! %s/^\s\+//e
-	silent! %s/\(“\|”\)/"/ge
-	silent! %s/’/'/ge
-	silent! %s/—/--/ge
-	silent! %s/\s?…\s?/.../ge
+	keeppatterns silent! %s/<\(h\d\).\{-}>\(.\{-}\)<\/\1>/.tl '\2'''/
+	keeppatterns silent! %s/<\(title\).\{-}>\(.\{-}\)<\/\1>/.ce 1\r\2/
+	keeppatterns silent! %s/<.\{-}>//ge
+	keeppatterns silent! %s/^\s\+//e
+	keeppatterns silent! %s/\(“\|”\)/"/ge
+	keeppatterns silent! %s/’/'/ge
+	keeppatterns silent! %s/—/--/ge
+	keeppatterns silent! %s/\s?…\s?/.../ge
 	call append(0, '.ll '.l:tw)
 	call append(0, '.nh')
 	silent %!nroff
