@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Wed 16 Sep 2015
+" Modified: Tue 22 Sep 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -154,6 +154,8 @@ function! s:setup_navd_buf(paths)
 " 	call matchaddpos('Keyword', s:match['mod'])
 
 	setlocal modifiable
+	let save_vfile = &verbosefile
+	set verbosefile=
 	silent %delete _
 	if s:display_info
 		let pathsize = []
@@ -168,16 +170,17 @@ function! s:setup_navd_buf(paths)
 		endfor
 		call append(0, pathsize)
 		$delete _
-		silent! %s/\([/\\]\)\{2,}/\1/g
+		keeppatterns silent! %s/\([/\\]\)\{2,}/\1/ge
 		Tabularize /|
-		silent! %s/|//ge
-		silent! %s/\s*$//e
+		keeppatterns silent! %s/|//ge
+		keeppatterns silent! %s/\s*$//e
 	else
 		call append(0, a:paths)
 		$delete _
-		silent! %s/\([/\\]\)\{2,}/\1/g
+		keeppatterns silent! %s/\([/\\]\)\{2,}/\1/ge
 	endif
 	setlocal nomodifiable
+	let &verbosefile = save_vfile
 	call cursor(1,1)
 endfunction
 

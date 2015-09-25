@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Mon 14 Sep 2015
+" Modified: Thu 24 Sep 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -87,7 +87,7 @@ nnoremap Y yg_
 nnoremap Q :normal! n.<CR>
 
 " Split lines, oposite of join, J
-nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:noh<cr>`w
+nnoremap S i<cr><esc>^mwgk:keeppatterns silent! s/\v +$//<cr>:noh<cr>`w
 
 " Symbols {{{1
 
