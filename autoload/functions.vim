@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Fri 18 Sep 2015
+" Modified: Wed 30 Sep 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -91,15 +91,16 @@ endfunction
 
 " Oldfiles {{{1
 function! functions#Oldfiles()
-	Verbose oldfiles
-	0delete _
-	silent %s/\v\d+: //
+	let temp = tempname()
+	call writefile(v:oldfiles, temp)
+	exe 'pedit' temp
+	wincmd P
 	setlocal nobuflisted
 	setlocal buftype=nofile
 	setlocal bufhidden=delete
 	setlocal noswapfile
 	setlocal nomodifiable
-	normal gg
+	call cursor(0,0)
 	nnoremap <buffer> <cr> :let f=expand('<cfile>') \| pclose \| exe 'e 'f<cr>
 endfunction
 
