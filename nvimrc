@@ -1,11 +1,12 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Wed 09 Sep 2015
+" Modified: Fri 09 Oct 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
 " Paths and Variables            {{{1
 "
 
+let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
 let g:vimhome = '~/.vim/'
 let $VIMHOME = '~/.vim/'
 if has('win32')
@@ -18,7 +19,7 @@ endif
 "
 
 " let g:use_vim_plug = 1
-if executable('git') && exists('g:use_vim_plug')
+if exists('g:use_vim_plug') && executable('git')
 	let g:plug_threads = 6
 	let g:plug_timeout = 20
 	command! InstallPlug silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -50,14 +51,14 @@ if executable('git') && exists('g:use_vim_plug')
 endif " executable(git)
 
 function! s:lod(path)
-	exe 'set rtp+=' . g:vimhome . 'plugged/' . a:path
+" 	exe 'set rtp+=' . g:vimhome . 'plugged/' . a:path
 	exe 'source ' . g:vimhome . 'plugged/' . a:path . '/plugin/*.vim'
 endfunction
 
 " call s:lod('vim-dirvish')
 call s:lod('vim-buftabline')
 call s:lod('tabular')
-call s:lod('tgpg_vim')
+" call s:lod('tgpg_vim')
 
 " Plugin Settings                {{{1
 "
@@ -95,14 +96,13 @@ let g:buftabline_indicators = 1
 filetype plugin on
 filetype indent on
 syntax on
-let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
 augroup colourscheme
 	au!
 	au VimEnter * colorscheme molokaiV
-	au VimEnter,Colorscheme * hi! link ColorColumn CursorLine
 augroup END
-doautocmd colourscheme VimEnter %
-set encoding=utf-8 " character encoding used in Vim: "latin1", "utf-8"
+if !has('nvim')
+	set encoding=utf-8 " character encoding used in Vim: "latin1", "utf-8"
+endif
 
 " 1 important {{{2
 
@@ -271,7 +271,7 @@ endif
 set keywordprg="" " program used for the "K" command
 
 "23 running make and jumping to errors {{{2
-set makeprg=make " program used for the ":make" command
+set makeprg=make\ >\ /dev/null " program used for the ":make" command
 
 "24 system specific {{{2
 
@@ -279,12 +279,10 @@ set makeprg=make " program used for the ":make" command
 set isfname-==
 
 "26 multi-byte characters {{{2
-set encoding=utf-8 " character encoding used in Vim: "latin1", "utf-8"
 
 "27 various {{{2
 set virtualedit+=block " when to use virtual editing: "block", "insert" and/or "all"
-set viminfo^=!         " list that specifies what to write in the viminfo file
-set viminfo+='2000
+set viminfo=!,'2000,<50,s10,h   " list that specifies what to write in the viminfo file
 if has('gui_running')
 	set viminfo+=n$HOME/.win.viminfo
 else
@@ -368,9 +366,9 @@ function! CreatedHeader()
 endfunction
 
 iabbrev <expr> Cre: CreatedHeader()
-iabbrev TST TIMESTAMP
 
-iabbrev Copyr Copyright: 2015, LDRA Ltd.
+Snip TST TIMESTAMP
+Snip Copyr Copyright: 2015, LDRA Ltd.
 
 " LDRA                           {{{1
 "
@@ -392,12 +390,41 @@ command! TBini :e C:\ProgramData\LDRA\TESTBED.ini
 nnoremap <F11> :<C-U>e ~/Documents/Details/ldra-learnt.md<cr>
 command! FormatWikiEntry :Tabularize /\(\( \|^\)\zs|\)\|\^
 
-if has("gui_running") && !exists("g:vim_started")
+if !has('nvim') && has("gui_running") && !exists("g:vim_started")
 	set lines=40
 	exe "set columns=" . (82+&numberwidth)
 	let g:vim_started = 1
 endif
 " }}}
+
+" map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+" \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+" \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+augroup record_files
+	au!
+ 	autocmd VimEnter,BufAdd * :silent call <SID>recordFile(expand('<afile>'))
+augroup END
+function! s:recordFile(file)
+	let save_vfile = &verbosefile
+	set verbosefile=
+	if !filereadable(a:file) && !isdirectory(a:file)
+		return
+	endif
+	let histfile = "~/Documents/Details/files/files.txt"
+	let size = getfsize(a:file)
+	let type = getftype(a:file)
+	let time = getftime(a:file)
+	let fname = fnamemodify(a:file, ':p')
+	let fname = substitute(fname, escape($HOME, '\'), '~', '')
+	let fname = substitute(fname, '^H:\\', '~/', '')
+	let fname = substitute(fname, '^L:\\', '~/Resources', '')
+	let fname = substitute(fname, '\\', '/', 'g')
+
+	exe 'redir >>' histfile
+		echo strftime('%Y-%m-%d %H:%M:%S') '|' fname '|' size '|' type '|' time
+	redir END
+	let &verbosefile = save_vfile
+endfunction
 
 " Keybindings
 "         ~/.vim/plugin/keybindings.vim

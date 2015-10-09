@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Wed 30 Sep 2015
+" Modified: Fri 09 Oct 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -397,6 +397,9 @@ if !has('nvim') && has("gui_running") && !exists("g:vim_started")
 endif
 " }}}
 
+" map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+" \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+" \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 augroup record_files
 	au!
  	autocmd VimEnter,BufAdd * :silent call <SID>recordFile(expand('<afile>'))
