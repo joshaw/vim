@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Thu 24 Sep 2015
+" Modified: Mon 05 Oct 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -40,16 +40,17 @@ nnoremap <s-end> G
 " Letters {{{1
 
 " Change some options (Taken from unimpaired.vim - TPope)
-nnoremap cow :set wrap!<CR>
-nnoremap col :set list!<CR>
-nnoremap coc :set cursorcolumn!<CR>
-nnoremap cou :set cursorline!<CR>
-nnoremap cos :set spell!<CR>
-nnoremap cop :set paste!<CR>
+nnoremap cow :set wrap!<bar>set wrap?<cr>
+nnoremap col :set list!<bar>set list?<cr>
+nnoremap coc :set cursorcolumn!<bar>set cursorcolumn?<cr>
+nnoremap cou :set cursorline!<bar>set cursorline?<cr>
+nnoremap cos :set spell!<bar>set spell?<cr>
+nnoremap cop :set paste!<bar>set paste?<cr>
+nnoremap com :set makeprg?<cr>
 nnoremap <silent> [<space> :-1 put _<cr>j
 nnoremap <silent> ]<space> :put _<cr>k
-nnoremap <silent> ]b :bnext<CR>
-nnoremap <silent> [b :bprevious<CR>
+nnoremap <silent> ]b :bnext<cr>
+nnoremap <silent> [b :bprevious<cr>
 
 " Re-indent whole file
 nnoremap g+ :call Preserve("normal! gg=G")<CR>
