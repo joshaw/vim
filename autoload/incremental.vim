@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Mon 07 Sep 2015
+" Modified: Tue 13 Oct 2015
 " Author:   Josh Wainwright
 " Filename: incremental.vim
 
@@ -16,6 +16,11 @@ let s:mods =
 				\'friday', 'saturday', 'sunday'],
 			\ ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven',
 				\ 'eight', 'nine'],
+			\ ['first', 'second', 'third', 'fourth', 'fifth', 'sixth',
+				\ 'seventh', 'eighth', 'nineth', 'tenth', 'eleventh',
+				\ 'twelvth', 'thirteenth', 'fourteenth', 'fifteenth',
+				\ 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth',
+				\ 'twentieth'],
 			\ ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul',
 				\'aug', 'sep', 'oct', 'nov', 'dec'],
 			\ ['january', 'february', 'march', 'april', 'may', 'june', 'july',
