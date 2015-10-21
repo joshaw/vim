@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Mon 21 Sep 2015
+" Modified: Fri 16 Oct 2015
 " Author:   Josh Wainwright
 " Filename: mail.vim
 
@@ -16,8 +16,6 @@ setlocal spell
 if executable('par')
 	setlocal formatprg=par\ -w71qie
 endif
-
-iabbrev i I
 
 Snip sig <esc>:r ~/.signature2<cr>']A
 
