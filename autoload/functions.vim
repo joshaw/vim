@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Sun 11 Oct 2015
+" Modified: Sat 24 Oct 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -260,4 +260,19 @@ function! functions#smart_TabComplete()
 
 	" Otherwise, default completion
 	return "\<c-n>"
+endfunction
+
+" Show non-ascii characters
+function! functions#AsciiToggle()
+	if exists('g:ascii_highlight')
+		call matchdelete(g:ascii_highlight)
+		unlet g:ascii_highlight
+		let g:status_var = ''
+	else
+		let nonasciisearch = '[^\x00-\x7F]'
+		highlight link NonAsciiChars Error
+		let g:ascii_highlight = matchadd('NonAsciiChars', nonasciisearch)
+		let @/ = nonasciisearch
+		let g:status_var = 'NA'
+	endif
 endfunction

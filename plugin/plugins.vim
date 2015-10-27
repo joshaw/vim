@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Tue 01 Sep 2015
+" Modified: Sat 24 Oct 2015
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -72,3 +72,6 @@ xnoremap <silent> S :call surroundings#surroundings(visualmode() ==# 'v'? 1: 2)<
 "
 " Nroff formatting of html files
 command! -nargs=? Html2Nroff :call functions#html2nroff(<args>)
+
+" Show non-ascii characters in text
+command! -nargs=0 AsciiToggle :call functions#AsciiToggle()
