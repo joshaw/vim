@@ -1,14 +1,16 @@
 " Created:  Mon 22 Jun 2015
-" Modified: Mon 22 Jun 2015
+" Modified: Mon 26 Oct 2015
 " Author:   Josh Wainwright
 " Filename: gcc.vim
 " syntax coloring for make output
 
-syn match cMLogConfig "^[^/\\]\{-}: "
+syn match cMLogConfig "^\(\s\{-,4}\)\S[^/\\]\{-}: "
 
-syn match cMLogMissing  "[\./a-zA-Z0-9_]\+\.[a-zA-Z_]\+: No such .*$"
+syn match cMLogCmdOpt "\[-W.\{-}\]"
+
+syn match cMLogMissing  "[\./a-zA-Z0-9_-]\+\.[a-zA-Z_]\+: No such .*$"
 syn match cMLogMissing  "undefined reference to .*$"
-syn match cMLogSource   "[\./a-zA-Z0-9_]\+\.[hHcCiIsS][pPxXnN]\?[lp]\?\(:\d\+\)\+:"
+syn match cMLogSource   "[\./a-zA-Z0-9_-]\+\.[hHcCiIsS][pPxXnN]\?[lp]\?\(:\d\+\)\+:"
 syn match cMLogCurDir   "Entering directory .*$"
 
 syn match cMLogWarn "\<[wW]arning:.*$"
@@ -21,3 +23,4 @@ hi link cMLogErr     ErrorMsg
 hi link cMLogSource  Special
 hi link cMLogCurDir  SpecialComment
 hi link cMLogMissing ErrorMsg
+hi link cMLogCmdOpt  Identifier
