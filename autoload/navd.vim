@@ -70,7 +70,7 @@ function! s:new_obj()
 		endif
 		call search(new_name, 'cW')
 	else
-		exe 'edit '.g:navd['cur'].new_name
+		exe 'edit '.g:navd['cur'].'/'.new_name
 	endif
 endfunction
 
