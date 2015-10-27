@@ -1,5 +1,5 @@
 " Created:  Thu 07 Aug 2014
-" Modified: Fri 11 Sep 2015
+" Modified: Tue 27 Oct 2015
 " Author:   Josh Wainwright
 " Filename: filetype.vim
 
@@ -36,6 +36,7 @@ augroup filetypedetect
 	FT *[mM]etpen.dat metpen
 	FT *.gnu gnuplot
 	FT *.cmm practice
+	FT *.dotf dot
 augroup END
 
 delfunction s:FT
