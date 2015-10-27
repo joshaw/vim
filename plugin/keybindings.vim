@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Mon 05 Oct 2015
+" Modified: Mon 26 Oct 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -15,6 +15,11 @@ nnoremap <silent> <F6> :<C-u>ReadingMode<CR>
 " Save the current file and run the make program
 map <F9>   :w <bar> make<cr><cr>
 map <S-F9> :w <bar> silent make<cr>
+
+" Print current highlight information for group under cursor
+nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")
+	\ . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+	\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Edit weekly reports
 nnoremap <F12> :EditReport<cr>

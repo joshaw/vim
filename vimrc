@@ -375,9 +375,6 @@ if !has('nvim') && has("gui_running") && !exists("g:vim_started")
 endif
 " }}}
 
-" map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-" \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-" \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 augroup record_files
 	au!
  	autocmd VimEnter,BufAdd * :silent call <SID>recordFile(expand('<afile>'))
