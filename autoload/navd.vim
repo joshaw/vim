@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Tue 22 Sep 2015
+" Modified: Mon 26 Oct 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -114,6 +114,7 @@ endfunction
 
 function! s:q_handle()
 	let alt = expand('#')
+	call clearmatches()
 	if alt ==# s:navd_fname
 		enew
 	else
