@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Sat 24 Oct 2015
+" Modified: Thu 29 Oct 2015
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -75,3 +75,7 @@ command! -nargs=? Html2Nroff :call functions#html2nroff(<args>)
 
 " Show non-ascii characters in text
 command! -nargs=0 AsciiToggle :call functions#AsciiToggle()
+
+" Align text on character
+command! -range=% -nargs=? -bang Align :<line1>,<line2>call align#align('<args>', <bang>0, 0)
+command! -range=% -nargs=? -bang AlignR :<line1>,<line2>call align#align('<args>', <bang>0, 1)

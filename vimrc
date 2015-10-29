@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Mon 26 Oct 2015
+" Modified: Thu 29 Oct 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -57,7 +57,6 @@ endfunction
 
 " call s:lod('vim-dirvish')
 call s:lod('vim-buftabline')
-call s:lod('tabular')
 call s:lod('tgpg_vim')
 
 " Plugin Settings                {{{1

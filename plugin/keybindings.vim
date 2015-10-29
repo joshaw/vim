@@ -65,7 +65,8 @@ nnoremap <silent> gcc :call functions#toggleComment(&ft)<CR>
 xnoremap <silent> gc :call functions#toggleComment(&ft)<cr>
 
 " Align with easy align
-xnoremap gl :Tabularize /
+xnoremap gl :call align#align_getchar()<cr>
+nnoremap <silent> gl :<c-u>set opfunc=align#alignmap<cr>g@
 
 " Try using jk and kj as Escape in insert mode.
 inoremap jk <Esc>
