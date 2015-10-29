@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Mon 26 Oct 2015
+" Modified: Thu 29 Oct 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -54,11 +54,8 @@ nnoremap cop :set paste!<bar>set paste?<cr>
 nnoremap com :set makeprg?<cr>
 nnoremap <silent> [<space> :-1 put _<cr>j
 nnoremap <silent> ]<space> :put _<cr>k
-nnoremap <silent> ]b :bnext<cr>
-nnoremap <silent> [b :bprevious<cr>
-
-" Re-indent whole file
-nnoremap g+ :call Preserve("normal! gg=G")<CR>
+nnoremap <silent> ]b :bnext<cr>:echo printf('Buffer [%s/%s] %s', bufnr('%'), bufnr('$'), bufname('%'))<cr>
+nnoremap <silent> [b :bprevious<cr>:echo printf('Buffer [%s/%s] %s', bufnr('%'), bufnr('$'), bufname('%'))<cr>
 
 " Toggle Comment
 nnoremap <silent> gcc :call functions#toggleComment()<CR>
