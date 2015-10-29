@@ -61,8 +61,9 @@ nnoremap <silent> [b :bprevious<cr>
 nnoremap g+ :call Preserve("normal! gg=G")<CR>
 
 " Toggle Comment
-nnoremap <silent> gcc :call functions#toggleComment(&ft)<CR>
-xnoremap <silent> gc :call functions#toggleComment(&ft)<cr>
+nnoremap <silent> gcc :call functions#toggleComment()<CR>
+nnoremap <silent> gc :<c-u>set opfunc=functions#toggleCommentmap<cr>g@
+xnoremap <silent> gc :call functions#toggleComment()<cr>
 
 " Align with easy align
 xnoremap gl :call align#align_getchar()<cr>
