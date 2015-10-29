@@ -127,6 +127,11 @@ if executable('dmenu')
 	noremap <c-b> :call dmenuOpen#DmenuOpen("e", 1)<cr>
 endif
 
+" Return character under cursor - works for multi-byte chars
+function! s:cchar()
+	return matchstr(getline('.'), '\%' . col('.') . 'c.')
+endfunction
+
 " Visual increment numbers
 if has("patch823")
 	xnoremap <c-a> <c-a>gv
@@ -137,8 +142,8 @@ else
 endif
 nnoremap <silent> <c-a> :<c-u>call incremental#incremental(expand('<cword>'), 1)<cr>
 nnoremap <silent> <c-x> :<c-u>call incremental#incremental(expand('<cword>'), -1)<cr>
-nnoremap g<c-a> :<c-u>call incremental#incrementalGlobal(getline(".")[col(".")-1], 1)<cr>
-nnoremap g<c-x> :<c-u>call incremental#incrementalGlobal(getline(".")[col(".")-1], -1)<cr>
+nnoremap <silent> g<c-a> :<c-u>call incremental#incChar(<SID>cchar(), 1)<cr>
+nnoremap <silent> g<c-x> :<c-u>call incremental#incChar(<SID>cchar(), -1)<cr>
 
 " GrepString
 nnoremap <c-g> :call functions#GrepString()<cr>:grep<space>
