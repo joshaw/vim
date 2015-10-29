@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Tue 27 Oct 2015
+" Modified: Wed 28 Oct 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -122,6 +122,8 @@ function! s:setup_navd_buf(paths)
 		nnoremap <silent><buffer> R    :call <SID>display_paths(g:navd['cur'])<cr>
 		nnoremap <silent><buffer> gh   :call <SID>toggle_hidden(getline('.'))<cr>
 		nnoremap <silent><buffer> +    :call <SID>new_obj()<cr>
+		nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter_handle()<cr>
+		nnoremap <silent><buffer> <RightMouse> :call <SID>display_paths('<parent>')<cr>
 
 		" Syntax highlighting of folders
 		let sep = escape(s:sep, '/\')
