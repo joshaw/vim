@@ -169,7 +169,7 @@ nnoremap <c-Q> :q<cr>
 inoremap <leader>fn <C-R>=expand("%:t")<CR>
 
 " List all buffers and quickly switch to selected
-nnoremap <leader>b :ls<CR>:buffer<Space>
+nnoremap <leader>b :ls!<CR>:buffer<Space>
 
 nnoremap <leader>rc :e! $MYVIMRC<CR>:setlocal autochdir<cr>
 nnoremap <leader>rd :e! $VIMHOME/plugin/display.vim<CR>
