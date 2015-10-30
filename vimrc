@@ -36,10 +36,6 @@ if exists('g:use_vim_plug') && executable('git')
 	Plug 'gregsexton/gitv', {'on': 'Gitv'}
 	"Syntax checking for a wide range of languages
 	Plug 'scrooloose/syntastic', {'on': 'SyntasticCheck'}
-	"Simple alignment of lines
-	Plug 'godlygeek/tabular'
-	"Simple minimalist alternative to netrw
-	Plug 'justinmk/vim-dirvish'
 	"Code structure overview
 	Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
 
