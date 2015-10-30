@@ -1,11 +1,11 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Wed 16 Sep 2015
+" Modified: Fri 30 Oct 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
 " ~/.vim/autoload/navd.vim
 
-command! -nargs=? -bang Navd :call navd#navd(<q-args>, <bang>0)
+command! -nargs=? -bang -complete=file Navd :call navd#navd(<q-args>, <bang>0)
 command! -bang NavdBuf :call navd#navdbuf()
 command! NavdRecursive :call navd#navdall()
 
