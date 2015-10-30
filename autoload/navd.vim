@@ -83,6 +83,9 @@ function! s:toggle_hidden(curline)
 endfunction
 
 function! s:enter_handle()
+	if line('.') == 1
+		return
+	endif
 	let cur_line = getline('.')
 	if isdirectory(cur_line)
 		call clearmatches()
@@ -129,7 +132,9 @@ function! s:setup_navd_buf(paths)
 		let sep = escape(s:sep, '/\')
 		exe 'syntax match NavdPathHead ''\v.*'.sep.'\ze[^'.sep.']+'.sep.'?$'' conceal'
 		exe 'syntax match NavdPathTail ''\v[^'.sep.']+'.sep.'$'''
+		syntax match NavdCurDir '\%^.*$'
 		highlight! link NavdPathTail Directory
+		highlight! link NavdCurDir   Comment
 	endif
 	for i in s:match['noread']  | call matchadd('Comment', '\%'.i.'l') | endfor
 	for i in s:match['nowrite'] | call matchadd('String', '\%'.i.'l')  | endfor
@@ -142,7 +147,8 @@ function! s:setup_navd_buf(paths)
 	let save_vfile = &verbosefile
 	set verbosefile=
 	silent %delete _
-	call append(0, a:paths)
+	call append(0, s:current_dir())
+	call append(1, a:paths)
 	$delete _
 	keeppatterns silent! %s/\([/\\]\)\{2,}/\1/ge
 	setlocal nomodifiable
@@ -188,6 +194,8 @@ function! s:display_paths(path)
 		endif
 	elseif has_key(g:navd, 'prev') && !empty(g:navd['prev'])
 		call search(escape(g:navd['prev'], '\\'), 'cW')
+	if line('.') == 1
+		normal j
 	endif
 endfunction
 
