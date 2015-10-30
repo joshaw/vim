@@ -25,8 +25,8 @@ function! s:sort_paths(p1, p2)
   return a:p1 ==# a:p2 ? 0 : a:p1 ># a:p2 ? 1 : -1
 endfunction
 
-function! s:init_match()
-	let s:match = {'noread': [], 'nowrite': [], 'mod': []}
+function! s:init_matches()
+	return {'noread': [], 'nowrite': [], 'mod': []}
 endfunction
 
 " Get the list of files and folders to display in the buffer.
@@ -40,13 +40,13 @@ function! s:get_paths(path, inc_hidden)
 	call map(l:paths, "fnamemodify(v:val, ':p')")
 	call sort(l:paths, '<sid>sort_paths')
 	let counter = 0
-	call s:init_match()
+	let matches = s:init_matches()
 	for path in l:paths
 		let counter += 1
 		if !s:isdir(path) && !filereadable(path)
-			call add(s:match['noread'], counter)
+			call add(matches['noread'], counter)
 		elseif !filewritable(path)
-			call add(s:match['nowrite'], counter)
+			call add(matches['nowrite'], counter)
 		endif
 	endfor
 	return l:paths
@@ -61,8 +61,8 @@ function! s:new_obj()
 			echo "Directory already exists: ".new_name
 		else
 			if mkdir(g:navd['cur'].'/'.new_name)
-				let paths = s:get_paths(g:navd['cur'], 1)
-				call s:setup_navd_buf(paths)
+				let P = s:get_paths(g:navd['cur'], 1)
+				call s:setup_navd_buf(P['paths'], P['matches'])
 			else
 				echoerr "Failed to create directory: ".new_name
 				return
@@ -75,11 +75,9 @@ function! s:new_obj()
 endfunction
 
 function! s:toggle_hidden(curline)
-	if has_key(g:navd, 'cur')
-		let g:navd['hidden'] = !g:navd['hidden']
-		call s:display_paths(g:navd['cur'])
-		call search(a:curline, 'cW')
-	endif
+	let g:navd['hidden'] = !g:navd['hidden']
+	call s:display_paths(g:navd['cur'])
+	call search(a:curline, 'cW')
 endfunction
 
 function! s:enter_handle()
@@ -110,7 +108,8 @@ endfunction
 
 " Setup the navd buffer, write the paths and filenames to it and make it
 " unwritable.
-function! s:setup_navd_buf(paths)
+" Setup the navd buffer, write the paths to it and make it unwritable.
+function! s:setup_navd_buf(paths, matches)
 	if &filetype !=# 'navd'
 		exe 'silent! edit ' . s:navd_fname
 		setlocal filetype=navd
@@ -136,12 +135,10 @@ function! s:setup_navd_buf(paths)
 		highlight! link NavdPathTail Directory
 		highlight! link NavdCurDir   Comment
 	endif
-	for i in s:match['noread']  | call matchadd('Comment', '\%'.i.'l') | endfor
-	for i in s:match['nowrite'] | call matchadd('String', '\%'.i.'l')  | endfor
-	for i in s:match['mod']     | call matchadd('Keyword', '\%'.i.'l') | endfor
-" 	call matchaddpos('Comment', s:match['noread'])
-" 	call matchaddpos('String', s:match['nowrite'])
-" 	call matchaddpos('Keyword', s:match['mod'])
+	call clearmatches()
+	for i in a:matches['noread']  | call matchadd('Comment', '\%'.i.'l') | endfor
+	for i in a:matches['nowrite'] | call matchadd('String', '\%'.i.'l')  | endfor
+	for i in a:matches['mod']     | call matchadd('Keyword', '\%'.i.'l') | endfor
 
 	setlocal modifiable
 	let save_vfile = &verbosefile
@@ -178,22 +175,16 @@ function! s:display_paths(path)
 	endif
 	let g:navd['cur'] = target_path
 
-	if isdirectory(target_path)
-		let hid = fnamemodify(target_fname, ':t')[0] ==# '.' ? 1 : g:navd['hidden']
-		let paths = s:get_paths(target_path, hid)
-		call s:setup_navd_buf(paths)
-	else
-		echoerr "Not a valid directory: ".target_path
-		return
-	endif
+	let hid = fnamemodify(target_fname, ':t')[0] ==# '.' ? 1 : g:navd['hidden']
+	let P = s:get_paths(target_path, hid)
+	call s:setup_navd_buf(P['paths'], P['matches'])
 
-	if !empty(target_fname)
-		let sep = target_fname[0] ==# s:sep ? '' : s:sep
-		if search(sep . escape(target_fname, '\\'), 'cW') <= 0
-			call search(escape(target_path, '\\'), 'cW')
-		endif
-	elseif has_key(g:navd, 'prev') && !empty(g:navd['prev'])
-		call search(escape(g:navd['prev'], '\\'), 'cW')
+	" Find the correct line to highlight
+	let sep = target_fname[0] ==# s:sep ? '' : s:sep
+	if search(sep . escape(target_fname, '\\'), 'cW') <= 0
+		call search(escape(target_path, '\\'), 'cW')
+	endif
+	
 	if line('.') == 1
 		normal j
 	endif
@@ -203,30 +194,30 @@ function! s:buffer_paths()
 	let tot_bufs = bufnr('$')
 	let buf_list = []
 	let buf_count = 0
-	call s:init_match()
+	let matches = s:init_matches()
 	for buff in range(1, tot_bufs)
 		let buf_name = bufname(buff)
 		if bufexists(buff) && buf_name !~# s:navd_fname
 			let buf_count += 1
 			if getbufvar(buff, '&modified')
-				call add(s:match['mod'], buf_count)
+				call add(matches['mod'], buf_count)
 			endif
 			if !getbufvar(buff, '&modifiable')
-				call add(s:match['nowrite'], buf_count)
+				call add(matches['nowrite'], buf_count)
 			endif
 			call add(buf_list, buf_name)
 		endif
 	endfor
 
 	let cur_buf = bufname('%')
-	call s:setup_navd_buf(buf_list)
+	call s:setup_navd_buf(buf_list, matches)
 	call search(cur_buf, 'cW')
 endfunction
 
 function! s:all_paths()
 	let cmd = 'find . \( -type d -printf "%P/\n" , -type f -printf "%P\n" \)'
 	let cmd = 'ag --nogroup --hidden -g .'
-	call s:init_match()
+	call s:init_matches()
 	let output = systemlist(cmd)
 	call remove(output, 0)
 	call s:setup_navd_buf(output)
