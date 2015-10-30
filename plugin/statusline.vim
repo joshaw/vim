@@ -50,7 +50,7 @@ function! statusline#optflags()
 endfunction
 
 let s:stl= ""
-let s:stl.="%5*%<%{statusline#filepath()}"      " file path
+let s:stl.="%5*%<%{statusline#filepath()}"       " file path
 let s:stl.="%9*%t "                              " file name
 let s:stl.="%7*%([%M]%) "                        " modified flag
 

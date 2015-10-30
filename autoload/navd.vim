@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Wed 28 Oct 2015
+" Modified: Fri 30 Oct 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -50,7 +50,7 @@ function! s:get_paths(path, inc_hidden)
 			call add(matches['nowrite'], counter)
 		endif
 	endfor
-	return l:paths
+	return {'paths':l:paths, 'matches':matches}
 endfunction
 
 " Create a new file or folder depending on the name given.
@@ -58,7 +58,7 @@ function! s:new_obj()
 	let new_name = input('Name: ')
 	redraw
 	if new_name[-1:] =~# '[/\\]'
-		if s:isdir(g:navd['cur'].'/'.new_name)
+		if isdirectory(g:navd['cur'].'/'.new_name)
 			echo "Directory already exists: ".new_name
 		else
 			if mkdir(g:navd['cur'].'/'.new_name)
@@ -87,11 +87,13 @@ function! s:enter_handle()
 	endif
 	let cur_line = getline('.')
 	if isdirectory(cur_line)
-		call clearmatches()
 		call s:display_paths(cur_line)
 	elseif filereadable(cur_line)
 		call clearmatches()
+		let g:status_var = ''
+		let this = bufnr('%')
 		exe 'edit' fnameescape(cur_line)
+		exe 'bwipeout' this
 	else
 		echoerr 'Cannot access' cur_line
 	endif
@@ -99,16 +101,21 @@ endfunction
 
 function! s:q_handle()
 	let alt = expand('#')
+	let this = bufnr('%')
 	call clearmatches()
 	if alt ==# s:navd_fname
 		enew
 	else
 		exe 'edit' alt
 	endif
+	exe 'bwipeout' this
 endfunction
 
-" Setup the navd buffer, write the paths and filenames to it and make it
-" unwritable.
+function! s:current_dir()
+	let g:status_var = substitute(g:navd['cur'], $HOME, '~/', '')
+	return g:status_var
+endfunction
+
 " Setup the navd buffer, write the paths to it and make it unwritable.
 function! s:setup_navd_buf(paths, matches)
 	if &filetype !=# 'navd'
@@ -116,7 +123,7 @@ function! s:setup_navd_buf(paths, matches)
 		setlocal filetype=navd
 		setlocal concealcursor=nc conceallevel=3 bufhidden=hide undolevels=-1
 		setlocal nobuflisted buftype=nofile noswapfile nowrap nolist cursorline
-		setlocal colorcolumn=""
+		setlocal colorcolumn="" foldcolumn=0 nofoldenable
 
 		" Keybindings in navd buffer
 		nnoremap <silent><buffer> -    :call <SID>display_paths('<parent>')<cr>
@@ -154,22 +161,28 @@ function! s:setup_navd_buf(paths, matches)
 	call cursor(1,1)
 endfunction
 
-" Call the nessessary functions, sort out where we've come from and highlight
-" to right line.
+" Call the functions, sort out where we've come from and highlight that line.
 function! s:display_paths(path)
 	let g:navd['prev'] = has_key(g:navd, 'cur') ? g:navd['cur'] : a:path
 
-	if a:path ==# ''
-		let target_path = expand('%:p:h')
-		let target_fname = expand('%:t')
-	elseif a:path ==# '<parent>'
+	if a:path ==# '<parent>'
+		" Within the plugin to go up a level
 		let target_path = fnamemodify(g:navd['cur'], ':p:h:h')
 		let target_fname = g:navd['prev']
+
+	elseif a:path ==# ''
+		" Called from outside the plugin (:Navd no args)
+		let target_path = expand('%:p:h')
+		let target_fname = expand('%:t')
+
 	else
 		if s:isdir(a:path)
+			" Called from outside the plugin (:Navd directory)
 			let target_path = a:path
 			let target_fname = g:navd['prev']
+
 		else
+			" Called from outside the plugin (:Navd file)
 			let target_path = fnamemodify(a:path, ':p:h')
 			let target_fname = fnamemodify(a:path, ':p:t')
 		endif
