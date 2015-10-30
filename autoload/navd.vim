@@ -31,10 +31,11 @@ endfunction
 
 " Get the list of files and folders to display in the buffer.
 function! s:get_paths(path, inc_hidden)
-	let l:paths = glob(a:path.'/*', 1, 1)
+	let path = a:path ==# '/' ? '' : a:path
+	let l:paths = glob(path.'/*', 1, 1)
 	if a:inc_hidden == 1
 		" Include hidden files except '.' and '..'
-		let l:hidden = glob(a:path.'/.[^.]*', 1, 1)
+		let l:hidden = glob(path.'/.[^.]*', 1, 1)
 		let l:paths = extend(l:paths, l:hidden)
 	endif
 	call map(l:paths, "fnamemodify(v:val, ':p')")
