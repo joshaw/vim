@@ -126,14 +126,15 @@ function! s:setup_navd_buf(paths, matches)
 		setlocal colorcolumn="" foldcolumn=0 nofoldenable
 
 		" Keybindings in navd buffer
-		nnoremap <silent><buffer> -    :call <SID>display_paths('<parent>')<cr>
-		nnoremap <silent><buffer> <cr> :call <SID>enter_handle()<cr>
-		nnoremap <silent><buffer> q    :call <SID>q_handle()<cr>
-		nnoremap <silent><buffer> R    :call <SID>display_paths(g:navd['cur'])<cr>
-		nnoremap <silent><buffer> gh   :call <SID>toggle_hidden(getline('.'))<cr>
-		nnoremap <silent><buffer> +    :call <SID>new_obj()<cr>
+		nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>')<cr>
+		nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>')<cr>
+		nnoremap <silent><buffer> <cr>          :call <SID>enter_handle()<cr>
 		nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter_handle()<cr>
-		nnoremap <silent><buffer> <RightMouse> :call <SID>display_paths('<parent>')<cr>
+		nnoremap <silent><buffer> q             :call <SID>q_handle()<cr>
+		nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'])<cr>
+		nnoremap <silent><buffer> gs            :call <SID>toggle_hidden(getline('.'))<cr>
+		nnoremap <silent><buffer> gh            :call <SID>display_paths('$HOME/')<cr>
+		nnoremap <silent><buffer> +             :call <SID>new_obj()<cr>
 
 		" Syntax highlighting of folders
 		let sep = escape(s:sep, '/\')
