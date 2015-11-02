@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Thu 29 Oct 2015
+" Modified: Mon 02 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -14,46 +14,6 @@ if has('win32')
 	let $VIMHOME = $HOME.'/vimfiles/'
 	let $PATH=$PATH.';C:/cygwin/bin/;'.$HOME.'/Tools/'
 endif
-
-" Vim-Plug Plugins               {{{1
-"
-
-" let g:use_vim_plug = 1
-if exists('g:use_vim_plug') && executable('git')
-	let g:plug_threads = 6
-	let g:plug_timeout = 20
-	command! InstallPlug silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-		\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-	call plug#begin(g:vimhome.'plugged')
-
-	let g:plug_url_format = 'https://git@github.com/%s.git'
-	"Show buffers in tabline at top of window
-	Plug 'ap/vim-buftabline'
-	"Git management from withing vim
-	Plug 'tpope/vim-fugitive'
-	"Gitk for vim
-	Plug 'gregsexton/gitv', {'on': 'Gitv'}
-	"Syntax checking for a wide range of languages
-	Plug 'scrooloose/syntastic', {'on': 'SyntasticCheck'}
-	"Code structure overview
-	Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
-
-	"Filetypes
-	"Plug 'jamessan/vim-gnupg'
-	Plug 'tomtom/tgpg_vim'
-
-	call plug#end()
-endif " executable(git)
-
-function! s:lod(path)
-	exe 'set rtp+=' . g:vimhome . 'plugged/' . a:path
-	exe 'source ' . g:vimhome . 'plugged/' . a:path . '/plugin/*.vim'
-endfunction
-
-" call s:lod('vim-dirvish')
-call s:lod('vim-buftabline')
-call s:lod('tgpg_vim')
 
 " Plugin Settings                {{{1
 "
@@ -73,17 +33,6 @@ let loaded_rrhelper        = 1
 let g:skip_loading_mswin   = 1
 let loaded_spellfile_plugin = 1
 let did_install_default_menus = 1
-
-"""" Syntastic
-let g:syntastic_check_on_wq              = 0
-let g:syntastic_auto_loc_list            = 0
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_tex_checkers             = ['chktex']
-
-""" BufTabLine
-let g:buftabline_show       = 1
-let g:buftabline_numbers    = 1
-let g:buftabline_indicators = 1
 
 " Settings                       {{{1
 "
@@ -148,8 +97,6 @@ set splitbelow       " a new window is put below the current one
 set splitright       " a new window is put right of the current one
 
 " 7 multiple tab pages {{{2
-set showtabline=1 " 0, 1 or 2; when to use a tab pages line
-
 " 8 terminal {{{2
 set t_vb=
 

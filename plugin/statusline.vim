@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Mon 14 Sep 2015
+" Modified: Mon 02 Nov 2015
 " Author:   Josh Wainwright
 " Filename: statusline.vim
 
@@ -72,3 +72,32 @@ augroup statusline
 	au WinLeave *  exec "hi StatusLineNC guifg=#BBBBBB guibg=#111111" |
 				\ call setwinvar(0, "&statusline", "")
 augroup END
+
+set showtabline=2
+set tabline=%!MyTabLine()
+function! MyTabLine()
+	let s = ''
+	for i in range(1, bufnr('$'))
+		" select the highlighting
+		if bufnr('%') == i
+			let s .= '%#TabLineSel#'
+		elseif buflisted(i) > 0
+			let s .= '%#TabLine#'
+		else
+			continue
+		endif
+
+		" the label is made by MyTabLabel()
+		let s .= ' %{MyTabLabel(' . i . ')} '
+	endfor
+
+	" after the last tab fill with TabLineFill and reset tab page nr
+	let s .= '%#TabLineFill#'
+	return s
+endfunction
+
+function! MyTabLabel(n)
+	let name = fnamemodify(bufname(a:n), ':p:t')
+	let mod = getbufvar(a:n, '&modified') == 1 ? '+' : ''
+	return a:n . mod . ' ' . name
+endfunction
