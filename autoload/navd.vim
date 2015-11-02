@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Fri 30 Oct 2015
+" Modified: Mon 02 Nov 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -112,7 +112,11 @@ function! s:q_handle()
 endfunction
 
 function! s:current_dir()
-	let g:status_var = substitute(g:navd['cur'], $HOME, '~/', '')
+	if has_key(g:navd, 'cur')
+		let g:status_var = substitute(g:navd['cur'], $HOME, '~/', '')
+	else
+		let g:status_var = ''
+	endif
 	return g:status_var
 endfunction
 
@@ -205,7 +209,7 @@ function! s:display_paths(path)
 	endif
 endfunction
 
-function! s:buffer_paths()
+function! navd#navdbuf()
 	let tot_bufs = bufnr('$')
 	let buf_list = []
 	let buf_count = 0
@@ -229,24 +233,16 @@ function! s:buffer_paths()
 	call search(cur_buf, 'cW')
 endfunction
 
-function! s:all_paths()
+function! navd#navdall()
 	let cmd = 'find . \( -type d -printf "%P/\n" , -type f -printf "%P\n" \)'
 	let cmd = 'ag --nogroup --hidden -g .'
-	call s:init_matches()
+	let matches = s:init_matches()
 	let output = systemlist(cmd)
 	call remove(output, 0)
-	call s:setup_navd_buf(output)
+	call s:setup_navd_buf(output, matches)
 endfunction
 
 function! navd#navd(path, hidden)
 	let g:navd['hidden'] = a:hidden
 	call s:display_paths(a:path)
-endfunction
-
-function! navd#navdbuf()
-	call s:buffer_paths()
-endfunction
-
-function! navd#navdall()
-	call s:all_paths()
 endfunction
