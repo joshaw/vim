@@ -1,5 +1,5 @@
 " Created:  Thu 07 Aug 2014
-" Modified: Tue 27 Oct 2015
+" Modified: Mon 02 Nov 2015
 " Author:   Josh Wainwright
 " Filename: filetype.vim
 
@@ -50,7 +50,10 @@ augroup END
 
 augroup vimp
 	autocmd!
-	autocmd BufEnter pass.gpg setf mypass.conf
+	autocmd BufEnter * :echomsg "FILE " . expand('<amatch>')
+	autocmd BufEnter *.jgpg :echomsg "FILE " . expand('<amatch>') | setf mypass.conf
+	autocmd BufEnter *.jgpg :echomsg "FILE EDITED"
+				\ | setf mypass.conf
 				\ | setlocal conceallevel=2
 				\ | syntax region hideup Conceal start='|' end='$'
 				\ | setlocal colorcolumn=0
