@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Thu 29 Oct 2015
+" Modified: Mon 02 Nov 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -280,4 +280,22 @@ function! functions#AsciiToggle()
 		let @/ = nonasciisearch
 		let g:status_var = 'NA'
 	endif
+endfunction
+
+" Buffer Navigation
+function! functions#buffernext(dir)
+	let maxbuf = bufnr('$')
+	let thisbuf = bufnr('%')
+	let isfirst = 1
+	let i = thisbuf
+	while maxbuf != 1 && (i == thisbuf || !bufexists(i))
+		let i = i + a:dir
+		if i <= 0
+			let i = maxbuf
+		elseif i > maxbuf
+			let i = 1
+		endif
+	endwhile
+	silent exe 'buffer' i
+	echo printf('Buffer [%s/%s] %s', bufnr('%'), bufnr('$'), bufname('%'))
 endfunction

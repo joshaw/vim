@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Thu 29 Oct 2015
+" Modified: Mon 02 Nov 2015
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -52,10 +52,6 @@ nnoremap cou :set cursorline!<bar>set cursorline?<cr>
 nnoremap cos :set spell!<bar>set spell?<cr>
 nnoremap cop :set paste!<bar>set paste?<cr>
 nnoremap com :set makeprg?<cr>
-nnoremap <silent> [<space> :-1 put _<cr>j
-nnoremap <silent> ]<space> :put _<cr>k
-nnoremap <silent> ]b :bnext<cr>:echo printf('Buffer [%s/%s] %s', bufnr('%'), bufnr('$'), bufname('%'))<cr>
-nnoremap <silent> [b :bprevious<cr>:echo printf('Buffer [%s/%s] %s', bufnr('%'), bufnr('$'), bufname('%'))<cr>
 
 " Toggle Comment
 nnoremap <silent> gcc :call functions#toggleComment()<CR>
@@ -98,6 +94,14 @@ nnoremap S i<cr><esc>^mwgk:keeppatterns silent! s/\v +$//<cr>:noh<cr>`w
 
 nnoremap ; :
 nnoremap , ;
+
+nnoremap <silent> [<space> :-1 put _<cr>j
+nnoremap <silent> ]<space> :put _<cr>k
+
+" Navigate buffers
+nnoremap ]b :call functions#buffernext(1)<cr>
+nnoremap [b :call functions#buffernext(-1)<cr>
+nnoremap <silent> <space> :<c-u>exe 'buffer ' . v:count1<cr>
 
 " N/P File in dir
 nnoremap ]f :call functions#nextFileInDir(1)<cr>
