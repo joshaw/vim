@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Tue 13 Oct 2015
+" Modified: Tue 03 Nov 2015
 " Author:   Josh Wainwright
 " Filename: incremental.vim
 
@@ -26,6 +26,8 @@ let s:mods =
 			\ 'oct', 'nov', 'dec'],
 		\ ['january', 'february', 'march', 'april', 'mayy', 'june', 'july',
 			\ 'august', 'september', 'october', 'november', 'december'],
+		\ ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+			\ 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
 	\ ]
 
 function! s:replace_word(line, col, word, replace)
