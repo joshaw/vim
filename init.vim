@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Fri 09 Oct 2015
+" Modified: Mon 02 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -36,10 +36,6 @@ if exists('g:use_vim_plug') && executable('git')
 	Plug 'gregsexton/gitv', {'on': 'Gitv'}
 	"Syntax checking for a wide range of languages
 	Plug 'scrooloose/syntastic', {'on': 'SyntasticCheck'}
-	"Simple alignment of lines
-	Plug 'godlygeek/tabular'
-	"Simple minimalist alternative to netrw
-	Plug 'justinmk/vim-dirvish'
 	"Code structure overview
 	Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
 
@@ -51,14 +47,13 @@ if exists('g:use_vim_plug') && executable('git')
 endif " executable(git)
 
 function! s:lod(path)
-" 	exe 'set rtp+=' . g:vimhome . 'plugged/' . a:path
+	exe 'set rtp+=' . g:vimhome . 'plugged/' . a:path
 	exe 'source ' . g:vimhome . 'plugged/' . a:path . '/plugin/*.vim'
 endfunction
 
 " call s:lod('vim-dirvish')
 call s:lod('vim-buftabline')
-call s:lod('tabular')
-" call s:lod('tgpg_vim')
+call s:lod('tgpg_vim')
 
 " Plugin Settings                {{{1
 "
@@ -282,12 +277,12 @@ set isfname-==
 
 "27 various {{{2
 set virtualedit+=block " when to use virtual editing: "block", "insert" and/or "all"
-set viminfo=!,'2000,<50,s10,h   " list that specifies what to write in the viminfo file
-if has('gui_running')
-	set viminfo+=n$HOME/.win.viminfo
-else
-	set viminfo+=n$HOME/.viminfo
-endif
+" set viminfo=!,'2000,<50,s10,h   " list that specifies what to write in the viminfo file
+" if has('gui_running')
+" 	set viminfo+=n$HOME/.win.viminfo
+" else
+" 	set viminfo+=n$HOME/.viminfo
+" endif
 
 " go to last cursor position when opening files
 augroup vimrc_line_return
@@ -318,28 +313,6 @@ if has('win32') || has('win32unix')
 else
 	let dictfile="/usr/share/dict/words"
 endif
-
-" Objects                        {{{2
-
-" Line object
-xnoremap il :<c-u>normal! ^vg_<cr>
-xnoremap al :<c-u>normal! 0v$<cr>
-onoremap il :normal vil<cr>
-onoremap al :normal val<cr>
-
-" Whole file object
-xnoremap if :<c-u>normal! gg0VG<cr>
-xnoremap af :<c-u>normal! gg0VG<cr>
-onoremap if :normal vif<cr>
-onoremap af :normal vaf<cr>
-
-" custom text-objects
-for char in [ '_', '.', ':', ',', ';', '<bar>', '/', '<bslash>', '*', '+', '%', '`' ]
-    execute 'xnoremap i' . char . ' :<C-u>normal! T' . char . 'vt' . char . '<CR>'
-    execute 'onoremap i' . char . ' :normal vi' . char . '<CR>'
-    execute 'xnoremap a' . char . ' :<C-u>normal! F' . char . 'vf' . char . '<CR>'
-    execute 'onoremap a' . char . ' :normal va' . char . '<CR>'
-endfor
 
 " Abbreviations                  {{{1
 "
@@ -396,35 +369,6 @@ if !has('nvim') && has("gui_running") && !exists("g:vim_started")
 	let g:vim_started = 1
 endif
 " }}}
-
-" map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-" \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-" \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-augroup record_files
-	au!
- 	autocmd VimEnter,BufAdd * :silent call <SID>recordFile(expand('<afile>'))
-augroup END
-function! s:recordFile(file)
-	let save_vfile = &verbosefile
-	set verbosefile=
-	if !filereadable(a:file) && !isdirectory(a:file)
-		return
-	endif
-	let histfile = "~/Documents/Details/files/files.txt"
-	let size = getfsize(a:file)
-	let type = getftype(a:file)
-	let time = getftime(a:file)
-	let fname = fnamemodify(a:file, ':p')
-	let fname = substitute(fname, escape($HOME, '\'), '~', '')
-	let fname = substitute(fname, '^H:\\', '~/', '')
-	let fname = substitute(fname, '^L:\\', '~/Resources', '')
-	let fname = substitute(fname, '\\', '/', 'g')
-
-	exe 'redir >>' histfile
-		echo strftime('%Y-%m-%d %H:%M:%S') '|' fname '|' size '|' type '|' time
-	redir END
-	let &verbosefile = save_vfile
-endfunction
 
 " Keybindings
 "         ~/.vim/plugin/keybindings.vim
