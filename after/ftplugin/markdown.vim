@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Fri 16 Oct 2015
+" Modified: Wed 04 Nov 2015
 " Author:   Josh Wainwright
 " Filename: markdown.vim
 
@@ -24,9 +24,9 @@ function! FormatTable()
 	let tabend = search("^$", "nW") -1
 	exe tabhead."d _"
 	if tabstart < tabend
-		exe tabstart.",".tabend."EasyAlign *|"
+		exe tabstart.",".tabend."Align |"
 	else
-		exe tabend.",".tabstart."EasyAlign *|"
+		exe tabend.",".tabstart."Align |"
 	endif
 	call append(tabstart, getline(tabstart))
 	exe tabhead."s/[^|]/-/g"
