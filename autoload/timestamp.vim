@@ -2,7 +2,6 @@
 " Modified: Wed 08 Jul 2015
 " Author:   Josh Wainwright
 " Filename: timestamp.vim
-"
 
 " Update timestamp if found in the first few lines of a file.
 " Triggered on file read but not set as modified.

@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Mon 02 Nov 2015
+" Modified: Tue 03 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -40,11 +40,13 @@ let did_install_default_menus = 1
 filetype plugin on
 filetype indent on
 syntax on
-augroup colourscheme
-	au!
-	au VimEnter * colorscheme molokaiV
-augroup END
-if !has('nvim')
+if has('nvim')
+	augroup colourscheme
+		au!
+		au VimEnter * colorscheme molokaiV
+	augroup END
+else
+	colorscheme molokaiV
 	set encoding=utf-8 " character encoding used in Vim: "latin1", "utf-8"
 endif
 
