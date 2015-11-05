@@ -14,7 +14,7 @@ nnoremap <silent> _ :NavdBuf<cr>
 
 augroup navd_bufevents
   au!
-  autocmd BufEnter * if isdirectory(expand('<amatch>'))
+  autocmd BufNew * if isdirectory(expand('<amatch>'))
         \ | call navd#navd(expand('<amatch>'), 0)
         \ | endif
 augroup END

@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Mon 02 Nov 2015
+" Modified: Wed 04 Nov 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -93,7 +93,6 @@ function! s:enter_handle()
 		let g:status_var = ''
 		let this = bufnr('%')
 		exe 'edit' fnameescape(cur_line)
-		exe 'bwipeout' this
 	else
 		echoerr 'Cannot access' cur_line
 	endif
@@ -108,12 +107,11 @@ function! s:q_handle()
 	else
 		exe 'edit' alt
 	endif
-	exe 'bwipeout' this
 endfunction
 
 function! s:current_dir()
 	if has_key(g:navd, 'cur')
-		let g:status_var = substitute(g:navd['cur'], $HOME, '~/', '')
+		let g:status_var = substitute(g:navd['cur'], $HOME, '~', '')
 	else
 		let g:status_var = ''
 	endif
@@ -122,32 +120,35 @@ endfunction
 
 " Setup the navd buffer, write the paths to it and make it unwritable.
 function! s:setup_navd_buf(paths, matches)
-	if &filetype !=# 'navd'
+" 	if &filetype !=# 'navd'
+	if bufname('%') !=# s:navd_fname
 		exe 'silent! edit ' . s:navd_fname
 		setlocal filetype=navd
-		setlocal concealcursor=nc conceallevel=3 bufhidden=hide undolevels=-1
-		setlocal nobuflisted buftype=nofile noswapfile nowrap nolist cursorline
-		setlocal colorcolumn="" foldcolumn=0 nofoldenable
-
-		" Keybindings in navd buffer
-		nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>')<cr>
-		nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>')<cr>
-		nnoremap <silent><buffer> <cr>          :call <SID>enter_handle()<cr>
-		nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter_handle()<cr>
-		nnoremap <silent><buffer> q             :call <SID>q_handle()<cr>
-		nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'])<cr>
-		nnoremap <silent><buffer> gs            :call <SID>toggle_hidden(getline('.'))<cr>
-		nnoremap <silent><buffer> gh            :call <SID>display_paths('$HOME/')<cr>
-		nnoremap <silent><buffer> +             :call <SID>new_obj()<cr>
-
-		" Syntax highlighting of folders
-		let sep = escape(s:sep, '/\')
-		exe 'syntax match NavdPathHead ''\v.*'.sep.'\ze[^'.sep.']+'.sep.'?$'' conceal'
-		exe 'syntax match NavdPathTail ''\v[^'.sep.']+'.sep.'$'''
-		syntax match NavdCurDir '\%^.*$'
-		highlight! link NavdPathTail Directory
-		highlight! link NavdCurDir   Comment
 	endif
+
+	setlocal concealcursor=nc conceallevel=3 bufhidden=unload undolevels=-1
+	setlocal nobuflisted buftype=nowrite noswapfile nowrap nolist cursorline
+	setlocal colorcolumn="" foldcolumn=0 nofoldenable
+
+	" Keybindings in navd buffer
+	nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>')<cr>
+	nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>')<cr>
+	nnoremap <silent><buffer> <cr>          :call <SID>enter_handle()<cr>
+	nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter_handle()<cr>
+	nnoremap <silent><buffer> q             :call <SID>q_handle()<cr>
+	nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'])<cr>
+	nnoremap <silent><buffer> gs            :call <SID>toggle_hidden(getline('.'))<cr>
+	nnoremap <silent><buffer> gh            :call <SID>display_paths('$HOME/')<cr>
+	nnoremap <silent><buffer> +             :call <SID>new_obj()<cr>
+
+	" Syntax highlighting of folders
+	let sep = escape(s:sep, '/\')
+	exe 'syntax match NavdPathHead ''\v.*'.sep.'\ze[^'.sep.']+'.sep.'?$'' conceal'
+	exe 'syntax match NavdPathTail ''\v[^'.sep.']+'.sep.'$'''
+	syntax match NavdCurDir '\%^.*$'
+	highlight! link NavdPathTail Directory
+	highlight! link NavdCurDir   Comment
+
 	call clearmatches()
 	for i in a:matches['noread']  | call matchadd('Comment', '\%'.i.'l') | endfor
 	for i in a:matches['nowrite'] | call matchadd('String', '\%'.i.'l')  | endfor
