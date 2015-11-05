@@ -48,7 +48,7 @@ function! functions#Sum() range
 
 	let s:sum = 0
 	for s:n in split(s:selection, '[^0-9.-]')
-		let s:n = substitute(s:n, '\v^[^0-9]*\ze([0-9]|$)', '', "")
+		let s:n = substitute(s:n, '\v^[^0-9-]*\ze([0-9]|$)', '', "")
 		if s:n == ''
 			continue
 		endif
