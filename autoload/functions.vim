@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Mon 02 Nov 2015
+" Modified: Wed 04 Nov 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -124,10 +124,6 @@ endfunction
 
 " FirstTimeRun {{{1
 function! functions#FirstTimeRun()
-	" Install vim-plug
-	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-		\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
 	" Make folders if they don't already exist.
 	if !isdirectory(expand(&undodir))
 		call mkdir(expand(&undodir), "p")
@@ -268,7 +264,7 @@ function! functions#smart_TabComplete()
 	return "\<c-n>"
 endfunction
 
-" Show non-ascii characters
+" Show non-ascii characters {{{1
 function! functions#AsciiToggle()
 	if exists('g:ascii_highlight')
 		call matchdelete(g:ascii_highlight)
@@ -283,20 +279,26 @@ function! functions#AsciiToggle()
 	endif
 endfunction
 
-" Buffer Navigation
-function! functions#buffernext(dir)
-	let maxbuf = bufnr('$')
-	let thisbuf = bufnr('%')
-	let isfirst = 1
-	let i = thisbuf
-	while maxbuf != 1 && (i == thisbuf || !bufexists(i))
-		let i = i + a:dir
-		if i <= 0
-			let i = maxbuf
-		elseif i > maxbuf
-			let i = 1
+" Buffer Navigation {{{1
+function! functions#buffernext(incr)
+	let current = bufnr("%")
+	let last = bufnr("$")
+	let newnr = current + a:incr
+	while 1
+		if newnr != 0 && bufexists(newnr) && buflisted(newnr)
+			execute ":buffer ".newnr
+			break
+		else
+			let newnr += a:incr
+			if newnr < 1
+				let newnr = last
+			elseif newnr > last
+				let newnr = 1
+			endif
+			if newnr == current
+				break
+			endif
 		endif
 	endwhile
-	silent exe 'buffer' i
 	echo printf('Buffer [%s/%s] %s', bufnr('%'), bufnr('$'), bufname('%'))
 endfunction
