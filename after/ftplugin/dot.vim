@@ -1,6 +1,8 @@
-" Created:  TIMESTAMP
-" Modified: TIMESTAMP
+" Created:  Wed 04 Nov 2015
+" Modified: Wed 04 Nov 2015
 " Author:   Josh Wainwright
 " Filename: dot.vim
 
-setlocal makeprg=dot\ %\ -O\ -Tpdf
+if !filereadable("makefile")
+	setlocal makeprg=dot\ %\ -O\ -Tpdf
+endif
