@@ -163,12 +163,13 @@ function! functions#toggleComment()
 		exe "s@^@".c." @ | s@^".c." ".c." @@e"
 		call histdel('search', -1)
 		call histdel('search', -1)
+	else
+		echo &ft . ': no comment char.'
 	endif
 endfun
 function! functions#toggleCommentmap(type)
 	let [lnum1, lnum2] = [line("'["), line("']")]
 	exe lnum1 . ',' . lnum2. 'call functions#toggleComment()'
-" 	unlet g:ft
 endfunction
 
 " N/P file in dir {{{1
