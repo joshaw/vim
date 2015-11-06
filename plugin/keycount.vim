@@ -1,9 +1,13 @@
 " Created:  Thu 04 Jun 2015
-" Modified: Tue 30 Jun 2015
+" Modified: Fri 06 Nov 2015
 " Author:   Josh Wainwright
 " Filename: keycount.vim
 
 let g:KeyCountFile = expand('~/Documents/Details/keys/keys.md')
+if ! filewritable(g:KeyCountFile)
+	finish
+endif
+
 let g:KeyCountFileTypes = {}
 let g:KeyCount = 0
 let g:KeyCountLetters = {
