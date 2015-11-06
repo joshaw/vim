@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Tue 03 Nov 2015
+" Modified: Fri 06 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -105,6 +105,7 @@ set t_vb=
 " 9 using the mouse {{{2
 set mouse=a   " list of flags for using the mouse
 set mousehide " hide the mouse pointer while typing
+set ttymouse=xterm2
 
 "10 GUI {{{2
 if has('win32') || has('win32unix')
@@ -226,12 +227,12 @@ set isfname-==
 
 "27 various {{{2
 set virtualedit+=block " when to use virtual editing: "block", "insert" and/or "all"
-set viminfo=!,'2000,<50,s10,h   " list that specifies what to write in the viminfo file
-if has('gui_running')
-	set viminfo+=n$HOME/.win.viminfo
-else
-	set viminfo+=n$HOME/.viminfo
-endif
+" set viminfo=!,'2000,<50,s10,h   " list that specifies what to write in the viminfo file
+" if has('gui_running')
+" 	set viminfo+=n$HOME/.win.viminfo
+" else
+" 	set viminfo+=n$HOME/.viminfo
+" endif
 
 " go to last cursor position when opening files
 augroup vimrc_line_return
