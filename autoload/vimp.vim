@@ -1,5 +1,5 @@
 " Created:  Mon 02 Nov 2015
-" Modified: Mon 02 Nov 2015
+" Modified: Thu 12 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimp.vim
 
@@ -24,6 +24,8 @@ function! vimp#encrypt(file)
 			redraw
 			echo "Passwords do not match. Cannot write file."
 		endif
+	else
+		echoerr "GPG executable not found. Cannot encrypt"
 	endif
 endfunction
 
