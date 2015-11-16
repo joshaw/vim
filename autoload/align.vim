@@ -1,11 +1,12 @@
 " Created:  Tue 27 Oct 2015
-" Modified: Thu 29 Oct 2015
+" Modified: Fri 13 Nov 2015
 " Author:   Josh Wainwright
 " Filename: align.vim
 
 function! align#align(char, delspace, alignright) range
 	" Set default align character if none is given
 	let char = len(a:char) == 0 ? '|' : a:char
+	let char = substitute(char, '\\ ', ' ', 'g')
 	let linesplit = []
 	let mem = {}
 
@@ -53,6 +54,7 @@ function! align#align(char, delspace, alignright) range
 		call setline(a:firstline + lcount, newline)
 		let lcount += 1
 	endfor
+	redraw
 	echo lcount . ' lines aligned.'
 endfunction
 
