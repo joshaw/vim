@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Wed 04 Nov 2015
+" Modified: Fri 13 Nov 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -122,16 +122,6 @@ function! functions#IPtablesSort()
 	delmarks a b
 endfunction
 
-" FirstTimeRun {{{1
-function! functions#FirstTimeRun()
-	" Make folders if they don't already exist.
-	if !isdirectory(expand(&undodir))
-		call mkdir(expand(&undodir), "p")
-		call mkdir(expand(&backupdir), "p")
-		call mkdir(expand(&directory), "p")
-	endif
-endfunction
-
 " Toggle Comment {{{1
 function! functions#toggleComment()
 	let dict = {
@@ -168,7 +158,7 @@ function! functions#toggleCommentmap(type)
 	exe lnum1 . ',' . lnum2. 'call functions#toggleComment()'
 endfunction
 
-" N/P file in dir {{{1
+" NextFileinDir {{{1
 function! functions#nextFileInDir(direction)
 	let sep = has("win32") ? '\' : '/'
 	let fn = expand('%:p:h')
@@ -203,35 +193,33 @@ function! functions#html2nroff(...)
 endfunction
 
 " Count occurances {{{1
-function! s:get_visual_selection()
-  " Why is this not a built-in Vim script function?!
-  let [lnum1, col1] = getpos("'<")[1:2]
-  let [lnum2, col2] = getpos("'>")[1:2]
-  let lines = getline(lnum1, lnum2)
-  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
-  let lines[0] = lines[0][col1 - 1:]
-  return join(lines, "\n")
-endfunction
-
-function! functions#count(mode) range
+function! functions#count(...) range
 	let w = winsaveview()
+	let noecho = 0
 
-	if a:mode ==# 'normal'
-		let word = expand('<cword>')
-		let word = '\<' . escape(word, '#\\') . '\>'
-	elseif a:mode ==# 'visual'
-		let word = s:get_visual_selection()
-		let word = escape(word, '#\\')
+	if a:0 == 1
+		let word = a:1
+	elseif a:0 == 2
+		let word = a:1
+		let noecho = !!a:2
+	else
+		let word = @/
 	endif
 
 	redir => soutput
 		exe 'silent %s#\V' . word . '##nge'
 	redir END
+
 	let soutput = soutput[1:]
 	let g:status_var = soutput + 0
-	echo '"' . word . '": ' . soutput
+
+	if !noecho
+		echo '"' . word . '": ' . soutput
+	endif
+
 	call histdel('/', -1)
 	call winrestview(w)
+	return g:status_var
 endfunction
 
 " Smart completion on tab {{{1
@@ -286,7 +274,7 @@ function! functions#buffernext(incr)
 	let newnr = current + a:incr
 	while 1
 		if newnr != 0 && bufexists(newnr) && buflisted(newnr)
-			execute ":buffer ".newnr
+			silent execute ":buffer ".newnr
 			break
 		else
 			let newnr += a:incr
