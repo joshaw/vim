@@ -6,7 +6,7 @@
 " This script highlights all the default highlighting groups in Vim by matching
 " the groups literal name and placing it in its group.
 
-if(exists("g:loaded_hdhg"))
+if(exists('g:loaded_hdhg'))
   finish
 endif
 

@@ -1,18 +1,18 @@
 " Created:  Thu 17 Apr 2014
-" Modified: Wed 08 Jul 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: timestamp.vim
 
 " Update timestamp if found in the first few lines of a file.
 " Triggered on file read but not set as modified.
-function! timestamp#Timestamp()
+function! timestamp#Timestamp() abort
 	if &readonly
 		return
 	endif
 	let l:winview = winsaveview()
 
 	let pat = '\v\C%(Modified\s*:\s*)\zs%(.*20\d{2}|TIMESTAMP)\ze|Created\s*:\s*\zsTIMESTAMP\ze$'
-	let rep = strftime("%a %d %b %Y")
+	let rep = strftime('%a %d %b %Y')
 
 	if line('$') > 2 * &modelines
 		call s:subst(1, &modelines, pat, rep)
@@ -25,7 +25,7 @@ function! timestamp#Timestamp()
 	call winrestview(l:winview)
 endfunction
 
-function! s:subst(start, end, pat, rep)
+function! s:subst(start, end, pat, rep) abort
 	let lineno = a:start
 	while lineno <= a:end
 		let curline = getline(lineno)

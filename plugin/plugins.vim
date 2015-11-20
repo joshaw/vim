@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Thu 29 Oct 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -9,7 +9,10 @@ command! BookReformatCmd call booksreformat#BookReformatCmd()
 
 "
 " Timestamp
-autocmd! BufRead * :call timestamp#Timestamp()
+augroup timestamp
+	autocmd!
+	autocmd! BufRead * :call timestamp#Timestamp()
+augroup END
 
 "
 "Whitespace

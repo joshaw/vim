@@ -1,13 +1,13 @@
 " Created:  Thu 15 Jan 2015
-" Modified: Mon 11 May 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: biblereading.vim
 
-if exists("b:current_syntax")
+if exists('b:current_syntax')
 	finish
 endif
 
-let b:current_syntax = "biblereading"
+let b:current_syntax = 'biblereading'
 
 syn match bibread_emptycheckbox "\v\[ \]"
 syn match bibread_fullcheckbox  "\v\[x\].*$"

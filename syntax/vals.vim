@@ -1,15 +1,13 @@
 " Created:  Sat 01 Aug 2015
-" Modified: Mon 17 Aug 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vals.vim
 
-if version < 600
-   syntax clear
-elseif exists("b:current_syntax")
+if exists('b:current_syntax')
    finish
 endif
 
-if !exists("main_syntax")
+if !exists('main_syntax')
    let main_syntax='vals'
 endif
 

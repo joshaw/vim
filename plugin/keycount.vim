@@ -1,5 +1,5 @@
 " Created:  Thu 04 Jun 2015
-" Modified: Fri 06 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: keycount.vim
 
@@ -26,7 +26,7 @@ augroup keycount
 augroup END
 
 function! s:keycountinit()
-	let b:ftype = &ft == ''? 'none': &ft
+	let b:ftype = &ft ==# ''? 'none': &ft
 	if !has_key(g:KeyCountFileTypes, b:ftype)
 		let g:KeyCountFileTypes[b:ftype] = { 'total': 0,
 					\ 'a':0, 'b':0, 'c':0, 'd':0, 'e':0, 'f':0, 'g':0,
@@ -114,14 +114,14 @@ function! s:keycountwriteFT()
 endfunction
 
 function! s:keycountincrement(char)
-	let b:ftype = &ft == ''? 'none': &ft
+	let b:ftype = &ft ==# ''? 'none': &ft
 	let g:KeyCount += 1
 	let g:KeyCountFileTypes[b:ftype]['total'] += 1
 	let l:low = tolower(a:char)
 	if l:low =~? '\a\|\d'
 		let g:KeyCountLetters[l:low] += 1
 		let g:KeyCountFileTypes[b:ftype][l:low] += 1
-	elseif a:char == ' '
+	elseif a:char ==# ' '
 		let g:KeyCountLetters['~space'] += 1
 		let g:KeyCountFileTypes[b:ftype]['~space'] += 1
 	elseif a:char =~? '\t'

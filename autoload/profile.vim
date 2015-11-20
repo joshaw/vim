@@ -1,5 +1,5 @@
 " Generate a table from the file produced by :profile
-function! profile#tabular()
+function! profile#tabular() abort
   " Append a line which happens to be a table header to EOF, as the cursor
   " need a consistent place to sit on in :global processing.
   $put ='TotalTime SelfTime Times Script'

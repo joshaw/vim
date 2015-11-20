@@ -1,9 +1,9 @@
 " Created:  Tue 27 Oct 2015
-" Modified: Fri 13 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: align.vim
 
-function! align#align(char, delspace, alignright) range
+function! g:align#align(char, delspace, alignright) range abort
 	" Set default align character if none is given
 	let char = len(a:char) == 0 ? '|' : a:char
 	let char = substitute(char, '\\ ', ' ', 'g')
@@ -58,12 +58,12 @@ function! align#align(char, delspace, alignright) range
 	echo lcount . ' lines aligned.'
 endfunction
 
-function! align#alignmap(type, ...)
+function! align#alignmap(type, ...) abort
 	let [lnum1, lnum2] = [line("'["), line("']")]
 	exe lnum1 . ',' . lnum2. 'call align#align_getchar()'
 endfunction
 
-function! align#align_getchar() range
+function! align#align_getchar() range abort
 	echon 'Char: '
 	let char = nr2char(getchar())
 	exe a:firstline . ',' . a:lastline . 'call align#align(char, 0, 0)'

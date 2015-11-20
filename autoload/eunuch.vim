@@ -1,11 +1,11 @@
 " Created:  Fri 12 Jun 2015
-" Modified: Tue 01 Sep 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: eunuch.vim
 
-let s:sep = has("win32") ? '\' : '/'
+let s:sep = has('win32') ? '\' : '/'
 
-function! eunuch#RemoveFile(bang, args)
+function! eunuch#RemoveFile(bang, args) abort
 	let s:file = fnamemodify(bufname(a:args),':p')
 	execute 'bdelete'.a:bang
 	if !bufloaded(s:file) && delete(s:file)
@@ -14,16 +14,15 @@ function! eunuch#RemoveFile(bang, args)
 	unlet s:file
 endfunction
 
-function! eunuch#MoveFile(bang, args)
+function! eunuch#MoveFile(bang, args) abort
 	let s:src = expand('%:p')
-	if a:args == ''
+	if a:args ==# ''
 		let s:dst = input('New file name: ', expand('%:p'), 'file')
 	else
 		let s:dst = expand(a:args)
 	endif
 	if isdirectory(s:dst) || s:dst[-1:-1] =~# '[\\/]'
-		let s:dst .= (s:dst[-1:-1] =~# '[\\/]' ? '' : s:sep) .
-		fnamemodify(s:src, ':t')
+		let s:dst .= (s:dst[-1:-1] =~# '[\\/]' ? '' : s:sep) . fnamemodify(s:src, ':t')
 	endif
 	if !isdirectory(fnamemodify(s:dst, ':h'))
 		call mkdir(fnamemodify(s:dst, ':h'), 'p')
@@ -52,7 +51,7 @@ function! eunuch#Grep(bang,args,prg) abort
 		let &l:grepprg = a:prg
 		setlocal grepformat=%f
 		if &shellpipe ==# '2>&1| tee' || &shellpipe ==# '|& tee'
-			let &shellpipe = "| tee"
+			let &shellpipe = '| tee'
 		endif
 		execute 'grep! '.a:args
 		if empty(a:bang) && !empty(getqflist())
@@ -67,24 +66,24 @@ function! eunuch#Grep(bang,args,prg) abort
 	endtry
 endfunction
 
-function! eunuch#Mkdir(bang, args)
+function! eunuch#Mkdir(bang, args) abort
 	call mkdir(empty(a:args) ? expand('%:h') : a:args, empty(a:bang) ? '' : 'p')
 	if empty(a:args)
 		silent keepalt execute 'file' expand('%')
 	endif
 endfunction
 
-function! eunuch#MaxLine()
+function! eunuch#MaxLine() abort
 	let maxcol = 0
 	let lnum = 1
-	while lnum <= line("$")
+	while lnum <= line('$')
 		call cursor(lnum, 0)
-		if col("$") > maxcol
-			let maxcol = col("$")
+		if col('$') > maxcol
+			let maxcol = col('$')
 			let maxline = lnum
 		endif
 		let lnum += 1
 	endwhile
 	exec maxline
-	echo "Line" maxline "has" maxcol - 1 "characters"
+	echo 'Line' maxline 'has' maxcol - 1 'characters'
 endfunction

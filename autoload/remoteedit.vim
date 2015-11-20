@@ -1,15 +1,15 @@
 " Created:  Fri 06 Nov 2015
-" Modified: Fri 06 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: remoteedit.vim
 
 let s:scpcmd = 'scp -p'
-function! remoteedit#scpedit(path, edit)
+function! remoteedit#scpedit(path, edit) abort
 	let filepath = shellescape(substitute(a:path, '^\(scp\|ssh\)://', '', ''))
 	let tmpfile = tempname()
 	call system(s:scpcmd . ' ' . filepath . ' ' . tmpfile)
 	if v:shell_error
-		echo "Command failed. Usage: scp://[[user@]host:]file"
+		echo 'Command failed. Usage: scp://[[user@]host:]file'
 		return
 	endif
 	exe 'read' tmpfile
@@ -18,7 +18,7 @@ function! remoteedit#scpedit(path, edit)
 	filetype detect
 endfunction
 
-function! remoteedit#scpwrite(path, opt)
+function! remoteedit#scpwrite(path, opt) abort
 	" opt = 0 write whole buffer
 	" opt = 1 write selected text
 	" opt = 2 append selected text
@@ -37,7 +37,7 @@ function! remoteedit#scpwrite(path, opt)
 
 	call system(s:scpcmd . ' ' . tmpfile . ' ' . filepath)
 	if v:shell_error
-		echo "Error: could not save file to remote location"
+		echo 'Error: could not save file to remote location'
 	else
 		setlocal nomodified
 	endif

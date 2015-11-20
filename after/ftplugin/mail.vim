@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Fri 16 Oct 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: mail.vim
 
@@ -37,8 +37,8 @@ if search('ldra', 'cn') > 0
 
 	if search('weekly report', 'cn')
 		if ! search('=============', 'cn')
-			call append(line('$'), [""])
-			exec "$r ".weeklyr#EditReport(0,1)
+			call append(line('$'), [''])
+			exec '$r '.weeklyr#EditReport(0,1)
 			/Weekly Report/,$normal gwG
 		endif
 	endif

@@ -3,9 +3,7 @@
 " Maintainer:   Alex Brick <alex@alexrbrick.com>
 " Last Change:  2007 Oct 18
 
-if version < 600
-  syntax clear
-elseif exists("b:current_syntax")
+if exists('b:current_syntax')
   finish
 endif
 
@@ -248,4 +246,4 @@ hi def link mipsRegister       Identifier
 hi def link mipsDirective      Type
 hi def link mipsInstruction    Statement
 
-let b:current_syntax = "mips"
+let b:current_syntax = 'mips'

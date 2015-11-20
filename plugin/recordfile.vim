@@ -1,9 +1,9 @@
 " Created:  Mon 26 Oct 2015
-" Modified: Fri 06 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: recordfile.vim
 
-let s:histfile = expand("~/Documents/Details/files/files.txt")
+let s:histfile = expand('~/Documents/Details/files/files.txt')
 if !filewritable(s:histfile)
 	finish
 endif

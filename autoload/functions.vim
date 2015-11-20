@@ -1,12 +1,12 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Fri 13 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
 " GrepString {{{1
 " Set the grepprg depending on context
-function! functions#GrepString()
-	if ( exists("b:git_dir") && b:git_dir != '')
+function! functions#GrepString() abort
+	if ( exists('b:git_dir') && b:git_dir !=# '')
 				\ || isdirectory('.git')
 				\ || isdirectory('../.git')
 				\ || isdirectory('../../.git')
@@ -27,16 +27,16 @@ endfunction
 
 " BufGrep {{{1
 " Search and Replace through all buffers
-function! functions#BufGrep(search)
+function! functions#BufGrep(search) abort
 	cclose
 	call setqflist([])
-	silent! exe "bufdo vimgrepadd " . a:search . " %"
+	silent! exe 'bufdo vimgrepadd ' . a:search . ' %'
 	copen
 endfunction
 
 " Sum {{{1
 " Sum a visual selection of numbers
-function! functions#Sum() range
+function! functions#Sum() range abort
 	let s:reg_save = getreg('"')
 	let s:regtype_save = getregtype('"')
 	let s:cb_save = &clipboard
@@ -48,8 +48,8 @@ function! functions#Sum() range
 
 	let s:sum = 0
 	for s:n in split(s:selection, '[^0-9.-]')
-		let s:n = substitute(s:n, '\v^[^0-9-]*\ze([0-9]|$)', '', "")
-		if s:n == ''
+		let s:n = substitute(s:n, '\v^[^0-9-]*\ze([0-9]|$)', '', '')
+		if s:n ==# ''
 			continue
 		endif
 		let s:num = str2float(s:n)
@@ -58,12 +58,12 @@ function! functions#Sum() range
 			let s:sum = s:sum + s:num
 		endif
 	endfor
-	echon " = " . string(s:sum)
+	echon ' = ' . string(s:sum)
 endfunction
 
 " BlockIncr {{{1
 " Increment a blockwise selection
-function! functions#BlockIncr(num) range
+function! functions#BlockIncr(num) range abort
 	let l:old = @/
 	try
 		'<,'>s/\v%V-?\d+/\=(submatch(0) + a:num)/
@@ -75,7 +75,7 @@ function! functions#BlockIncr(num) range
 endfunction
 
 " Verbose {{{1
-function! functions#Verbose(level, excmd)
+function! functions#Verbose(level, excmd) abort
   let temp = tempname()
   let verbosefile = &verbosefile
   call writefile([':'.a:level.'Verbose '.a:excmd], temp, 'b')
@@ -90,7 +90,7 @@ function! functions#Verbose(level, excmd)
 endfunction
 
 " Oldfiles {{{1
-function! functions#Oldfiles()
+function! functions#Oldfiles() abort
 	let temp = tempname()
 	call writefile(v:oldfiles, temp)
 	exe 'pedit' temp
@@ -104,26 +104,8 @@ function! functions#Oldfiles()
 	nnoremap <buffer> <cr> :let f=expand('<cfile>') \| pclose \| exe 'e 'f<cr>
 endfunction
 
-" iptables {{{1
-function! functions#IPtablesSort()
-	silent setlocal filetype=ipfilter
-	1
-	call search('^\[.\{-}:.\{-}\]')
-	mark a
-	$
-	call search('DROP', 'b')
-	mark b
-	'a;'bs/^\v(\[\d+:\d+]) (-A.*DROP *)$/\2\1/
-	'a;'b!sort -Vu
-	$
-	call search('DROP', 'b')
-	mark b
-	'a;'bs/^\v(-A.*DROP) (\[\d+:\d+\])$/\2 \1 /
-	delmarks a b
-endfunction
-
 " Toggle Comment {{{1
-function! functions#toggleComment()
+function! functions#toggleComment() abort
 	let dict = {
 			\ 'bash': '#',
 			\ 'c': '//',
@@ -144,27 +126,27 @@ function! functions#toggleComment()
 			\ 'vim': '"',
 			\ 'zsh': '#',
 			\ }
-	if has_key(dict, &ft)
-		let c = dict[&ft]
-		exe "s@^@".c." @ | s@^".c." ".c." @@e"
+	if has_key(dict, &filetype)
+		let c = dict[&filetype]
+		exe 's@^@'.c.' @ | s@^'.c.' '.c.' @@e'
 		call histdel('search', -1)
 		call histdel('search', -1)
 	else
-		echo &ft . ': no comment char.'
+		echo &filetype . ': no comment char.'
 	endif
 endfun
-function! functions#toggleCommentmap(type)
+function! functions#toggleCommentmap(type) abort
 	let [lnum1, lnum2] = [line("'["), line("']")]
 	exe lnum1 . ',' . lnum2. 'call functions#toggleComment()'
 endfunction
 
 " NextFileinDir {{{1
-function! functions#nextFileInDir(direction)
-	let sep = has("win32") ? '\' : '/'
+function! functions#nextFileInDir(direction) abort
+	let sep = has('win32') ? '\' : '/'
 	let fn = expand('%:p:h')
 	let files = extend(glob(fn.'/*', 0, 1), glob(fn.'/.[^.]*', 0, 1))
 	call map(files, "fnamemodify(v:val, ':p')")
-	call filter(files, "v:val[-1:] !=# sep")
+	call filter(files, 'v:val[-1:] !=# sep')
 
 	let tot = len(files)
 	if tot > 0
@@ -175,8 +157,8 @@ function! functions#nextFileInDir(direction)
 endfunction
 
 " Nroff formatting of HTML file {{{1
-function! functions#html2nroff(...)
-	let l:tw = a:0 > 0 ? a:1 : &tw
+function! functions#html2nroff(...) abort
+	let l:tw = a:0 > 0 ? a:1 : &textwidth
 	silent StripTrailing
 	keeppatterns silent! %s/<\(h\d\).\{-}>\(.\{-}\)<\/\1>/.tl '\2'''/
 	keeppatterns silent! %s/<\(title\).\{-}>\(.\{-}\)<\/\1>/.ce 1\r\2/
@@ -193,7 +175,7 @@ function! functions#html2nroff(...)
 endfunction
 
 " Count occurances {{{1
-function! functions#count(...) range
+function! functions#count(...) range abort
 	let w = winsaveview()
 	let noecho = 0
 
@@ -223,7 +205,7 @@ function! functions#count(...) range
 endfunction
 
 " Smart completion on tab {{{1
-function! functions#smart_TabComplete()
+function! functions#smart_TabComplete() abort
 	" Check for existing completion menu
 	if pumvisible()
 		return "\<c-n>"
@@ -238,7 +220,7 @@ function! functions#smart_TabComplete()
 
 	" Check for abbreviations
 	let cword = split(linestart)[-1]
-	if maparg(cword.'#', 'i', 1) != ''
+	if maparg(cword.'#', 'i', 1) !=# ''
 		return "#\<c-]>"
 	endif
 
@@ -253,7 +235,7 @@ function! functions#smart_TabComplete()
 endfunction
 
 " Show non-ascii characters {{{1
-function! functions#AsciiToggle()
+function! functions#AsciiToggle() abort
 	if exists('g:ascii_highlight')
 		call matchdelete(g:ascii_highlight)
 		unlet g:ascii_highlight
@@ -268,13 +250,13 @@ function! functions#AsciiToggle()
 endfunction
 
 " Buffer Navigation {{{1
-function! functions#buffernext(incr)
-	let current = bufnr("%")
-	let last = bufnr("$")
+function! functions#buffernext(incr) abort
+	let current = bufnr('%')
+	let last = bufnr('$')
 	let newnr = current + a:incr
 	while 1
 		if newnr != 0 && bufexists(newnr) && buflisted(newnr)
-			silent execute ":buffer ".newnr
+			silent execute ':buffer '.newnr
 			break
 		else
 			let newnr += a:incr

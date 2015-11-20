@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Tue 03 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: incremental.vim
 
@@ -30,7 +30,7 @@ let s:mods =
 			\ 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
 	\ ]
 
-function! s:replace_word(line, col, word, replace)
+function! s:replace_word(line, col, word, replace) abort
 	let idx = match(a:line, a:word, a:col-len(a:word), 1)
 	let after = a:line[idx + len(a:word):]
 	if idx == 0
@@ -41,7 +41,7 @@ function! s:replace_word(line, col, word, replace)
 	endif
 endfunction
 
-function! incremental#incremental(arg, direction)
+function! incremental#incremental(arg, direction) abort
 	let retval = ''
 	let w = tolower(a:arg)
 
@@ -56,21 +56,21 @@ function! incremental#incremental(arg, direction)
 			elseif a:arg =~# '^\u\l*$'
 				let retval = toupper(retval[0]) . retval[1:]
 			else
-				echoerr "Error encountered with argument:" a:arg
+				echoerr 'Error encountered with argument:' a:arg
 				return
 			endif
 			break
 		endif
 	endfor
 
-	if retval == ''
-		silent exe "normal! ".v:count1.(a:direction==1 ? "\<C-a>" : "\<C-x>")
+	if retval ==# ''
+		silent exe 'normal! '.v:count1.(a:direction==1 ? '\<C-a>' : '\<C-x>')
 	else
 		call s:replace_word(getline('.'), col('.'), a:arg, retval)
 	endif
 endfunction
 
-function! incremental#incChar(arg, direction)
+function! incremental#incChar(arg, direction) abort
 	let w = ''
 	for char in split(a:arg, '.\zs')
 		let w = w . nr2char(char2nr(char) + v:count1 * a:direction)

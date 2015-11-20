@@ -1,11 +1,11 @@
 " Created:  Wed 18 Feb 2015
-" Modified: Wed 18 Feb 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: preserve.vim
 
 " Allows an arbitrary command to be run on the file without changing the view
 " on the file, or the position of the cursor.
-function! preserve#Preserve(command)
+function! preserve#Preserve(command) abort
   " Preparation: save last search, and cursor position.
   let _s=@/
   let w = winsaveview()

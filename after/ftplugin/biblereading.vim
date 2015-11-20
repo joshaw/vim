@@ -1,5 +1,5 @@
 " Created:  Fri 06 Feb 2015
-" Modified: Tue 07 Jul 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: biblereading.vim
 
@@ -8,7 +8,7 @@ nmap <buffer> n :call BR_NextReading()<cr>
 
 function! BR_NextReading()
 	1
-	call search("^\[ ", 'W')
+	call search('^\[ ', 'W')
 endfunction
 
 " Check line and move to next
@@ -25,23 +25,23 @@ function! BR_GotoReading()
 	let [book; numbers] = parts
 
 	" For cases like 2Tim, make the regex match 2.*Tim
-	if book =~ '\v^\d.+'
-		let book = book[:0] . "*" . book[1:]
+	if book =~# '\v^\d.+'
+		let book = book[:0] . '*' . book[1:]
 	endif
-	let book = "*" . book . "*"
+	let book = '*' . book . '*'
 
 	" Turn multiple chapters into OR pattern, eg 4,6,8
-	let nums = join(numbers, "|")
-	let nums = substitute(nums, ",", "", "g")
+	let nums = join(numbers, '|')
+	let nums = substitute(nums, ',', '', 'g')
 
 	" Turn range of chapters into OR pattern, eg 23-25
 	let rangestr = matchstr(nums, '\v\d+-\d+')
-	if rangestr == ""
+	if rangestr ==# ''
 		let rangestr = nums
 	else
-		let range = split(rangestr, "-")
+		let range = split(rangestr, '-')
 		let range = range(range[0], range[1])
-		let rangestr = join(range, "|")
+		let rangestr = join(range, '|')
 	endif
 
 	" let bibfile = "~/Documents/Church/NIV.bible"
@@ -52,12 +52,12 @@ function! BR_GotoReading()
 	windo if &ft == "bible" | let winnum = bufwinnr("%") | endif
 	if winnum == -1
 		" Make new split as usual with the right width
-		exe winwidth(0)-40."vsplit " . bibfile
+		exe winwidth(0)-40.'vsplit ' . bibfile
 	else
 		" Jump to existing split
-		exe winnum . "wincmd w"
+		exe winnum . 'wincmd w'
 		if !expand('%') == bibfile
-			exe "edit " bibfile
+			exe 'edit ' bibfile
 		endif
 	endif
 
@@ -66,8 +66,8 @@ function! BR_GotoReading()
 
 	call clearmatches()
 	let numsearch = "\\v^\\[ *(".rangestr.")\\]"
-	call matchadd("User1", numsearch)
-	call search(numsearch, "cw")
+	call matchadd('User1', numsearch)
+	call search(numsearch, 'cw')
 
 endfunction
 

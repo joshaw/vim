@@ -1,5 +1,5 @@
 " Created:  Sat 18 Oct 2014
-" Modified: Thu 03 Sep 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: display.vim
 
@@ -31,23 +31,23 @@ let s:display_mode_def = {
 			\ 'Colorscheme': 'simplon',
 			\ }
 
-function! display#Reading_mode_toggle()
+function! display#Reading_mode_toggle() abort
 	call s:mode_toggle(s:reading_mode_def)
 endfunction
-function! display#Display_mode_toggle()
+function! display#Display_mode_toggle() abort
 	call s:mode_toggle(s:display_mode_def)
 endfunction
 
 " Reading mode turns off a number of distractions
-function! s:mode_toggle(mode_def)
+function! s:mode_toggle(mode_def) abort
 	let modename = a:mode_def['Name']
-	if exists("b:opts_save{modename}")
+	if exists('b:opts_save{modename}')
 		echo modename.' mode off'
 		for [optname, optval] in items(b:opts_save{modename})
-			if optname == 'Name'
+			if optname ==# 'Name'
 				continue
 
-			elseif optname == 'Colorscheme'
+			elseif optname ==# 'Colorscheme'
 				exe 'colorscheme '.optval
 
 			else
@@ -61,12 +61,12 @@ function! s:mode_toggle(mode_def)
 		let g:DMODE = a:mode_def['Name']
 		echo modename.' mode on'
 		for [optname, optval] in items(a:mode_def)
-			if optname == 'Name'
-				let b:opts_save{modename}["Name"] = optval
+			if optname ==# 'Name'
+				let b:opts_save{modename}['Name'] = optval
 				continue
 
-			elseif optname == 'Colorscheme'
-				let b:opts_save{modename}["Colorscheme"] = g:colors_name
+			elseif optname ==# 'Colorscheme'
+				let b:opts_save{modename}['Colorscheme'] = g:colors_name
 				exe 'colorscheme '.optval
 
 			else
@@ -78,9 +78,9 @@ function! s:mode_toggle(mode_def)
 endfunction
 
 " When starting, check to see if DMODE exists from a previous session.
-function! display#Display_mode_start()
-	if exists("g:DMODE")
-		if g:DMODE == 'Display'
+function! display#Display_mode_start() abort
+	if exists('g:DMODE')
+		if g:DMODE ==# 'Display'
 			unlet g:DMODE
 			call display#Display_mode_toggle()
 		else

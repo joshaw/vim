@@ -1,17 +1,17 @@
 " Created:  Mon 02 Nov 2015
-" Modified: Thu 12 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimp.vim
 
-function! s:check_gpg()
+function! s:check_gpg() abort
 	if !executable('gpg') == 1
-		echoerr "GPG executable has not been found"
+		echoerr 'GPG executable has not been found'
 		return 0
 	endif
 	return 1
 endfunction
 
-function! vimp#encrypt(file)
+function! vimp#encrypt(file) abort
 	if s:check_gpg()
 		let pass = inputsecret('Passphrase: ')
 		let rep_pass = inputsecret('Repeat passphrase: ')
@@ -22,14 +22,14 @@ function! vimp#encrypt(file)
 			set nomodified
 		else
 			redraw
-			echo "Passwords do not match. Cannot write file."
+			echo 'Passwords do not match. Cannot write file.'
 		endif
 	else
-		echoerr "GPG executable not found. Cannot encrypt"
+		echoerr 'GPG executable not found. Cannot encrypt'
 	endif
 endfunction
 
-function! vimp#decrypt(file)
+function! vimp#decrypt(file) abort
 	if s:check_gpg()
 		let pass = inputsecret('Passphrase: ')
 		let dec_cmd = 'gpg --quiet --yes --passphrase ' . pass . ' -d '

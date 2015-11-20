@@ -1,10 +1,10 @@
 " Created:  Wed 30 Jul 2014 03:31 PM
-" Modified: Mon 27 Apr 2015 08:57 AM
+" Modified: Fri 20 Nov 2015 08:57 AM
 
 " Highlight all instances of word under cursor, when idle.
 " Useful when studying strange source code.
 " Type z/ to toggle highlighting on/off.
-function! autohighlight#AutoHighlightToggle()
+function! autohighlight#AutoHighlightToggle() abort
   let @/ = ''
   if exists('#auto_highlight')
     au! auto_highlight

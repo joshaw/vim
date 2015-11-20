@@ -1,9 +1,9 @@
 " Created:  Fri 10 Jul 2015
-" Modified: Mon 13 Jul 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: multi-f.vim
 
-function! multif#multif(char, direction, till)
+function! multif#multif(char, direction, till) abort
 	let c = nr2char(a:char)
 	let g:fchar = a:char
 	let flags = 's'
@@ -21,5 +21,5 @@ function! multif#multif(char, direction, till)
 		endif
 	endif
 	call search('\V'.c, flags, stopl, 5)
-	silent! exe "normal!" fin
+	silent! exe 'normal!' fin
 endfunction

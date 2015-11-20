@@ -5,14 +5,12 @@
 " Credits: Based on the trace.vim syntax file by Stefan Liebl
 " Last change: 2014 April 17
 
-if version < 600
-   syntax clear
-elseif exists("b:current_syntax")
+if exists('b:current_syntax')
    finish
 endif
 
 " we define it here so that included files can test for it
-if !exists("main_syntax")
+if !exists('main_syntax')
    let main_syntax='practice'
 endif
 
@@ -154,40 +152,31 @@ syn region practiceString start=+"+ end=+"+ contains=ucSpecialChar,ucSpecialErro
 "syn match practiceNumber "#\?$\?\<\x\+\>"
 
 " Define the default highlighting.
-" For version 5.7 and earlier: only when not done already
-" For version 5.8 and later: only when an item doesn't have highlighting yet
-if version >= 508 || !exists("did_practice_syntax_inits")
-   if version < 508
-      let did_practice_syntax_inits = 1
-      command -nargs=+ HiLink hi link <args>
-   else
-      command -nargs=+ HiLink hi def link <args>
-   endif
+command -nargs=+ HiLink hi def link <args>
 
-   HiLink practiceConditional Conditional
-   HiLink practiceRepeat Repeat
-   HiLink practiceNumber Number
-   HiLink practiceComment Comment
-   HiLink practiceString String
-   HiLink practiceBranch Statement
-   HiLink practiceOperator String
-   HiLink practiceEOS String
-   HiLink practiceSeperator String
-   HiLink practiceLabel Label
-   HiLink practiceCommand Statement
-   HiLink practiceFunction Function
+HiLink practiceConditional Conditional
+HiLink practiceRepeat Repeat
+HiLink practiceNumber Number
+HiLink practiceComment Comment
+HiLink practiceString String
+HiLink practiceBranch Statement
+HiLink practiceOperator String
+HiLink practiceEOS String
+HiLink practiceSeperator String
+HiLink practiceLabel Label
+HiLink practiceCommand Statement
+HiLink practiceFunction Function
 
-   delcommand HiLink
-endif
+delcommand HiLink
 
-let b:current_syntax = "practice"
+let b:current_syntax = 'practice'
 
-if main_syntax == 'practice'
+if main_syntax ==# 'practice'
    unlet main_syntax
 endif
 
 " Only load this indent file when no other was loaded.
-if exists("b:did_indent")
+if exists('b:did_indent')
    finish
 endif
 let b:did_indent = 1
@@ -195,4 +184,4 @@ let b:did_indent = 1
 " TT is like indenting C
 setlocal cindent
 
-let b:undo_indent = "setl cin<"
+let b:undo_indent = 'setl cin<'

@@ -85,7 +85,7 @@ silent! set relativenumber " show the relative line number for each line
 set synmaxcol=200      " maximum column to look for syntax items
 set hlsearch           " highlight all matches for the last used search pattern
 set cursorline         " highlight the screen line of the cursor
-if exists("&colorcolumn")
+if exists('&colorcolumn')
 	set colorcolumn=+1 " columns to highlight
 else
 	:mat ErrorMsg '\%81v.\+'
@@ -114,7 +114,7 @@ else
 	set guifont=Droid\ Sans\ Mono\ 10,DeJaVu\ Sans\ Mono\ 10
 	set guifont=
 endif
-if has("gui_running")
+if has('gui_running')
 	" set guioptions+=P "allow visual selection to be accessed in system paste
 	set guioptions+=c "use console dialogues
 	set guioptions-=L "left hand toolbar isn't present
@@ -248,7 +248,7 @@ augroup END
 " FileTypes                      {{{1
 "
 
-if has("autocmd") && exists("+omnifunc")
+if has('autocmd') && exists('+omnifunc')
 	augroup Vimrc
 		au!
 		autocmd Filetype *
@@ -259,16 +259,16 @@ if has("autocmd") && exists("+omnifunc")
 endif
 
 if has('win32') || has('win32unix')
-	let dictfile="C:/cygwin/usr/share/dict/words"
+	let dictfile='C:/cygwin/usr/share/dict/words'
 else
-	let dictfile="/usr/share/dict/words"
+	let dictfile='/usr/share/dict/words'
 endif
 
 " Abbreviations                  {{{1
 "
 function! s:snipfunc(name, ...)
 	let repl = join(a:000, ' ')
-	exe "iabbrev <buffer> ".a:name."# ".repl
+	exe 'iabbrev <buffer> '.a:name.'# '.repl
 endfunction
 
 command! -nargs=+ Snip :call s:snipfunc(<f-args>)
@@ -285,7 +285,7 @@ function! CreatedHeader()
 	return "Created:  TIMESTAMP\<CR>"
 	    \ ."Modified: TIMESTAMP\<CR>"
 	    \ ."Author:   Josh Wainwright\<CR>"
-	    \ ."Filename: " . expand('%:t')
+	    \ .'Filename: ' . expand('%:t')
 endfunction
 
 iabbrev <expr> Cre: CreatedHeader()
@@ -313,9 +313,9 @@ command! TBini :e C:\ProgramData\LDRA\TESTBED.ini
 nnoremap <F11> :<C-U>e ~/Documents/Details/ldra-learnt.md<cr>
 command! FormatWikiEntry :Tabularize /\(\( \|^\)\zs|\)\|\^
 
-if !has('nvim') && has("gui_running") && !exists("g:vim_started")
+if !has('nvim') && has('gui_running') && !exists('g:vim_started')
 	set lines=40
-	exe "set columns=" . (82+&numberwidth)
+	exe 'set columns=' . (82+&numberwidth)
 	let g:vim_started = 1
 endif
 " }}}

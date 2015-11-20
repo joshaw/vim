@@ -1,16 +1,14 @@
-" Created:  TIMESTAMP
-" Modified: TIMESTAMP
+" Created:  Fri 20 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: instr.vim
 
-if version < 600
-   syntax clear
-elseif exists("b:current_syntax")
+if exists('b:current_syntax')
    finish
 endif
 
 " we define it here so that included files can test for it
-if !exists("main_syntax")
+if !exists('main_syntax')
    let main_syntax='instr'
 endif
 

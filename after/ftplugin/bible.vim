@@ -1,5 +1,5 @@
 " Created:  Fri 06 Feb 2015
-" Modified: Tue 01 Sep 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: bible.vim
 
@@ -10,13 +10,13 @@ function! BibleIndent()
 	let firstchar = line[:0]
 	let prevline = getline(v:lnum - 1)
 
-	if firstchar == "[" || firstchar == "#"
+	if firstchar ==# '[' || firstchar ==# '#'
 		return 0
 	else
 		let indprev = indent(v:lnum - 1)
-		if indprev == 10 || prevline =~ '\v^\[.{3}\]'
+		if indprev == 10 || prevline =~# '\v^\[.{3}\]'
 			return 10
-		elseif  line =~ '\v^\s*PSALM\s+\d+'
+		elseif  line =~# '\v^\s*PSALM\s+\d+'
 			return 5
 		else
 			return 8

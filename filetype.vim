@@ -1,9 +1,9 @@
 " Created:  Thu 07 Aug 2014
-" Modified: Mon 02 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: filetype.vim
 
-if exists("did_load_filetypes")
+if exists('did_load_filetypes')
 	finish
 endif
 

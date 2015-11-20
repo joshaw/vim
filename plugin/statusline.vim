@@ -1,9 +1,9 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Wed 04 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: statusline.vim
 
-set ls=2 " Always show status line
+set laststatus=2 " Always show status line
 
 function! s:statuslineconvert(n, orig)
 	let p = has('gui_running') ? 'gui' : 'cterm'
@@ -22,7 +22,7 @@ function! statusline#colour()
 endfunc
 
 function! statusline#filepath()
-	if expand('%') == ''
+	if expand('%') ==# ''
 		return ''
 	else
 		let l:home = escape($HOME, '\')
@@ -38,8 +38,8 @@ function! statusline#optflags()
 	let flags.=(&paste != 0 ? 'p' : '')
 	let flags.=(&spell != 0 ? 's' : '')
 " 	let flags.=(&wrap != 0 ? 'w' : '')
-	let flags.=(&bin != 0 ? 'b' : '')
-	let flags.=(&ro != 0 ? ' ro' : '')
+	let flags.=(&binary != 0 ? 'b' : '')
+	let flags.=(&readonly != 0 ? ' ro' : '')
 	if flags ==# ' ro'
 		let flags = 'ro'
 	endif
@@ -49,21 +49,21 @@ function! statusline#optflags()
 	return flags
 endfunction
 
-let s:stl= ""
-let s:stl.="%5*%<%{statusline#filepath()}"       " file path
-let s:stl.="%9*%t "                              " file name
-let s:stl.="%7*%([%M]%) "                        " modified flag
+let s:stl= ''
+let s:stl.='%5*%<%{statusline#filepath()}'       " file path
+let s:stl.='%9*%t '                              " file name
+let s:stl.='%7*%([%M]%) '                        " modified flag
 
-let s:stl.="%="                                  " right-align
+let s:stl.='%='                                  " right-align
 
-let s:stl.="%7*%{(exists('g:status_var') ? g:status_var : '')} "
-let s:stl.="%9*%{statusline#optflags()} "        " option flags
-let s:stl.="%8*%{&filetype} "                    " file type
-let s:stl.="%9*%{(&ff=='unix'?'u':&ff)}"         " file format
-let s:stl.="%(%{(&fenc=='utf-8'?'8':&fenc)} |%)" " file encoding
-let s:stl.="%3.c:"                               " column number
-let s:stl.="%7*%3.l%8*/%-2.L\ "                  " line number / total lines
-let s:stl.="%3.p%% "                             " percentage done
+let s:stl.='%7*%{(exists("g:status_var") ? g:status_var : "")} '
+let s:stl.='%9*%{statusline#optflags()} '        " option flags
+let s:stl.='%8*%{&filetype} '                    " file type
+let s:stl.='%9*%{(&ff=="unix"?"u":&ff)}'         " file format
+let s:stl.='%(%{(&fenc=="utf-8"?"8":&fenc)} |%)' " file encoding
+let s:stl.='%3.c:'                               " column number
+let s:stl.='%7*%3.l%8*/%-2.L\ '                  " line number / total lines
+let s:stl.='%3.p%% '                             " percentage done
 
 augroup statusline
 	" whenever the color scheme changes re-apply the colors
@@ -181,7 +181,7 @@ function! BufLineRender()
 		for group in groups
 			call remove(tabs_by_tail, group[0].tail)
 			for tab in group
-				if strlen(tab.head) && tab.head != '.'
+				if strlen(tab.head) && tab.head !=# '.'
 					let tab.tail = fnamemodify(tab.head, ':t') . '/' . tab.tail
 					let tab.head = fnamemodify(tab.head, ':h')
 				endif

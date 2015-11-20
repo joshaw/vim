@@ -1,13 +1,13 @@
 " Created:  Tue 13 Jan 2015
-" Modified: Tue 23 Jun 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: bible.vim
 
-if exists("b:current_syntax")
+if exists('b:current_syntax')
 	finish
 endif
 
-let b:current_syntax = "bible"
+let b:current_syntax = 'bible'
 
 syn sync clear
 syn sync fromstart
