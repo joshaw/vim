@@ -1,9 +1,10 @@
 " Created:  Tue 14 Jul 2015
-" Modified: Tue 14 Jul 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vim.vim
 
 nnoremap <F10> :w<bar>source %<cr>
+setlocal include=^\\s*source\\s\\+
 
 Snip function function! <esc>oendfunction<esc>kA
 Snip if if <esc>oendif<esc>kA
