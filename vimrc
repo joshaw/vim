@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Fri 06 Nov 2015
+" Modified: Fri 20 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -105,7 +105,7 @@ set t_vb=
 " 9 using the mouse {{{2
 set mouse=a   " list of flags for using the mouse
 set mousehide " hide the mouse pointer while typing
-set ttymouse=xterm2
+silent! set ttymouse=xterm2
 
 "10 GUI {{{2
 if has('win32') || has('win32unix')
@@ -128,7 +128,7 @@ endif
 "11 printing {{{2
 
 "12 messages and info {{{2
-set shortmess=aoOstT  " list of flags to make messages shorter
+set shortmess=aoOstTI " list of flags to make messages shorter
 silent! set shortmess+=c
 set showcmd           " show (partial) command keys in the status line
 set ruler             " show cursor position below each window
@@ -177,10 +177,10 @@ set timeoutlen=300 " time in msec for 'timeout'
 set modeline                        " enable using settings from modelines when reading a file
 set fileformats=unix,dos,mac        " list of file formats to look for when editing a file
 set endofline                       " last line in the file has an end-of-line
-set writebackup                     " write a backup file before overwriting a file
-set backup                          " write a backup file before overwriting a file
-" list of directories to put backup files in
-exe 'set backupdir='.g:vimhome.'tmp/backup//'
+"set writebackup                     " write a backup file before overwriting a file
+"set backup                          " write a backup file before overwriting a file
+"" list of directories to put backup files in
+"exe 'set backupdir='.g:vimhome.'tmp/backup//'
 "set autowrite                       " automatically write a file when leaving a modified buffer
 set autoread                        " automatically read a file when it was modified outside of Vim
 
