@@ -1,10 +1,11 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Fri 20 Nov 2015
+" Modified: Tue 24 Nov 2015
 " Author:   Josh Wainwright
 " Filename: markdown.vim
 
 exe 'setlocal dict+='.dictfile
 setlocal keywordprg=define
+nnoremap <buffer> K :cgetexpr system('define ' . expand('<cword>'))<cr>
 
 " Automatic formating of paragraphs whenever text is inserted
 setlocal formatoptions=tcqwan1
