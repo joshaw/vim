@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Fri 20 Nov 2015
+" Modified: Thu 26 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -115,14 +115,7 @@ else
 	set guifont=
 endif
 if has('gui_running')
-	" set guioptions+=P "allow visual selection to be accessed in system paste
-	set guioptions+=c "use console dialogues
-	set guioptions-=L "left hand toolbar isn't present
-	set guioptions-=T "remove tool bar
-	set guioptions-=m "remove menu bar
-	set guioptions-=l "remove right scroll
-	set guioptions-=r "remove left scroll
-	set guioptions-=b "remove bottom scroll
+	set guioptions=c " use console dialogues
 endif
 
 "11 printing {{{2
