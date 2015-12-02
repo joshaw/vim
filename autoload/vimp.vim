@@ -1,14 +1,14 @@
 " Created:  Mon 02 Nov 2015
-" Modified: Fri 20 Nov 2015
+" Modified: Tue 24 Nov 2015
 " Author:   Josh Wainwright
 " Filename: vimp.vim
 
 function! s:check_gpg() abort
-	if !executable('gpg') == 1
-		echoerr 'GPG executable has not been found'
-		return 0
+	if executable('gpg')
+		return 1
 	endif
-	return 1
+	echoerr 'GPG executable has not been found'
+	return 0
 endfunction
 
 function! vimp#encrypt(file) abort
