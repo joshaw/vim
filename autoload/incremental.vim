@@ -64,7 +64,7 @@ function! incremental#incremental(arg, direction) abort
 	endfor
 
 	if retval ==# ''
-		silent exe 'normal! '.v:count1.(a:direction==1 ? '\<C-a>' : '\<C-x>')
+		silent exe 'normal! '.v:count1.(a:direction==1 ? "\<C-a>" : "\<C-x>")
 	else
 		call s:replace_word(getline('.'), col('.'), a:arg, retval)
 	endif
