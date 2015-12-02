@@ -136,7 +136,7 @@ endfunction
 " Visual increment numbers
 if has("patch823")
 	xnoremap <c-a> <c-a>gv
-	xnoremap <c-x> <c-a>gv
+	xnoremap <c-x> <c-x>gv
 else
 	xnoremap <c-a> :call functions#BlockIncr(1)<cr>gv
 	xnoremap <c-x> :call functions#BlockIncr(-1)<cr>gv
