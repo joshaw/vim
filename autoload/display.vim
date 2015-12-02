@@ -1,5 +1,5 @@
 " Created:  Sat 18 Oct 2014
-" Modified: Fri 20 Nov 2015
+" Modified: Thu 26 Nov 2015
 " Author:   Josh Wainwright
 " Filename: display.vim
 
@@ -23,7 +23,7 @@ let s:reading_mode_def = {
 
 let s:display_mode_def = {
 			\ 'Name': 'Display',
-			\ 'guioptions': &guioptions.'br',
+			\ 'guioptions': 'rbh',
 			\ 'colorcolumn': 0,
 			\ 'list': 0,
 			\ 'relativenumber': 0,
@@ -51,7 +51,7 @@ function! s:mode_toggle(mode_def) abort
 				exe 'colorscheme '.optval
 
 			else
-				exe 'let &l:'.optname.'="'.optval.'"'
+				exe 'let &l:'.optname.'="'.escape(optval, '"').'"'
 			endif
 		endfor
 		unlet b:opts_save{modename}
