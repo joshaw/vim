@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Fri 20 Nov 2015
+" Modified: Tue 24 Nov 2015
 " Author:   Josh Wainwright
 " Filename: statusline.vim
 
@@ -62,7 +62,7 @@ let s:stl.='%8*%{&filetype} '                    " file type
 let s:stl.='%9*%{(&ff=="unix"?"u":&ff)}'         " file format
 let s:stl.='%(%{(&fenc=="utf-8"?"8":&fenc)} |%)' " file encoding
 let s:stl.='%3.c:'                               " column number
-let s:stl.='%7*%3.l%8*/%-2.L\ '                  " line number / total lines
+let s:stl.='%7*%3.l%8*/%-2.L '                   " line number / total lines
 let s:stl.='%3.p%% '                             " percentage done
 
 augroup statusline
@@ -73,73 +73,10 @@ augroup statusline
 				\ call setwinvar(0, "&statusline", "")
 augroup END
 
-" if !has('gui_running')
-" 	set showtabline=2
-" 	set tabline=%!Bufferline()
-" 	function! Bufferline()
-" 		let tl = []
-" 		let totlen = 0
-" 		let g:bufs = []
-" 		for i in range(1, bufnr('$'))
-" 			if bufnr('%') == i
-" 				let g:bufs = add(g:bufs, {'sel': 1, 'lab': Bufferlabel(i)})
-" 			elseif buflisted(i) > 0
-" 				let g:bufs = add(g:bufs, {'sel': 0, 'lab': Bufferlabel(i)})
-" 			else
-" 				continue
-" 			endif
-" 		endfor
-"
-" 		" Remove elements if too long to fit on screen
-" 		let totlen = 9999
-" 		while totlen > &columns && len(g:bufs) > 1
-" 			let totlen = 0
-" 			for buf in g:bufs
-" 				let totlen += len(buf['lab'])
-" 			endfor
-" 			if totlen < &columns
-" 				break
-" 			endif
-"
-" 			" Choose which end to remove a buffer label from
-" 			if g:bufs[-1]['sel'] == 1
-" 				let end = 0
-" 			else
-" 				let end = -1
-" 			endif
-"
-" 			let removed = g:bufs[end]['lab']
-" 			call remove(g:bufs, end)
-" 			let totlen -= strlen(removed)
-" 		endwhile
-"
-" 		" Build tabline with correct highlighting
-" 		let tabline = ''
-" 		for buf in g:bufs
-" 			let tabline .= (buf['sel'] == 1) ? '%#TabLineSel#' : '%#TabLine#'
-" 			let tabline .= buf['lab']
-" 		endfor
-"
-" 		" after the last tab fill with TabLineFill
-" 		let tabline .= '%#TabLineFill#'
-" 		return tabline
-" 	endfunction
-"
-" 	function! Bufferlabel(n)
-" 		let name = fnamemodify(bufname(a:n), ':p:~:.')
-" 		let mod = getbufvar(a:n, '&modified') == 1 ? '+' : ''
-" 		return ' ' . a:n . mod . ' ' . name . ' '
-" 	endfunction
-" endif
-
-function! s:user_buffers()
-	" help buffers are always unlisted, but quickfix buffers are not
-	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
-endfunction
-
 let s:prev_currentbuf = winbufnr(0)
 function! BufLineRender()
-	let bufnums = s:user_buffers()
+	" help buffers are always unlisted, but quickfix buffers are not
+	let bufnums = filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 
 	" pick up data on all the buffers
 	let tabs = []
