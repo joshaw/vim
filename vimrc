@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Thu 26 Nov 2015
+" Modified: Thu 03 Dec 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -68,7 +68,7 @@ set scrolloff=5      " minimal number of columns to keep left and right of the c
 set wrap             " margin from the right in which to break a line
 set linebreak        " wrap long lines at a character in 'breakat'
 set display=lastline,uhex " show lastline even if it doesn't fit
-set fillchars=vert:│ " characters to use for the status line, folds and filler lines
+set fillchars=vert:  " characters to use for the status line, folds and filler lines
 set cmdheight=1      " number of lines used for the command-line
 set lazyredraw       " don't redraw while executing macros
 set list             " show <Tab> as ^I and end-of-line as $
