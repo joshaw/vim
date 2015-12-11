@@ -1,20 +1,29 @@
 " Created:  Mon 13 Jul 2015
-" Modified: Tue 14 Jul 2015
+" Modified: Thu 10 Dec 2015
 " Author:   Josh Wainwright
 " Filename: surroundings.vim
 
+" abc def ghi
+
 function! surroundings#surroundings(visual)
-	let c = nr2char(getchar())
 	if a:visual > 0
+		echon 'Char: '
+		let c = nr2char(getchar())
 		let start = c
 	else
+		echon 'In/Out: '
+		let c = nr2char(getchar())
 		if c =~# '^[ia]$'
 			let obj = c
+			redraw
+			echon 'Char: '
 			let mov = nr2char(getchar())
 		else
 			let obj = ''
 			let mov = c
 		endif
+		redraw
+		echon 'Start: '
 		let start = nr2char(getchar())
 	endif
 
