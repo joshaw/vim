@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Fri 20 Nov 2015
+" Modified: Thu 10 Dec 2015
 " Author:   Josh Wainwright
 " Filename: dmenuOpen.vim
 
@@ -22,12 +22,14 @@ function! dmenuOpen#DmenuOpen(cmd, ...) abort
 		let command = 'find *'
 	endif
 	
-	let fname = systemlist(command . ' | dmenu -b -i -l 20 -p ' . a:cmd)[0]
-	let fname = fnameescape(fname)
-	if empty(fname) || !filereadable(expand(fname))
-		echo 'No file selected'
+	let fnames = systemlist(command . ' | dmenu -b -i -l 20 -p ' . a:cmd)
+	if empty(fnames)
 		return
 	endif
-	execute a:cmd . ' ' . fname
+	let fname = fnameescape(expand(fnames[0][0:-2]))
+	if !filereadable(fname)
+		return
+	endif
+	exe a:cmd . ' ' . fname
 	call histadd('cmd', a:cmd . ' ' . fname)
 endfunction
