@@ -111,6 +111,10 @@ nnoremap [f :call functions#nextFileInDir(-1)<cr>
 nnoremap ]q :cnext<cr>
 nnoremap [q :cprevious<cr>
 
+" Surroundings
+nnoremap <silent> ys :call surroundings#surroundings(0)<cr>
+xnoremap <silent> S :call surroundings#surroundings(visualmode() ==# 'v'? 1: 2)<cr>
+
 " Control Keys {{{1
 
 nnoremap <silent> <C-Up>   :move-2<CR>

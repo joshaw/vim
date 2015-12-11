@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Fri 20 Nov 2015
+" Modified: Thu 10 Dec 2015
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -66,11 +66,6 @@ command! IPtablesSort :call functions#IPtablesSort()
 "
 " FirstTimeRun
 command! FirstTimeRun :call functions#FirstTimeRun()
-
-"
-" Surroundings
-nnoremap <silent> ys :call surroundings#surroundings(0)<cr>
-xnoremap <silent> S :call surroundings#surroundings(visualmode() ==# 'v'? 1: 2)<cr>
 
 "
 " Nroff formatting of html files
