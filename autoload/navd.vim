@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Wed 09 Dec 2015
+" Modified: Mon 14 Dec 2015
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -100,6 +100,7 @@ endfunction
 
 function! s:toggle_hidden(curline) abort
 	let g:navd['hidden'] = !g:navd['hidden']
+	echo (g:navd['hidden'] == 1 ? 'S' : 'Not s') . 'howing hidden files'
 	call s:display_paths(g:navd['cur'])
 	call search(a:curline, 'cW')
 endfunction
@@ -162,7 +163,7 @@ function! s:setup_navd_buf(fs) abort
 		nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>')<cr>
 		nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>')<cr>
 		nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'])<cr>
-		nnoremap <silent><buffer> gs            :call <SID>toggle_hidden(getline('.'))<cr>
+		nnoremap <silent><buffer> s             :call <SID>toggle_hidden(getline('.'))<cr>
 		nnoremap <silent><buffer> gh            :call <SID>display_paths($HOME)<cr>
 		nnoremap <silent><buffer> +             :call <SID>new_obj()<cr>
 	else
