@@ -1,5 +1,5 @@
 " Created:  Mon 02 Nov 2015
-" Modified: Tue 24 Nov 2015
+" Modified: Mon 14 Dec 2015
 " Author:   Josh Wainwright
 " Filename: vimp.vim
 
@@ -13,7 +13,12 @@ endfunction
 
 function! vimp#encrypt(file) abort
 	if s:check_gpg()
+		let pass = ''
 		let pass = inputsecret('Passphrase: ')
+		if empty(pass)
+			echo 'cannot be empty'
+			return
+		endwhile
 		let rep_pass = inputsecret('Repeat passphrase: ')
 		if pass ==# rep_pass
 			let enc_cmd = 'gpg --quiet --yes --passphrase ' . pass .
