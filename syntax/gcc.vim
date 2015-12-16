@@ -1,5 +1,5 @@
 " Created:  Mon 22 Jun 2015
-" Modified: Wed 25 Nov 2015
+" Modified: Mon 07 Dec 2015
 " Author:   Josh Wainwright
 " Filename: gcc.vim
 " syntax coloring for make output
@@ -46,8 +46,10 @@ syn region cMLogMess start='^*\{3,}\s\?$' end='^*\{3,}\s\?$' contains=cMLogSourc
 syn match cMLogMess "^[a-z0-9 -]* started\s\?$"
 syn match cMLogMess "^[a-z0-9 -]* finished\s\?$"
 
-syn match cMLogEnvVar "^[a-z_ ]\+\s*=\s*.*"
+syn match cMLogEnvVar "^[a-z_][a-z_]*\s*=\s*.*"
 syn match cMLogEnvVar "%[A-Z_]\+%"
+
+syn match cMLogLine "^\s*[=*-]\+\s*$"
 
 hi link cMLogConfig  Title
 hi link cMLogCommand Function
@@ -59,3 +61,4 @@ hi link cMLogErr     ErrorMsg
 hi link cMLogPass    Function
 hi link cMLogMess    Comment
 hi link cMLogEnvVar  Float
+hi link cMLogLine    Identifier
