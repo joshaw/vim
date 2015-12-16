@@ -1,11 +1,11 @@
 " Created:  Fri 04 Dec 2015
-" Modified: Fri 11 Dec 2015
+" Modified: Mon 14 Dec 2015
 " Author:   Josh Wainwright
 " Filename: seetags.vim
 
 let s:navd_fname = '__Navd__'
 let s:sortstrings = ['id', 'name', 'kind', 'length']
-let g:seetags = {'name': s:navd_fname, 'sort': 0, 'targetline': 0, 'fullkind': 1}
+let g:seetags = {'name': s:navd_fname, 'sort': 0, 'targetline': 0, 'fullkind': 0}
 
 function! s:q_handle() abort
 	let l:alt = expand('#')
@@ -129,6 +129,7 @@ function! s:display_tags()
 
 		nnoremap <silent><buffer> q :call <SID>q_handle()<cr>
 		nnoremap <silent><buffer> <cr> :call <SID>enter_handle()<cr>
+		nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter_handle()<cr>
 		nnoremap <silent><buffer> s :call <SID>toggle_sort(getline('.'))<cr>
 		nnoremap <silent><buffer> f :call <SID>f_handle()<cr>
 		nnoremap <silent><buffer> - q<cr>
