@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Thu 03 Dec 2015
+" Modified: Wed 16 Dec 2015
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -220,7 +220,9 @@ set isfname-==
 
 "27 various {{{2
 set virtualedit+=block " when to use virtual editing: "block", "insert" and/or "all"
-" set viminfo=!,'2000,<50,s10,h   " list that specifies what to write in the viminfo file
+if !has('nvim')
+	set viminfo=!,'2000,<50,s10,h   " list that specifies what to write in the viminfo file
+endif
 " if has('gui_running')
 " 	set viminfo+=n$HOME/.win.viminfo
 " else
