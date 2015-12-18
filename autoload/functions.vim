@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Fri 20 Nov 2015
+" Modified: Thu 17 Dec 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -164,8 +164,8 @@ function! functions#html2nroff(...) abort
 	keeppatterns silent! %s/<\(title\).\{-}>\(.\{-}\)<\/\1>/.ce 1\r\2/
 	keeppatterns silent! %s/<.\{-}>//ge
 	keeppatterns silent! %s/^\s\+//e
-	keeppatterns silent! %s/\(“\|”\)/"/ge
-	keeppatterns silent! %s/’/'/ge
+	keeppatterns silent! %s/“\|”/"/ge
+	keeppatterns silent! %s/‘\|’/'/ge
 	keeppatterns silent! %s/—/--/ge
 	keeppatterns silent! %s/\s?…\s?/.../ge
 	call append(0, '.ll '.l:tw)
@@ -204,7 +204,8 @@ function! functions#count(...) range abort
 	return g:status_var
 endfunction
 
-" Smart completion on tab {{{1
+" smart_TabCompete {{{1
+" Smart completion on tab
 function! functions#smart_TabComplete() abort
 	" Check for existing completion menu
 	if pumvisible()
@@ -231,6 +232,7 @@ function! functions#smart_TabComplete() abort
 	endif
 
 	" Otherwise, default completion
+" 	return "\<c-x>\<c-u>"
 	return "\<c-n>"
 endfunction
 

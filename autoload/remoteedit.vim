@@ -1,5 +1,5 @@
 " Created:  Fri 06 Nov 2015
-" Modified: Tue 24 Nov 2015
+" Modified: Mon 14 Dec 2015
 " Author:   Josh Wainwright
 " Filename: remoteedit.vim
 
@@ -37,7 +37,7 @@ function! remoteedit#scpwrite(path, opt) abort
 
 	call system(s:scpcmd . ' ' . tmpfile . ' ' . filepath)
 	if v:shell_error
-		echo 'Error ' . v:shell_error . ': could not save file to remote location'
+		echo 'Error ' . v:shell_error . ': could not write to remote location'
 	else
 		setlocal nomodified
 	endif

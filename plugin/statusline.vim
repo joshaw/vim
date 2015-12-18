@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Tue 24 Nov 2015
+" Modified: Tue 08 Dec 2015
 " Author:   Josh Wainwright
 " Filename: statusline.vim
 
@@ -91,6 +91,7 @@ function! BufLineRender()
 			let bufpath = substitute(fnamemodify(bufpath, ':p:~:.'), '^$', '.', '')
 			let tab.head = fnamemodify(bufpath, ':h')
 			let tab.tail = fnamemodify(bufpath, ':t')
+			let tab.tail = len(tab.tail) == 0 ? './' : tab.tail
 			let pre = bufnum . (getbufvar(bufnum, '&mod') ? '+ ' : ' ')
 
 			let tab.fmt = ' ' . pre . '%s' . ' '
