@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Mon 14 Dec 2015
+" Modified: Tue 05 Jan 2016
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -105,7 +105,7 @@ function! s:toggle_hidden(curline) abort
 	call search(a:curline, 'cW')
 endfunction
 
-function! s:enter_handle() abort
+function! s:enter() abort
 	let lnum = line('.')
 	if lnum == 1
 		return
@@ -122,7 +122,7 @@ function! s:enter_handle() abort
 	endif
 endfunction
 
-function! s:q_handle() abort
+function! s:quit_navd() abort
 	let l:alt = expand('#')
 	let g:status_var = ''
 	if l:alt ==# s:navd_fname
@@ -131,6 +131,18 @@ function! s:q_handle() abort
 		exe 'edit' l:alt
 	endif
 	let g:navd['paths'] = []
+endfunction
+
+function! s:preview() abort
+	let lnum = line('.')
+	if lnum == 1
+		return
+	endif
+	let path = g:navd['paths'][lnum-2]['path']
+	if filereadable(path)
+		silent exe "!less " . shellescape(path)
+		redraw!
+	endif
 endfunction
 
 function! s:current_dir() abort
@@ -162,6 +174,7 @@ function! s:setup_navd_buf(fs) abort
 	if a:fs
 		nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>')<cr>
 		nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>')<cr>
+		nnoremap <silent><buffer> <space>       :call <SID>preview()<cr>
 		nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'])<cr>
 		nnoremap <silent><buffer> s             :call <SID>toggle_hidden(getline('.'))<cr>
 		nnoremap <silent><buffer> gh            :call <SID>display_paths($HOME)<cr>
@@ -169,9 +182,9 @@ function! s:setup_navd_buf(fs) abort
 	else
 		nmapclear <buffer>
 	endif
-	nnoremap <silent><buffer> <cr>          :call <SID>enter_handle()<cr>
-	nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter_handle()<cr>
-	nnoremap <silent><buffer> q             :call <SID>q_handle()<cr>
+	nnoremap <silent><buffer> <cr>          :call <SID>enter()<cr>
+	nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter()<cr>
+	nnoremap <silent><buffer> q             :call <SID>quit_navd()<cr>
 
 	" Syntax highlighting of folders
 	syntax clear
@@ -232,7 +245,7 @@ function! s:display_paths(path) abort
 	else
 		if s:isdir(a:path)
 			" Called from outside the plugin (:Navd directory)
-			" Or from within the plugin (enter_handle())
+			" Or from within the plugin (enter())
 			let target_path = fnamemodify(a:path, ':p')
 			let target_fname = g:navd['prev']
 
