@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Wed 16 Dec 2015
+" Modified: Wed 06 Jan 2016
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -94,7 +94,7 @@ endif
 " 6 multiple windows {{{2
 set laststatus=2     " 0, 1 or 2; when to use a status line for the last window
 set hidden           " don't unload a buffer when no longer shown in a window
-set switchbuf=usetab " "useopen" and/or "split"; which window to use when jumping
+set switchbuf=usetab " useopen and/or split; which window to use when jumping
 set splitbelow       " a new window is put below the current one
 set splitright       " a new window is put right of the current one
 
@@ -143,7 +143,7 @@ set completeopt=menu                 " whether to use a popup menu for Insert mo
 set infercase                        " adjust case of a keyword completion match
 set showmatch                        " when inserting a bracket, briefly jump to its match
 set matchtime=5                      " tenth of a second to show a match for 'showmatch'
-set nrformats=hex                    " number formats recognized for CTRL-A and CTRL-X commands
+set nrformats=hex,alpha              " number formats recognized for CTRL-A and CTRL-X commands
 
 "15 tabs and indenting {{{2
 set tabstop=4      " number of spaces a <Tab> in the text stands for
@@ -203,8 +203,6 @@ if has('win32')
 	let &shell='C:/cygwin/bin/bash.exe --rcfile c:/cygwin/home/' . $USERNAME . '/.bashrc ' . '-i '
 	set shellcmdflag=-c
 	set shellxquote=\"
-else
-	set shell=sh
 endif
 set keywordprg="" " program used for the "K" command
 
@@ -223,11 +221,6 @@ set virtualedit+=block " when to use virtual editing: "block", "insert" and/or "
 if !has('nvim')
 	set viminfo=!,'2000,<50,s10,h   " list that specifies what to write in the viminfo file
 endif
-" if has('gui_running')
-" 	set viminfo+=n$HOME/.win.viminfo
-" else
-" 	set viminfo+=n$HOME/.viminfo
-" endif
 
 " go to last cursor position when opening files
 augroup vimrc_line_return
@@ -253,10 +246,10 @@ if has('autocmd') && exists('+omnifunc')
 	augroup END
 endif
 
-if has('win32') || has('win32unix')
-	let dictfile='C:/cygwin/usr/share/dict/words'
+if has('win32')
+	let g:dictfile='C:/cygwin/usr/share/dict/words'
 else
-	let dictfile='/usr/share/dict/words'
+	let g:dictfile='/usr/share/dict/words'
 endif
 
 " Abbreviations                  {{{1
