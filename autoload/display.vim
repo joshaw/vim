@@ -1,5 +1,5 @@
 " Created:  Sat 18 Oct 2014
-" Modified: Thu 26 Nov 2015
+" Modified: Fri 18 Dec 2015
 " Author:   Josh Wainwright
 " Filename: display.vim
 
@@ -9,21 +9,22 @@
 
 let s:reading_mode_def = {
 			\ 'Name': 'Reading',
-			\ 'number': 0,
+			\ 'numberwidth': '(winwidth(0) - &textwidth)/2',
 			\ 'relativenumber': 0,
 			\ 'cursorline': 0,
 			\ 'laststatus': 0,
 			\ 'ruler': 1,
-			\ 'rulerformat': '%6(%=%M%P%)',
+			\ 'rulerformat': '"%6(%=%M%P%)"',
 			\ 'showtabline': 0,
 			\ 'list': 0,
 			\ 'colorcolumn': 0,
 			\ 'scrolloff': 999,
+			\ 'Colorscheme': 'reading',
 			\ }
 
 let s:display_mode_def = {
 			\ 'Name': 'Display',
-			\ 'guioptions': 'rbh',
+			\ 'guioptions': '"rbh"',
 			\ 'colorcolumn': 0,
 			\ 'list': 0,
 			\ 'relativenumber': 0,
@@ -71,7 +72,7 @@ function! s:mode_toggle(mode_def) abort
 
 			else
 				exe 'let b:opts_save{modename}["'.optname.'"] = &'.optname
-				exe 'let &l:'.optname.'="'.optval.'"'
+				exe 'let &l:'.optname.'='.optval.''
 			endif
 		endfor
 	endif
