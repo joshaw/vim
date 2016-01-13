@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Tue 05 Jan 2016
+" Modified: Tue 12 Jan 2016
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -161,14 +161,15 @@ endfunction
 
 " Setup the navd buffer, write the paths to it and make it unwritable.
 function! s:setup_navd_buf(fs) abort
-	if bufname('%') !=# s:navd_fname
+" 	if bufname('%') !=# s:navd_fname
+	if getbufvar('.', '&buftype') != 'nofile'
 		exe 'silent! edit ' . s:navd_fname
-		setlocal filetype=navd
-
-		setlocal concealcursor=nc conceallevel=3 bufhidden=unload undolevels=-1
-		setlocal nobuflisted buftype=nowrite noswapfile nowrap nolist
-		setlocal cursorline colorcolumn="" foldcolumn=0 nofoldenable
 	endif
+
+	setlocal filetype=navd
+	setlocal concealcursor=nc conceallevel=3 undolevels=-1
+	setlocal nobuflisted buftype=nofile noswapfile nowrap nolist
+	setlocal cursorline colorcolumn="" foldcolumn=0 nofoldenable
 
 	" Keybindings in navd buffer
 	if a:fs
