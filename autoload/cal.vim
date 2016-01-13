@@ -1,0 +1,243 @@
+" Created:  Mon 11 Jan 2016
+" Modified: Wed 13 Jan 2016
+" Author:   Josh Wainwright
+" Filename: cal.vim
+
+let s:TRANS_YEAR = 1752
+let s:TRANS_MONTH = 8 " September
+let s:TRANS_DAY = 2
+
+" Calculate Calendar functions {{{
+function! s:isleap(year, cal)
+	if a:cal == "GREGORIAN"
+		if a:year % 400 == 0
+			return 1
+		elseif a:year % 100 == 0
+			return 0
+		endif
+		return (a:year % 4 == 0 )
+	else " a:cal == "JULIAN"
+		return (a:year % 4 == 0)
+	endif
+endfunction
+
+function! s:monthlength(year, month, cal)
+	let mdays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+	return (a:month == 1 && s:isleap(a:year, a:cal) ? 29 : mdays[a:month])
+endfunction
+
+function! s:dayofweek(year, month, dom, cal)
+	let a = (13 - a:month) / 12
+	let y = a:year - a
+	let m = a:month + 12 * a - 1
+
+	if a:cal == "GREGORIAN"
+		return (a:dom + y + y/4 - y/100 + y/400 + (31*m)/12) % 7
+	else " a:cal == "JULIAN"
+		return (5 + a:dom + y + y/4 + (31*m)/12) % 7
+	endif
+endfunction
+
+function! s:gettoday()
+	return [str2nr(strftime("%Y")), str2nr(strftime("%m")), str2nr(strftime("%d"))]
+endfunction
+
+function! s:getgrid(year, month, line)
+	let ret = ""
+	let cal = (a:year < s:TRANS_YEAR || (a:year == s:TRANS_YEAR && a:month <= s:TRANS_MONTH)) ? "JULIAN" : "GREGORIAN"
+	let trans = (a:year == s:TRANS_YEAR && a:month == s:TRANS_MONTH)
+	let offset = s:dayofweek(a:year, a:month, 1, cal) - 1
+	if offset < 0
+		let offset += 7
+	endif
+	
+	let d = 0
+	if a:line == 1
+		while ( d < offset )
+			let ret .= printf("%s", "   ")
+			let d += 1
+		endwhile
+		let dom = 1
+	else
+		let dom = 8 - offset + (a:line - 2) * 7
+		if ( trans )
+			let dom += 11
+		endif
+	endif
+
+	let today = s:gettoday()
+	let thismonth = (a:year == today[0] && a:month+1 == today[1])
+	while ( d < 7 && dom <= s:monthlength(a:year, a:month, cal) )
+		if ( thismonth && dom == today[2] )
+			let ret .= printf("%2d|", dom)
+		else
+			let ret .= printf("%2d ", dom)
+		endif
+		if ( trans && dom == s:TRANS_DAY )
+			let dom += 11
+		endif
+		let d += 1
+		let dom += 1
+	endwhile
+
+	while ( d < 7 )
+		let ret .= printf("%s", "   ")
+		let d += 1
+	endwhile
+
+	return ret
+endfunction
+
+function! s:getcal(year, month, showyear)
+	let cal = []
+	let smon = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+				\ 'August', 'September', 'October', 'November', 'December' ]
+	let days = [ 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+
+	let month = a:month % 12
+	let mon_name = smon[month] . (a:showyear ? ' ' . a:year : '')
+	let pad = 9 - ( len(mon_name) / 2 )
+	let mon_line = printf("%" . pad . "s%s", " ", mon_name)
+	call add(cal, printf("%-21s", mon_line))
+
+	let dow = 1
+	let line = ''
+	while ( dow < (1 + 7) )
+		let line .= printf("%s ", days[dow % 7])
+		let dow += 1
+	endwhile
+	call add(cal, line)
+
+	let line = 1
+	while ( line <= 6 )
+		call add(cal, s:getgrid(a:year, month, line))
+		let line += 1
+	endwhile
+	return cal
+endfunction
+
+" }}}
+
+" Draw Calendar functions {{{
+function! s:highlightline(line)
+	if stridx(a:line, '|') > 0
+		let split = split(a:line, '|', 1)
+		echo ""
+		echon split[0][0:-3]
+		echohl StatusLine
+		echon split[0][-2:]
+		echohl None
+		echon ' ' . split[1]
+		echo ""
+	else
+		echo a:line
+	endif
+endfunction
+
+function! s:drawcal(year, month)
+	for i in s:getcal(a:year, a:month, 1)
+		call s:highlightline(i)
+	endfor
+endfunction
+
+function! s:drawyear(draw, year, cols)
+	let cals = []
+	let calbuf = []
+	for i in range(0, 11)
+		call add(cals, s:getcal(a:year, i, 0))
+	endfor
+
+	let pad = (20 * a:cols + 2 * (a:cols)) / 2 + 2
+	let yearline = printf("%".pad."s", a:year)
+	if a:draw
+		echo printf("%s\n\n", yearline)
+	else
+		call extend(calbuf, [yearline, ''])
+	endif
+
+	for n in range(0, 11, a:cols)
+		for i in range(0, 7)
+			let line = ''
+			for j in range(n, n+a:cols-1)
+				try
+					let line .= cals[j][i] . '  '
+				catch /^Vim\%((\a\+)\)\=:E684/
+				endtry
+			endfor
+			if a:draw
+				call s:highlightline(line)
+			else
+				call add(calbuf, line)
+			endif
+		endfor
+	endfor
+	return calbuf
+endfunction
+
+
+" }}}
+
+" API {{{
+function! cal#cal(wholeyear, ...)
+	let len = len(a:000)
+	if empty(a:000)
+		if a:wholeyear
+			call s:drawyear(1, strftime("%Y"), 3)
+		else
+			call s:drawcal(strftime("%Y"), strftime("%m") - 1)
+		endif
+	elseif len == 1
+		if a:wholeyear
+			call s:drawyear(1, a:1, 3)
+		else
+			call s:drawcal(strftime("%Y"), a:1 - 1)
+		endif
+	elseif len == 2
+		if a:wholeyear
+			call s:drawyear(1, a:1, a:2)
+		else
+			call s:drawcal(a:1, a:2 - 1)
+		endif
+	elseif len == 3
+		let i = 0
+		let year = a:1
+		let mon = a:2
+		while i < a:3
+			call s:drawcal(year, mon - 1)
+			let mon += 1
+			if mon > 12
+				let mon = 1
+				let year += 1
+			endif
+			let i += 1
+		endwhile
+	else
+		echo "Wrong number of arguments"
+	endif
+endfunction
+
+function! cal#calbuf(...)
+	call ScratchBuf()
+	setlocal buftype=nofile conceallevel=1 filetype=calendar
+	setlocal nocursorcolumn nocursorline colorcolumn=0 nolist
+	let b:year = a:0 > 0 ? a:1 : strftime("%Y")
+	let yearcal = s:drawyear(0, b:year, 3)
+	setlocal modifiable
+	%delete _
+	call append(0, yearcal)
+	silent! %s/\s\+$//e
+	$delete _
+	setlocal nomodified
+	call cursor(1,1)
+	nnoremap <silent><buffer> h :call cal#calbuf(b:year - 1)<cr>
+	nnoremap <silent><buffer> l :call cal#calbuf(b:year + 1)<cr>
+	nnoremap <silent><buffer> H :call cal#calbuf(b:year - 10)<cr>
+	nnoremap <silent><buffer> L :call cal#calbuf(b:year + 10)<cr>
+	nnoremap <silent><buffer> t :call cal#calbuf(strftime("%Y"))<cr>
+	nnoremap <silent><buffer> g :call cal#calbuf(input("Year: "))<cr>
+	syn match calendarKeyword "\d\{,2}|" contains=calendarConceal
+	syn match calendarConceal "|" conceal
+	hi! link Conceal Normal
+endfunction
+
+" }}}

@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Thu 10 Dec 2015
+" Modified: Tue 12 Jan 2016
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -77,3 +77,7 @@ command! -nargs=0 AsciiToggle :call functions#AsciiToggle()
 " Align text on character
 command! -range=% -nargs=? -bang Align :<line1>,<line2>call align#align('<args>', <bang>0, 0)
 command! -range=% -nargs=? -bang AlignR :<line1>,<line2>call align#align('<args>', <bang>0, 1)
+
+" Calendar
+command! -nargs=* -bang -bar Calendar :call cal#cal(<bang>0, <f-args>)
+command! -nargs=* -bar CalBuf :call cal#calbuf(<f-args>)
