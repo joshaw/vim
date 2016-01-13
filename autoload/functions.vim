@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Thu 17 Dec 2015
+" Modified: Fri 18 Dec 2015
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -164,10 +164,11 @@ function! functions#html2nroff(...) abort
 	keeppatterns silent! %s/<\(title\).\{-}>\(.\{-}\)<\/\1>/.ce 1\r\2/
 	keeppatterns silent! %s/<.\{-}>//ge
 	keeppatterns silent! %s/^\s\+//e
-	keeppatterns silent! %s/“\|”/"/ge
-	keeppatterns silent! %s/‘\|’/'/ge
-	keeppatterns silent! %s/—/--/ge
-	keeppatterns silent! %s/\s?…\s?/.../ge
+	let htmlents = {'\s\?…\s\?': '...', '“': '"', '”': '"', '’': "'", '—': '--'}
+	for [ent, rep] in items(htmlents)
+		exe 'keeppatterns silent! %s/\V' . ent . '/' . rep . '/ge'
+		unlet ent rep
+	endfor
 	call append(0, '.ll '.l:tw)
 	call append(0, '.nh')
 	silent %!nroff
