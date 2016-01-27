@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Wed 13 Jan 2016
+" Modified: Wed 27 Jan 2016
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -95,7 +95,7 @@ nnoremap S i<cr><esc>^mwgk:keeppatterns silent! s/\v +$//<cr>:noh<cr>`w
 nnoremap ; :
 nnoremap , ;
 
-nnoremap <silent> [<space> :-1 put _<cr>j
+nnoremap <silent> [<space> :put! _<cr>j
 nnoremap <silent> ]<space> :put _<cr>k
 
 " Navigate buffers
@@ -117,10 +117,11 @@ xnoremap <silent> S :call surroundings#surroundings(visualmode() ==# 'v'? 1: 2)<
 
 " Control Keys {{{1
 
-nnoremap <silent> <C-Up>   :move-2<CR>
-nnoremap <silent> <C-Down> :move+<CR>
-xnoremap <silent> <C-Up>   :move-2<CR>gv
-xnoremap <silent> <C-Down> :move'>+<CR>gv
+" Move line up/down, maintain folds
+nnoremap <silent> <C-Up>   :let fm=&fdm<bar>let &fdm='manual'<bar>move-2  <bar>let &fdm=fm<CR>
+nnoremap <silent> <C-Down> :let fm=&fdm<bar>let &fdm='manual'<bar>move+   <bar>let &fdm=fm<CR>
+xnoremap <silent> <C-Up>   :let fm=&fdm<bar>let &fdm='manual'<bar>move-2  <bar>let &fdm=fm<CR>gv
+xnoremap <silent> <C-Down> :let fm=&fdm<bar>let &fdm='manual'<bar>move'>+ <bar>let &fdm=fm<CR>gv
 
 " Replace selected text
 xnoremap <C-r> "hy:%s/<C-r>h//g<left><left>
@@ -149,6 +150,9 @@ nnoremap <silent> <c-a> :<c-u>call incremental#incremental(expand('<cword>'), 1)
 nnoremap <silent> <c-x> :<c-u>call incremental#incremental(expand('<cword>'), -1)<cr>
 nnoremap <silent> g<c-a> :<c-u>call incremental#incChar(<SID>cchar(), 1)<cr>
 nnoremap <silent> g<c-x> :<c-u>call incremental#incChar(<SID>cchar(), -1)<cr>
+
+" Better Redraw
+nnoremap <c-l> :nohlsearch <bar> diffupdate <bar> redraw!<cr>
 
 " GrepString
 nnoremap <c-g> :call functions#GrepString()<cr>:grep<space>
@@ -181,12 +185,6 @@ nnoremap <leader>b :ls!<CR>:buffer<Space>
 
 nnoremap <leader>rc :e! $MYVIMRC<CR>:setlocal autochdir<cr>
 nnoremap <leader>rd :e! $VIMHOME/plugin/display.vim<CR>
-augroup vimrc_reload
-	autocmd!
-	autocmd BufWritePost $MYVIMRC source $MYVIMRC
-				\ | echo "vimrc is sourced"
-				\ | call statusline#colour()
-augroup END
 
 " Get count of word under cursor
 nnoremap <leader>gc :<c-u>call functions#count(expand('<cword>'))<cr>
