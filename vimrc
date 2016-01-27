@@ -267,6 +267,12 @@ iabbrev <expr> Weeklyr "Weekly Report<CR>
                        \--------<CR>
                        \- None"
 
+iabbrev toolsuite tool suite
+iabbrev tbmanager TBmanager
+iabbrev tbreq TBreq
+iabbrev tbrun TBrun
+iabbrev tbvision TBvision
+
 command! TBini :e C:\ProgramData\LDRA\TESTBED.ini
 nnoremap <F11> :<C-U>e ~/Documents/Details/ldra-learnt.md<cr>
 command! FormatWikiEntry :Tabularize /\(\( \|^\)\zs|\)\|\^
