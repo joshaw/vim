@@ -1,10 +1,10 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Fri 12 Jun 2015
+" Modified: Mon 25 Jan 2016
 " Author:   Josh Wainwright
 " Filename: weeklyr.vim
 
 function! DateOnFri(sep)
-python << EOP
+python3 << EOP
 import vim, datetime as dt
 t = dt.date.today()
 f = t + dt.timedelta((4 - t.weekday()) % 7)
