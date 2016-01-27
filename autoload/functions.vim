@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Fri 18 Dec 2015
+" Modified: Wed 13 Jan 2016
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -182,6 +182,7 @@ function! functions#count(...) range abort
 
 	if a:0 == 1
 		let word = a:1
+		let @/ = word
 	elseif a:0 == 2
 		let word = a:1
 		let noecho = !!a:2
@@ -252,6 +253,11 @@ function! functions#AsciiToggle() abort
 	endif
 endfunction
 
+" Mirror {{{1
+function! s:mirror(str)
+	return join(reverse(split(a:str, '.\zs')), '')
+endfunction
+
 " Buffer Navigation {{{1
 function! functions#buffernext(incr) abort
 	let current = bufnr('%')
@@ -273,5 +279,10 @@ function! functions#buffernext(incr) abort
 			endif
 		endif
 	endwhile
-	echo printf('Buffer [%s/%s] %s', bufnr('%'), bufnr('$'), bufname('%'))
+	let mes = printf('Buffer [%s/%s] %s', current, last, bufname('%'))
+	if len(mes) > &columns - 20
+		let bufname = '<' . s:mirror(printf('%.' . (&columns-23) . 's', s:mirror(bufname('%'))))
+		let mes = printf('Buf [%s/%s] %s', bufnr('%'), bufnr('$'), bufname)
+	endif
+	echo mes
 endfunction
