@@ -15,7 +15,8 @@ endfunction
 
 " Return the path converted to use unix style path separators
 function! s:tounix(path) abort
-	return substitute(a:path, '\\', '/', 'g')
+	let path = substitute(a:path, '\\', '/', 'g')
+	return substitute(path, '//', '/', 'g')
 endfunction
 
 " Return a list of paths matching the given pattern in the given directory
@@ -26,6 +27,10 @@ function! s:expand(path, pat) abort
 		return []
 	endif
 	return l:paths
+endfunction
+
+function! s:curdir() abort
+	return g:navd['cur']
 endfunction
 
 " Return the sort index for the two paths
@@ -78,22 +83,24 @@ function! s:get_paths(path, hidden) abort
 endfunction
 
 " Create a new file or folder depending on the name given.
-function! s:new_obj() abort
+function! s:new_obj(dir) abort
 	let l:new_name = input('Name: ')
+	let new_obj = s:tounix(a:dir . '/' . l:new_name)
 	redraw
-	if l:new_name[-1:] =~# '/'
-		if isdirectory(g:navd['cur'].'/'.l:new_name)
+	if s:isdir(l:new_name)
+		if isdirectory(new_obj)
 			echo 'Directory already exists: ' . l:new_name
+			call search(new_obj, 'cw')
 		else
-			if mkdir(g:navd['cur'].'/'.l:new_name)
-				call s:display_paths(g:navd['cur'], l:new_name)
+			if mkdir(new_obj)
+				call s:display_paths(a:dir, new_obj)
 			else
 				echoerr 'Failed to create directory: ' . l:new_name
 				return
 			endif
 		endif
 	else
-		exe 'edit ' . g:navd['cur'] . '/' . l:new_name
+		exe 'edit ' . new_obj
 	endif
 endfunction
 
@@ -113,7 +120,7 @@ endfunction
 function! s:toggle_hidden(curline) abort
 	let g:navd['hidden'] = !g:navd['hidden']
 	echo (g:navd['hidden'] == 1 ? 'S' : 'Not s') . 'howing hidden files'
-	call s:display_paths(g:navd['cur'], a:curline)
+	call s:display_paths(s:curdir(), a:curline)
 endfunction
 
 function! s:enter() abort
@@ -123,7 +130,6 @@ function! s:enter() abort
 	endif
 	let path = g:navd['paths'][lnum-2]['path']
 	if filereadable(path)
-		let g:status_var = ''
 		exe 'edit' fnameescape(path)
 		let g:navd['paths'] = []
 	elseif isdirectory(path)
@@ -136,11 +142,12 @@ endfunction
 " Quite navd and return to previously edited file
 function! s:quit_navd() abort
 	let l:alt = bufnr('#')
-	let g:status_var = ''
 	if l:alt < 0 || bufnr('$') == 1
 		enew
+	elseif l:alt == bufnr('%')
+		buffer 1
 	else
-		exe 'buffer ' l:alt
+		exe 'buffer' l:alt
 	endif
 	let g:navd['paths'] = []
 endfunction
@@ -161,23 +168,8 @@ function! s:preview() abort
 	endif
 endfunction
 
-" Format message
-function! s:current_dir() abort
-	let retval = ''
-	if has_key(g:navd, 'cur')
-		let retval = substitute(g:navd['cur'], $HOME, '~', '')
-		let g:status_var = retval
-	else
-		let g:status_var = ''
-	endif
-	if has_key(g:navd, 'message')
-		let retval .= ' :: ' . g:navd['message']
-	endif
-	return retval
-endfunction
-
 " Setup the navd buffer, write the paths to it and make it unwritable.
-function! s:setup_navd_buf(fs, paths) abort
+function! s:setup_navd_buf(fs, paths, cursor) abort
 	call ScratchBufHere()
 
 	setlocal filetype=navd
@@ -190,12 +182,12 @@ function! s:setup_navd_buf(fs, paths) abort
 		nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>', getline(1))<cr>
 		nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>', getline(1))<cr>
 		nnoremap <silent><buffer> <space>       :call <SID>preview()<cr>
-		nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'], getline('.'))<cr>
+		nnoremap <silent><buffer> R             :call <SID>display_paths(s:curdir(), getline('.'))<cr>
 		nnoremap <silent><buffer> s             :call <SID>toggle_hidden(getline('.'))<cr>
 		nnoremap <silent><buffer> gh            :call <SID>display_paths($HOME, 0)<cr>
 		nnoremap <silent><buffer> gs            :call <SID>get_obj_info()<cr>
 		xnoremap <silent><buffer> gs            :call <SID>get_obj_info()<cr>
-		nnoremap <silent><buffer> +             :call <SID>new_obj()<cr>
+		nnoremap <silent><buffer> +             :call <SID>new_obj(s:curdir())<cr>
 	else
 		nmapclear <buffer>
 	endif
@@ -207,7 +199,7 @@ function! s:setup_navd_buf(fs, paths) abort
 	syntax clear
 	syntax case match
 	if a:fs
-		let l:hw = len(g:navd['cur']) + 3
+		let l:hw = len(s:curdir()) + 3
 " 		exe 'syn match NavdHead ''\v.*/\ze[^/]+/?$'' conceal'
 		exe 'syn match NavdHead ".*\%' . l:hw . 'c" conceal'
 	else
@@ -230,11 +222,16 @@ function! s:setup_navd_buf(fs, paths) abort
 	let g:navd['paths'] = a:paths
 	setlocal modifiable
 	silent %delete _
-	call append(0, s:current_dir())
+	call append(0, substitute(g:navd['message'], $HOME, '~', ''))
 	call append(1, map(copy(a:paths), '<SID>make_line(v:val)'))
 	$delete _
 	setlocal nomodifiable
-	call cursor(1,1)
+
+	" Find the correct line to highlight
+	call cursor(2, 1)
+	if !empty(a:cursor)
+		call search('\V' . a:cursor, 'cw')
+	endif
 endfunction
 
 function! s:make_line(val)
@@ -249,7 +246,7 @@ endfunction
 function! s:display_paths(path, cursor) abort
 	if a:path ==# '<parent>'
 		" Within the plugin to go up a level
-		let target_path = fnamemodify(g:navd['cur'], ':p:h:h')
+		let target_path = fnamemodify(s:curdir(), ':p:h:h')
 
 	elseif empty(a:path)
 		" Called from outside the plugin (:Navd no args)
@@ -271,20 +268,13 @@ function! s:display_paths(path, cursor) abort
 	let target_path = s:tounix(target_path)
 	let target_path .= (target_path[-1:] ==# '/') ? '' : '/'
 	let g:navd['cur'] = target_path
+	let g:navd['message'] = target_path
+	let cursor = s:tounix(a:cursor)
 
 	" Check if target name is hidden and show hidden if true
-	let g:navd['hidden'] = fnamemodify(a:cursor, ':t')[0] ==# '.' ? 1 : g:navd['hidden']
+	let g:navd['hidden'] = fnamemodify(cursor, ':t')[0] ==# '.' ? 1 : g:navd['hidden']
 
-	call s:setup_navd_buf(1, s:get_paths(target_path, g:navd['hidden']))
-
-	" Find the correct line to highlight
-	if !empty(a:cursor)
-		call search(a:cursor)
-	endif
-	
-	if line('.') == 1
-		call cursor(2,1)
-	endif
+	call s:setup_navd_buf(1, s:get_paths(target_path, g:navd['hidden']), cursor)
 endfunction
 
 function! g:navd#navdbufs() abort
@@ -296,7 +286,7 @@ function! g:navd#navdbufs() abort
 	let bufnum = 0
 	for l:buff in range(1, l:tot_bufs)
 		let l:buf_name = fnamemodify(bufname(l:buff), ':~:.')
-		if bufexists(l:buff) && getbufvar(l:buff, "buftype") !=# 'nofile'
+		if bufexists(l:buff) && getbufvar(l:buff, '&buftype') !=# 'nofile'
 			let bufnum += 1
 			let bufdict = {'path': l:buf_name, 'type': 'b', 'access': 'f'}
 			if getbufvar(l:buff, '&modified')
@@ -309,11 +299,8 @@ function! g:navd#navdbufs() abort
 		endif
 	endfor
 
-	let g:navd['message'] = bufnum . ' buffers'
-	let g:navd['cur'] = getcwd()
-	let l:cur_buf = bufname('%')
-	call s:setup_navd_buf(0, paths)
-	call search(l:cur_buf, 'cW')
+	let g:navd['message'] = printf('%s :: %s/%s buffers', getcwd(), bufnum, tot_bufs)
+	call s:setup_navd_buf(0, paths, bufname('%'))
 endfunction
 
 function! g:navd#navdall() abort
@@ -323,9 +310,8 @@ function! g:navd#navdall() abort
 	call remove(output, 0)
 	call map(output, '{"path": v:val, "type": "f", "access": "f"}')
 
-	let g:navd['message'] = len(output) . ' Files'
-	let g:navd['cur'] = getcwd()
-	call s:setup_navd_buf(0, output)
+	let g:navd['message'] = getcwd() . ' :: ' . len(output) . ' Files'
+	call s:setup_navd_buf(0, output, 0)
 endfunction
 
 function! g:navd#navd(path, hidden) abort
