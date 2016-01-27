@@ -38,13 +38,10 @@ function! s:dayofweek(year, month, dom, cal)
 	endif
 endfunction
 
-function! s:gettoday()
-	return [str2nr(strftime("%Y")), str2nr(strftime("%m")), str2nr(strftime("%d"))]
-endfunction
-
 function! s:getgrid(year, month, line)
 	let ret = ""
-	let cal = (a:year < s:TRANS_YEAR || (a:year == s:TRANS_YEAR && a:month <= s:TRANS_MONTH)) ? "JULIAN" : "GREGORIAN"
+	let cal = (a:year < s:TRANS_YEAR || (a:year == s:TRANS_YEAR
+				\ && a:month <= s:TRANS_MONTH)) ? "JULIAN" : "GREGORIAN"
 	let trans = (a:year == s:TRANS_YEAR && a:month == s:TRANS_MONTH)
 	let offset = s:dayofweek(a:year, a:month, 1, cal) - 1
 	if offset < 0
@@ -65,7 +62,7 @@ function! s:getgrid(year, month, line)
 		endif
 	endif
 
-	let today = s:gettoday()
+	let today = filter(split(strftime("%Y %m %d")), "str2nr(v:val)")
 	let thismonth = (a:year == today[0] && a:month+1 == today[1])
 	while ( d < 7 && dom <= s:monthlength(a:year, a:month, cal) )
 		if ( thismonth && dom == today[2] )
@@ -96,14 +93,13 @@ function! s:getcal(year, month, showyear)
 
 	let month = a:month % 12
 	let mon_name = smon[month] . (a:showyear ? ' ' . a:year : '')
-	let pad = 9 - ( len(mon_name) / 2 )
-	let mon_line = printf("%" . pad . "s%s", " ", mon_name)
+	let mon_line = s:center(20, mon_name)
 	call add(cal, printf("%-21s", mon_line))
 
 	let dow = 1
 	let line = ''
 	while ( dow < (1 + 7) )
-		let line .= printf("%s ", days[dow % 7])
+		let line .= days[dow % 7] . ' '
 		let dow += 1
 	endwhile
 	call add(cal, line)
@@ -134,6 +130,11 @@ function! s:highlightline(line)
 	endif
 endfunction
 
+function! s:center(width, str) abort
+	let width = (a:width - strdisplaywidth(a:str)) / 2
+	return repeat(' ', width) . a:str
+endfunction
+
 function! s:drawcal(year, month)
 	for i in s:getcal(a:year, a:month, 1)
 		call s:highlightline(i)
@@ -147,8 +148,7 @@ function! s:drawyear(draw, year, cols)
 		call add(cals, s:getcal(a:year, i, 0))
 	endfor
 
-	let pad = (20 * a:cols + 2 * (a:cols)) / 2 + 2
-	let yearline = printf("%".pad."s", a:year)
+	let yearline = s:center((20 * a:cols + 2 * (a:cols)), a:year)
 	if a:draw
 		echo printf("%s\n\n", yearline)
 	else
@@ -218,8 +218,8 @@ endfunction
 
 function! cal#calbuf(...)
 	call ScratchBuf()
-	setlocal buftype=nofile conceallevel=1 filetype=calendar
-	setlocal nocursorcolumn nocursorline colorcolumn=0 nolist
+	setlocal conceallevel=1 concealcursor=nv filetype=calendar nocursorcolumn
+	setlocal nocursorline colorcolumn=0 nolist
 	let b:year = a:0 > 0 ? a:1 : strftime("%Y")
 	let yearcal = s:drawyear(0, b:year, 3)
 	setlocal modifiable
@@ -229,15 +229,15 @@ function! cal#calbuf(...)
 	$delete _
 	setlocal nomodified
 	call cursor(1,1)
-	nnoremap <silent><buffer> h :call cal#calbuf(b:year - 1)<cr>
-	nnoremap <silent><buffer> l :call cal#calbuf(b:year + 1)<cr>
-	nnoremap <silent><buffer> H :call cal#calbuf(b:year - 10)<cr>
-	nnoremap <silent><buffer> L :call cal#calbuf(b:year + 10)<cr>
+	call search('\d|', 'cW')
+	redraw
+	echo "Year:" b:year
+	nnoremap <silent><buffer> H :call cal#calbuf(b:year - 1)<cr>
+	nnoremap <silent><buffer> L :call cal#calbuf(b:year + 1)<cr>
 	nnoremap <silent><buffer> t :call cal#calbuf(strftime("%Y"))<cr>
-	nnoremap <silent><buffer> g :call cal#calbuf(input("Year: "))<cr>
-	syn match calendarKeyword "\d\{,2}|" contains=calendarConceal
-	syn match calendarConceal "|" conceal
-	hi! link Conceal Normal
+	syntax match calendarKeyword "\d\{1,2}|" contains=calendarConceal
+	syntax match calendarConceal "|" conceal
+	highlight! link Conceal Normal
 endfunction
 
 " }}}
