@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Tue 26 Jan 2016
+" Modified: Wed 27 Jan 2016
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -86,13 +86,12 @@ function! s:new_obj() abort
 			echo 'Directory already exists: ' . l:new_name
 		else
 			if mkdir(g:navd['cur'].'/'.l:new_name)
-				call s:display_paths(g:navd['cur'])
+				call s:display_paths(g:navd['cur'], l:new_name)
 			else
 				echoerr 'Failed to create directory: ' . l:new_name
 				return
 			endif
 		endif
-		call search(l:new_name, 'cW')
 	else
 		exe 'edit ' . g:navd['cur'] . '/' . l:new_name
 	endif
@@ -114,8 +113,7 @@ endfunction
 function! s:toggle_hidden(curline) abort
 	let g:navd['hidden'] = !g:navd['hidden']
 	echo (g:navd['hidden'] == 1 ? 'S' : 'Not s') . 'howing hidden files'
-	call s:display_paths(g:navd['cur'])
-	call search(a:curline, 'cW')
+	call s:display_paths(g:navd['cur'], a:curline)
 endfunction
 
 function! s:enter() abort
@@ -129,7 +127,7 @@ function! s:enter() abort
 		exe 'edit' fnameescape(path)
 		let g:navd['paths'] = []
 	elseif isdirectory(path)
-		call s:display_paths(path)
+		call s:display_paths(path, 0)
 	else
 		echo 'Cannot access' path
 	endif
@@ -189,12 +187,12 @@ function! s:setup_navd_buf(fs, paths) abort
 
 	" Keybindings in navd buffer
 	if a:fs
-		nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>')<cr>
-		nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>')<cr>
+		nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>', getline(1))<cr>
+		nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>', getline(1))<cr>
 		nnoremap <silent><buffer> <space>       :call <SID>preview()<cr>
-		nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'])<cr>
+		nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'], getline('.'))<cr>
 		nnoremap <silent><buffer> s             :call <SID>toggle_hidden(getline('.'))<cr>
-		nnoremap <silent><buffer> gh            :call <SID>display_paths($HOME)<cr>
+		nnoremap <silent><buffer> gh            :call <SID>display_paths($HOME, 0)<cr>
 		nnoremap <silent><buffer> gs            :call <SID>get_obj_info()<cr>
 		xnoremap <silent><buffer> gs            :call <SID>get_obj_info()<cr>
 		nnoremap <silent><buffer> +             :call <SID>new_obj()<cr>
@@ -244,35 +242,28 @@ function! s:make_line(val)
 	if a:val['type'] ==# 'D'
 		let acc = toupper(acc)
 	endif
-	let retval = printf("%S %S", acc, a:val['path'])
-	return retval
+	return printf("%S %S", acc, a:val['path'])
 endfunction
 
 " Call the functions, sort out where we've come from and highlight that line.
-function! s:display_paths(path) abort
-	let g:navd['prev'] = has_key(g:navd, 'cur') ? g:navd['cur'] : a:path
-
+function! s:display_paths(path, cursor) abort
 	if a:path ==# '<parent>'
 		" Within the plugin to go up a level
 		let target_path = fnamemodify(g:navd['cur'], ':p:h:h')
-		let target_fname = g:navd['prev']
 
-	elseif a:path ==# ''
+	elseif empty(a:path)
 		" Called from outside the plugin (:Navd no args)
 		let target_path = expand('%:p:h')
-		let target_fname = expand('%:t')
 
 	else
-		if s:isdir(a:path)
+		if isdirectory(a:path)
 			" Called from outside the plugin (:Navd directory)
 			" Or from within the plugin (enter())
 			let target_path = fnamemodify(a:path, ':p')
-			let target_fname = g:navd['prev']
 
 		else
 			" Called from outside the plugin (:Navd file)
 			let target_path = fnamemodify(a:path, ':p:h')
-			let target_fname = fnamemodify(a:path, ':p:t')
 		endif
 	endif
 	
@@ -282,15 +273,13 @@ function! s:display_paths(path) abort
 	let g:navd['cur'] = target_path
 
 	" Check if target name is hidden and show hidden if true
-	let g:navd['hidden'] = fnamemodify(target_fname, ':t')[0] ==# '.' ? 1 : g:navd['hidden']
+	let g:navd['hidden'] = fnamemodify(a:cursor, ':t')[0] ==# '.' ? 1 : g:navd['hidden']
 
 	call s:setup_navd_buf(1, s:get_paths(target_path, g:navd['hidden']))
 
 	" Find the correct line to highlight
-	if search(target_fname, 'cW') <= 0
-		if search(fnamemodify(target_fname, ':t'), 'cW') <= 0
-			call search(target_path, 'cW')
-		endif
+	if !empty(a:cursor)
+		call search(a:cursor)
 	endif
 	
 	if line('.') == 1
@@ -342,5 +331,5 @@ endfunction
 function! g:navd#navd(path, hidden) abort
 	let g:navd['hidden'] = a:hidden
 	let path = s:tounix(a:path)
-	call s:display_paths(path)
+	call s:display_paths(path, expand('%'))
 endfunction
