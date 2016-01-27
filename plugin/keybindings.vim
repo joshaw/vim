@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Mon 02 Nov 2015
+" Modified: Wed 13 Jan 2016
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -189,8 +189,8 @@ augroup vimrc_reload
 augroup END
 
 " Get count of word under cursor
-nnoremap <leader>gc :<c-u>call functions#count('normal')<cr>
-xnoremap <leader>gc :<c-u>call functions#count('visual')<cr>
+nnoremap <leader>gc :<c-u>call functions#count(expand('<cword>'))<cr>
+xnoremap <leader>gc :<c-u>call functions#count()<cr>
 
 " Fast saving
 nnoremap <leader>w :w!<cr>
