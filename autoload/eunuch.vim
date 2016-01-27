@@ -87,3 +87,20 @@ function! eunuch#MaxLine() abort
 	exec maxline
 	echo 'Line' maxline 'has' maxcol - 1 'characters'
 endfunction
+
+function! eunuch#FileSize(bang) abort
+	let bytes = getfsize(expand("%:p"))
+	if a:bang
+		echo bytes
+		return bytes
+	endif
+	let suf = ['B', 'KB', 'MB', 'GB']
+	let n = 0
+	while bytes > 1024
+		let n += 1
+		let bytes = bytes / 1024.0
+	endwhile
+	let fsize = printf('%.2f%s', bytes, suf[n])
+	echo expand("%:p") fsize
+	return fsize
+endfunction
