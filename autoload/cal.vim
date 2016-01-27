@@ -1,5 +1,5 @@
 " Created:  Mon 11 Jan 2016
-" Modified: Wed 13 Jan 2016
+" Modified: Mon 25 Jan 2016
 " Author:   Josh Wainwright
 " Filename: cal.vim
 
@@ -241,3 +241,106 @@ function! cal#calbuf(...)
 endfunction
 
 " }}}
+
+" Clock {{{
+function! s:setup()
+	setlocal modifiable
+	setlocal fileencoding=utf8 nonumber norelativenumber nocursorcolumn
+	setlocal nocursorline colorcolumn=0 nolist
+	let b:laststatus_save = &laststatus
+	set laststatus=0
+	%delete _
+	call append(0, repeat([''], winheight(0)))
+endfunction
+
+function! s:teardown()
+	exe 'set laststatus=' . b:laststatus_save
+	setlocal number< relativenumber< cursorcolumn< cursorline< colorcolumn<
+	setlocal list< modifiable
+	%delete _
+	autocmd! * <buffer>
+endfunction
+
+function! cal#clock()
+	call ScratchBuf()
+	call s:setup()
+	let s:secs = 1
+	if s:secs
+		setlocal updatetime=1000
+	else
+		setlocal updatetime<
+	endif
+	call s:getfont(2)
+	call s:doclock(s:secs)
+	autocmd CursorHold <buffer> call s:doclock(s:secs)
+	autocmd BufLeave <buffer> call s:teardown()
+	nnoremap <buffer> + :call <SID>getfont((b:font + 1) % 3)<bar>call <SID>setup()<bar>call <SID>doclock(1)<cr>
+	call cursor(1,1)
+endfunction
+
+function! s:doclock(secs)
+	if a:secs
+		let time = strftime("%Hc%Mc%S")
+	else
+		let time = strftime("%Hc%M")
+	endif
+	let nums = split(time, '\zs')
+	let n = (winheight(0) - 3) / 2
+	for i in range(0, len(s:n0)-1)
+		let n += 1
+		let line = ''
+		for j in nums
+			let line .= s:n{j}[i] . s:nsp[i]
+		endfor
+		let line = substitute(line, '#', '█', 'g')
+		call setline(n, s:center(winwidth(0), line))
+	endfor
+	let date = strftime("%A %d %B %Y")
+	call setline(n+2, s:center(winwidth(0), date))
+	call feedkeys('', 'n')
+	redraw!
+endfunction
+
+function! s:getfont(font)
+	let b:font = a:font
+	let fontarr = s:font{a:font}
+	let font = fontarr['font']
+	let letters = fontarr['letters']
+	let height = len(font)
+	let n = 0
+	for letter in letters
+		let s:n{letter} = []
+		for line in range(0, height-1)
+			call add(s:n{letter}, font[line][n])
+		endfor
+		let n += 1
+	endfor
+endfunction
+
+let s:font0 = {'letters': ['sp', 'c', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 'font': [
+\[' ',':','0','1','2','3','4','5','6','7','8','9']]}
+
+let s:font1 = {'letters': ['sp' ,'c', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 'font': [
+\[' ',' ','###',' # ','###','###','# #','###','###','###','###','###'],
+\[' ','#','# #','## ','  #','  #','# #','#  ','#  ','  #','# #','# #'],
+\[' ',' ','# #',' # ','###',' ##','###','###','###','  #','###','###'],
+\[' ','#','# #',' # ','#  ','  #','  #','  #','# #','  #','# #','  #'],
+\[' ',' ','###','###','###','###','  #','###','###','  #','###','  #']]}
+
+let s:font2 = {'letters': ['sp', 'c', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 'font': [
+\['  ','  ','########','   ##   ','########','########','##    ##','########','########','########','########','########'],
+\['  ','##','##    ##','   ##   ','##    ##','      ##','##    ##','##      ','##      ','      ##','##    ##','##    ##'],
+\['  ','##','##    ##','   ##   ','      ##','      ##','##    ##','##      ','##      ','      ##','##    ##','##    ##'],
+\['  ','  ','##    ##','   ##   ','########','  ######','########','########','########','      ##','########','########'],
+\['  ','##','##    ##','   ##   ','##      ','      ##','      ##','      ##','##    ##','      ##','##    ##','      ##'],
+\['  ','##','##    ##','   ##   ','##      ','      ##','      ##','##    ##','##    ##','      ##','##    ##','      ##'],
+\['  ','  ','########','   ##   ','########','########','      ##','########','########','      ##','########','########']]}
+
+let s:font3 = {'letters': ['sp', 'c', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 'font': [
+\['   ','  ','########','      ##','########','########','##    ##','########','########','########','########','########'],
+\['   ','##','##    ##','      ##','      ##','      ##','##    ##','##      ','##      ','      ##','##    ##','##    ##'],
+\['   ','##','##    ##','      ##','      ##','      ##','##    ##','##      ','##      ','      ##','##    ##','##    ##'],
+\['   ','  ','##    ##','      ##','########','########','########','########','########','      ##','########','########'],
+\['   ','##','##    ##','      ##','##      ','      ##','      ##','      ##','##    ##','      ##','##    ##','      ##'],
+\['   ','##','##    ##','      ##','##      ','      ##','      ##','      ##','##    ##','      ##','##    ##','      ##'],
+\['   ','  ','########','      ##','########','########','      ##','########','########','      ##','########','########']]}

@@ -81,6 +81,8 @@ command! -range=% -nargs=? -bang AlignR :<line1>,<line2>call align#align('<args>
 " Calendar
 command! -nargs=* -bang -bar Calendar :call cal#cal(<bang>0, <f-args>)
 command! -nargs=* -bar CalBuf :call cal#calbuf(<f-args>)
+command! -nargs=0 Clock :call cal#clock()
+
 " Langton's Ant
 command! -nargs=1 -bar Langton :call langton#langton(<f-args>)
 
