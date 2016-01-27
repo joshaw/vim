@@ -1,46 +1,46 @@
 " Created:  Fri 12 Jun 2015
-" Modified: Fri 20 Nov 2015
+" Modified: Tue 26 Jan 2016
 " Author:   Josh Wainwright
 " Filename: eunuch.vim
 
 let s:sep = has('win32') ? '\' : '/'
 
 function! eunuch#RemoveFile(bang, args) abort
-	let s:file = fnamemodify(bufname(a:args),':p')
-	execute 'bdelete'.a:bang
-	if !bufloaded(s:file) && delete(s:file)
-		echoerr 'Failed to delete "'.s:file.'"'
+	if !empty(&buftype) || empty(bufname('%'))
+		echo "No file to remove"
+		return
 	endif
-	unlet s:file
+	let file = expand('%')
+	execute 'bwipeout' . a:bang
+	if !bufloaded(file) && delete(file)
+		echoerr 'Failed to delete "' . file . '"'
+	else
+		echo file "removed"
+	endif
 endfunction
 
 function! eunuch#MoveFile(bang, args) abort
-	let s:src = expand('%:p')
-	if a:args ==# ''
-		let s:dst = input('New file name: ', expand('%:p'), 'file')
-	else
-		let s:dst = expand(a:args)
+	let src = expand('%:p')
+	let dst = empty(a:args) ? input('New file name: ', expand('%:p'), 'file')
+				\ : expand(a:args)
+	if isdirectory(dst) || dst[-1:-1] =~# '[\\/]'
+		let dst .= (dst[-1:-1] =~# '[\\/]' ? '' : s:sep) . fnamemodify(src, ':t')
 	endif
-	if isdirectory(s:dst) || s:dst[-1:-1] =~# '[\\/]'
-		let s:dst .= (s:dst[-1:-1] =~# '[\\/]' ? '' : s:sep) . fnamemodify(s:src, ':t')
+	if !isdirectory(fnamemodify(dst, ':h'))
+		call mkdir(fnamemodify(dst, ':h'), 'p')
 	endif
-	if !isdirectory(fnamemodify(s:dst, ':h'))
-		call mkdir(fnamemodify(s:dst, ':h'), 'p')
-	endif
-	let s:dst = substitute(simplify(s:dst), '^\.\'.s:sep, '', '')
-	if !a:bang && filereadable(s:dst)
-		exe 'keepalt saveas '.fnameescape(s:dst)
-	elseif rename(s:src, s:dst)
-		echoerr 'Failed to rename "'.s:src.'" to "'.s:dst.'"'
+	let dst = substitute(simplify(dst), '^\.\'.s:sep, '', '')
+	if !a:bang && filereadable(dst)
+		exe 'keepalt saveas '.fnameescape(dst)
+	elseif rename(src, dst)
+		echoerr 'Failed to rename "' . src . '" to "' . dst . '"'
 	else
 		setlocal modified
-		exe 'keepalt saveas! '.fnameescape(s:dst)
-		if s:src !=# expand('%:p')
-			execute 'bwipe '.fnameescape(s:src)
+		exe 'keepalt saveas! '.fnameescape(dst)
+		if src !=# expand('%:p')
+			execute 'bwipe '.fnameescape(src)
 		endif
 	endif
-	unlet s:src
-	unlet s:dst
 endfunction
 
 function! eunuch#Grep(bang,args,prg) abort
