@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Wed 13 Jan 2016
+" Modified: Wed 27 Jan 2016
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -112,6 +112,7 @@ function! functions#toggleComment() abort
 			\ 'cpp': '//',
 			\ 'dosbatch': '::',
 			\ 'dot': '//',
+			\ 'gitconfig': '#',
 			\ 'gnuplot': '#',
 			\ 'haskell': '--',
 			\ 'java': '//',
