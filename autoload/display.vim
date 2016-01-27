@@ -1,5 +1,5 @@
 " Created:  Sat 18 Oct 2014
-" Modified: Fri 18 Dec 2015
+" Modified: Tue 26 Jan 2016
 " Author:   Josh Wainwright
 " Filename: display.vim
 
@@ -13,7 +13,7 @@ let s:reading_mode_def = {
 			\ 'relativenumber': 0,
 			\ 'cursorline': 0,
 			\ 'laststatus': 0,
-			\ 'ruler': 1,
+			\ 'ruler': 0,
 			\ 'rulerformat': '"%6(%=%M%P%)"',
 			\ 'showtabline': 0,
 			\ 'list': 0,
@@ -28,7 +28,7 @@ let s:display_mode_def = {
 			\ 'colorcolumn': 0,
 			\ 'list': 0,
 			\ 'relativenumber': 0,
-			\ 'statusline': '',
+			\ 'statusline': '"%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P"',
 			\ 'Colorscheme': 'simplon',
 			\ }
 
@@ -71,8 +71,8 @@ function! s:mode_toggle(mode_def) abort
 				exe 'colorscheme '.optval
 
 			else
-				exe 'let b:opts_save{modename}["'.optname.'"] = &'.optname
-				exe 'let &l:'.optname.'='.optval.''
+				exe 'let b:opts_save{modename}["' . optname . '"] = &' . optname
+				exe 'let &l:' . optname . '=' . optval . ''
 			endif
 		endfor
 	endif
