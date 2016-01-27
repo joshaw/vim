@@ -95,7 +95,17 @@ function! s:new_obj() abort
 		call search(l:new_name, 'cW')
 	else
 		exe 'edit '.g:navd['cur'].'/'.l:new_name
+function! s:get_obj_info() abort
+	let lnum = line('.')
+	let path = g:navd['paths'][lnum-2]['path']
+	if isdirectory(path)
+		let path = shellescape(path)
+		let sizestr = systemlist('du -sh ' . path)[0]
+	else
+		let path = shellescape(path)
+		let sizestr = systemlist('ls -Gghmn --time-style=+"" ' . path)[0]
 	endif
+	echo sizestr
 endfunction
 
 function! s:toggle_hidden(curline) abort
@@ -179,6 +189,8 @@ function! s:setup_navd_buf(fs) abort
 		nnoremap <silent><buffer> R             :call <SID>display_paths(g:navd['cur'])<cr>
 		nnoremap <silent><buffer> s             :call <SID>toggle_hidden(getline('.'))<cr>
 		nnoremap <silent><buffer> gh            :call <SID>display_paths($HOME)<cr>
+		nnoremap <silent><buffer> gs            :call <SID>get_obj_info()<cr>
+		xnoremap <silent><buffer> gs            :call <SID>get_obj_info()<cr>
 		nnoremap <silent><buffer> +             :call <SID>new_obj()<cr>
 	else
 		nmapclear <buffer>
