@@ -1,8 +1,3 @@
-autoload/plug.vim
-autoload/plug.vim.old
-bundle/
-custom/spell/*
-plugged/
-undodir/
-tmp/
-errors.log
+/tags
+/tmp/
+/errors.log
