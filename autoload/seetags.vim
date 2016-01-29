@@ -1,20 +1,20 @@
 " Created:  Fri 04 Dec 2015
-" Modified: Mon 14 Dec 2015
+" Modified: Wed 27 Jan 2016
 " Author:   Josh Wainwright
 " Filename: seetags.vim
 
-let s:navd_fname = '__Navd__'
 let s:sortstrings = ['id', 'name', 'kind', 'length']
-let g:seetags = {'name': s:navd_fname, 'sort': 0, 'targetline': 0, 'fullkind': 0}
+let g:seetags = {'sort': 0, 'targetline': 0, 'fullkind': 0}
 
 function! s:q_handle() abort
-	let l:alt = expand('#')
-	call clearmatches()
 	let g:status_var = ''
-	if l:alt ==# s:navd_fname
+	let l:alt = bufnr('#')
+	if l:alt < 0 || bufnr('$') == 1
 		enew
+	elseif l:alt == bufnr('%')
+		buffer 1
 	else
-		exe 'edit' l:alt
+		exe 'buffer' l:alt
 	endif
 	let &l:wrap = g:seetags['wrapsave']
 	unlet g:seetags['tags']
@@ -123,31 +123,18 @@ function! seetags#seetags(filename)
 endfunction
 
 function! s:display_tags()
-	if bufname('%') !=# s:navd_fname
-		exe 'silent! edit ' . s:navd_fname
-		setlocal filetype=navd
+	call ScratchBufHere()
 
-		nnoremap <silent><buffer> q :call <SID>q_handle()<cr>
-		nnoremap <silent><buffer> <cr> :call <SID>enter_handle()<cr>
-		nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter_handle()<cr>
-		nnoremap <silent><buffer> s :call <SID>toggle_sort(getline('.'))<cr>
-		nnoremap <silent><buffer> f :call <SID>f_handle()<cr>
-		nnoremap <silent><buffer> - q<cr>
+	nnoremap <silent><buffer> q :call <SID>q_handle()<cr>
+	nnoremap <silent><buffer> <cr> :call <SID>enter_handle()<cr>
+	nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter_handle()<cr>
+	nnoremap <silent><buffer> s :call <SID>toggle_sort(getline('.'))<cr>
+	nnoremap <silent><buffer> f :call <SID>f_handle()<cr>
+	nnoremap <silent><buffer> - q<cr>
 
-		setlocal concealcursor=nc conceallevel=3 bufhidden=unload undolevels=-1
-		setlocal nobuflisted buftype=nowrite noswapfile nowrap nolist
-		setlocal cursorline colorcolumn="" foldcolumn=0 nofoldenable
-
-		hi! link NavdTagsf    Function
-		hi! link NavdTagsd    Macro
-		hi! link NavdTagsi    Define
-		hi! link NavdTagsm    Macro
-		hi! link NavdTagst    Typedef
-		hi! link NavdTagss    Structure
-		hi! link NavdTagsv    Identifier
-		hi! link NavdCurDir   SpecialComment
-		hi! link NavdTagsHid  Comment
-	endif
+	setlocal concealcursor=nc conceallevel=3 bufhidden=unload undolevels=-1
+	setlocal nobuflisted buftype=nowrite noswapfile nowrap nolist
+	setlocal cursorline colorcolumn="" foldcolumn=0 nofoldenable
 
 	syntax clear
 	syn region NavdTagsO matchgroup=NavdTagsHid start="^\w\+ \+" end="$"
@@ -160,8 +147,17 @@ function! s:display_tags()
 	syn region NavdTagsv matchgroup=NavdTagsHid start="^v\%[ariable] \+" end="$"
 	syn match NavdCurDir '\%^.*$'
 
-	setlocal modifiable
+	hi! link NavdTagsf    Function
+	hi! link NavdTagsd    Macro
+	hi! link NavdTagsi    Define
+	hi! link NavdTagsm    Macro
+	hi! link NavdTagst    Typedef
+	hi! link NavdTagss    Structure
+	hi! link NavdTagsv    Identifier
+	hi! link NavdCurDir   SpecialComment
+	hi! link NavdTagsHid  Comment
 
+	setlocal modifiable
 	silent %delete _
 	call append(0, g:seetags['ctags'])
 	if g:seetags['fullkind']
