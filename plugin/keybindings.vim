@@ -151,9 +151,6 @@ nnoremap <silent> <c-x> :<c-u>call incremental#incremental(expand('<cword>'), -1
 nnoremap <silent> g<c-a> :<c-u>call incremental#incChar(<SID>cchar(), 1)<cr>
 nnoremap <silent> g<c-x> :<c-u>call incremental#incChar(<SID>cchar(), -1)<cr>
 
-" Better Redraw
-nnoremap <c-l> :nohlsearch <bar> diffupdate <bar> redraw!<cr>
-
 " GrepString
 nnoremap <c-g> :call functions#GrepString()<cr>:grep<space>
 
@@ -183,11 +180,11 @@ inoremap <leader>fn <C-R>=expand("%:t")<CR>
 " List all buffers and quickly switch to selected
 nnoremap <leader>b :ls!<CR>:buffer<Space>
 
-nnoremap <leader>rc :e! $MYVIMRC<CR>:setlocal autochdir<cr>
+nnoremap <leader>rc :e! $MYVIMRC<CR>
 nnoremap <leader>rd :e! $VIMHOME/plugin/display.vim<CR>
 
 " Get count of word under cursor
-nnoremap <leader>gc :<c-u>call functions#count(expand('<cword>'))<cr>
+nnoremap <leader>gc :<c-u>call functions#count()<cr>
 xnoremap <leader>gc :<c-u>call functions#count()<cr>
 
 " Fast saving
@@ -199,7 +196,7 @@ imap <leader>v <esc>"+gpa
 nmap <leader>ay mhggVG"+y`hzz
 
 " Unset highlighting of a search
-nnoremap <silent> <leader>q :nohlsearch<CR>:let g:status_var=''<cr>
+nnoremap <silent> <leader>q :nohlsearch<bar>diffupdate<bar>redraw!<cr>
 
 " Shift-leftmouse searches for the word clicked on without moving
 nnoremap <S-LeftMouse> <LeftMouse>:<C-U>let @/='\<'.expand("<cword>").'\>'<CR>:set hlsearch<CR>
