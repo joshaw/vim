@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Tue 26 Jan 2016
+" Modified: Thu 28 Jan 2016
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -78,11 +78,11 @@ augroup vimrc_trailing " {{{
 	au InsertLeave * :set listchars+=trail:▸
 augroup END " }}}
 set number                 " show the line number for each line
-silent! set relativenumber " show the relative line number for each line
+" silent! set relativenumber " show the relative line number for each line
 
 " 5 syntax, highlighting and spelling {{{2
 set hlsearch           " highlight all matches for the last used search pattern
-set cursorline         " highlight the screen line of the cursor
+" set cursorline         " highlight the screen line of the cursor
 set colorcolumn=+1     " columns to highlight
 
 " 6 multiple windows {{{2
@@ -114,7 +114,7 @@ endif
 "12 messages and info {{{2
 set shortmess=aoOstTI " list of flags to make messages shorter
 silent! set shortmess+=c
-set showcmd           " show (partial) command keys in the status line
+set noshowcmd         " show (partial) command keys in the status line
 set ruler             " show cursor position below each window
 exe 'set verbosefile='.g:vimhome . 'errors.log'
 set nomore            " pause listings when the screen is full
@@ -215,6 +215,12 @@ if has('autocmd') && exists('+omnifunc')
 					\	endif
 	augroup END
 endif
+
+augroup vimrc_reload
+	autocmd!
+	autocmd BufWritePost $MYVIMRC source $MYVIMRC
+				\ | call statusline#colour()
+augroup END
 
 if has('win32')
 	let g:dictfile='C:/cygwin/usr/share/dict/words'
