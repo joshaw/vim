@@ -179,32 +179,17 @@ endfunction
 " Count occurances {{{1
 function! functions#count(...) range abort
 	let w = winsaveview()
-	let noecho = 0
-
-	if a:0 == 1
-		let word = a:1
-		let @/ = word
-	elseif a:0 == 2
-		let word = a:1
-		let noecho = !!a:2
-	else
-		let word = @/
-	endif
+	let word = @/
 
 	redir => soutput
 		exe 'silent %s#\V' . word . '##nge'
 	redir END
 
 	let soutput = soutput[1:]
-	let g:status_var = soutput + 0
-
-	if !noecho
-		echo '"' . word . '": ' . soutput
-	endif
+	echo '"' . word . '": ' . soutput
 
 	call histdel('/', -1)
 	call winrestview(w)
-	return g:status_var
 endfunction
 
 " smart_TabCompete {{{1
