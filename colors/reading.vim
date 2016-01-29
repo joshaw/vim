@@ -1,13 +1,13 @@
 " Created:  Fri 18 Dec 2015
-" Modified: Fri 18 Dec 2015
+" Modified: Thu 28 Jan 2016
 " Author:   Josh Wainwright
 " Filename: reading.vim
 
 set background=light
-highlight clear
-if exists("syntax_on")
-    syntax reset
-endif
+" highlight clear
+" if exists("syntax_on")
+"     syntax reset
+" endif
 
 let g:colors_name = "reading"
 
