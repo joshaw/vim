@@ -1,12 +1,7 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Wed 27 Jan 2016
+" Modified: Fri 29 Jan 2016
 " Author:   Josh Wainwright
 " Filename: navd.vim
-
-" A great deal of credit to justinmk for vim-dirvish, on which several parts of
-" this are heavily based (read blatantly copied)
-
-let g:navd = {}
 
 " Return 1 if the path ends in a slash, indicating it is a directory
 function! s:isdir(path) abort
@@ -15,8 +10,7 @@ endfunction
 
 " Return the path converted to use unix style path separators
 function! s:tounix(path) abort
-	let path = substitute(a:path, '\\', '/', 'g')
-	return substitute(path, '//', '/', 'g')
+	return substitute(a:path, '\\\|//', '/', 'g')
 endfunction
 
 " Return a list of paths matching the given pattern in the given directory
@@ -27,10 +21,6 @@ function! s:expand(path, pat) abort
 		return []
 	endif
 	return l:paths
-endfunction
-
-function! s:curdir() abort
-	return g:navd['cur']
 endfunction
 
 " Return the sort index for the two paths
@@ -49,53 +39,47 @@ endfunction
 
 " Return the list of files and folders to display in the buffer.
 function! s:get_paths(path, hidden) abort
-	let path = a:path ==# '/' ? '' : a:path
-	let path = path[-1:] ==# '/' ? path[0:-2] : path
-
-	let paths = s:expand(path, '/*')
+	let paths = s:expand(a:path, '*')
 	if a:hidden
 		" Include hidden files except '.' and '..'
-		let paths += s:expand(path, '/.[^.]*')
+		let paths += s:expand(a:path, '.[^.]*')
 	endif
 
-	let cnt = 0
+	let n = 0
 	for path in paths
-		
 		let path = s:tounix(fnamemodify(path, ':p'))
 		let pathdict = {'path': path, 'type': 'f', 'access': 'f'}
-
 		if s:isdir(path)
 			let pathdict['type'] = 'D'
 			let pathdict['access'] = 'D'
 		elseif !filereadable(path)
 			let pathdict['access'] = 'r'
 		endif
-
 		if !filewritable(path)
 			let pathdict['access'] = 'w'
 		endif
-		let paths[cnt] = pathdict
-		let cnt += 1
+		let paths[n] = pathdict
+		let n += 1
 	endfor
 
-	call sort(paths, '<sid>sort_paths')
-	return paths
+	return sort(paths, '<sid>sort_paths')
 endfunction
 
 " Create a new file or folder depending on the name given.
-function! s:new_obj(dir) abort
-	let l:new_name = input('Name: ')
-	let new_obj = s:tounix(a:dir . '/' . l:new_name)
+function! s:new_obj() abort
+	let curdir = b:navd['paths'][0]['path']
+	let new_name = input('Name: ')
+	let new_obj = s:tounix(curdir . '/' . new_name)
 	redraw
-	if s:isdir(l:new_name)
+	if s:isdir(new_name)
 		if isdirectory(new_obj)
-			echo 'Directory already exists: ' . l:new_name
+			echo 'Directory already exists: ' . new_name
 			call search(new_obj, 'cw')
 		else
 			if mkdir(new_obj)
-				call s:display_paths(a:dir, new_obj)
+				call s:display_paths(curdir, new_name, b:navd['hidden'], curdir)
 			else
-				echoerr 'Failed to create directory: ' . l:new_name
+				echoerr 'Failed to create directory: ' . new_name
 				return
 			endif
 		endif
@@ -106,7 +90,7 @@ endfunction
 
 function! s:get_obj_info() abort
 	let lnum = line('.')
-	let path = g:navd['paths'][lnum-2]['path']
+	let path = b:navd['paths'][lnum-1]['path']
 	if isdirectory(path)
 		let path = shellescape(path)
 		let sizestr = systemlist('du -sh ' . path)[0]
@@ -118,28 +102,39 @@ function! s:get_obj_info() abort
 endfunction
 
 function! s:toggle_hidden(curline) abort
-	let g:navd['hidden'] = !g:navd['hidden']
-	echo (g:navd['hidden'] == 1 ? 'S' : 'Not s') . 'howing hidden files'
-	call s:display_paths(s:curdir(), a:curline)
+	let b:navd['hidden'] = !b:navd['hidden']
+	echo (b:navd['hidden'] == 1 ? 'S' : 'Not s') . 'howing hidden files'
+	let curpath = b:navd['paths'][0]['path']
+	call cursor(1,1)
+	call s:display_paths(curpath, '', b:navd['hidden'], curpath)
 endfunction
 
 function! s:enter() abort
 	let lnum = line('.')
-	if lnum == 1
-		return
-	endif
-	let path = g:navd['paths'][lnum-2]['path']
+	let path = b:navd['paths'][lnum-1]['path']
+	let path = fnamemodify(path, ':p')
 	if filereadable(path)
 		exe 'edit' fnameescape(path)
-		let g:navd['paths'] = []
 	elseif isdirectory(path)
-		call s:display_paths(path, 0)
+		call s:display_paths(path, 0, b:navd['hidden'], path)
 	else
 		echo 'Cannot access' path
 	endif
 endfunction
 
-" Quite navd and return to previously edited file
+function! s:parent()
+	let path = fnamemodify(b:navd['paths'][0]['path'], ':p:h:h') . '/'
+	let cursor = getline(1)
+	call s:display_paths(path, cursor, b:navd['hidden'], path)
+endfunction
+
+function! s:refresh()
+	let path = getline(1)
+	let cursor = getline('.')
+	call s:display_paths(path, cursor, b:navd['hidden'], path)
+endfunction
+
+" Quit navd and return to previously edited file
 function! s:quit_navd() abort
 	let l:alt = bufnr('#')
 	if l:alt < 0 || bufnr('$') == 1
@@ -149,65 +144,57 @@ function! s:quit_navd() abort
 	else
 		exe 'buffer' l:alt
 	endif
-	let g:navd['paths'] = []
 endfunction
 
 " Pipe file through less or dir through tree to see preview
 function! s:preview() abort
 	let lnum = line('.')
-	if lnum == 1
-		return
-	endif
-	let path = g:navd['paths'][lnum-2]['path']
+	let path = b:navd['paths'][lnum-1]['path']
 	if filereadable(path)
 		silent exe "!less " . shellescape(path)
-		redraw!
 	elseif isdirectory(path)
 		silent exe "!tree " . shellescape(path) . ' | less -R'
-		redraw!
 	endif
+	redraw!
 endfunction
 
 " Setup the navd buffer, write the paths to it and make it unwritable.
 function! s:setup_navd_buf(fs, paths, cursor) abort
 	call ScratchBufHere()
 
-	setlocal filetype=navd
-	setlocal concealcursor=nc conceallevel=3 undolevels=-1
-	setlocal nobuflisted buftype=nofile noswapfile nowrap nolist
-	setlocal cursorline colorcolumn="" foldcolumn=0 nofoldenable
+	if !exists('b:navd')
+		let b:navd = {'hidden': 0, 'message': 'message'}
+	endif
+	let b:navd['paths'] = a:paths
+
+	setlocal concealcursor=nc conceallevel=3 undolevels=-1  noswapfile nowrap
+	setlocal nobuflisted buftype=nofile nolist cursorline colorcolumn=""
+	setlocal foldcolumn=0 nofoldenable
 
 	" Keybindings in navd buffer
 	if a:fs
-		nnoremap <silent><buffer> -             :call <SID>display_paths('<parent>', getline(1))<cr>
-		nnoremap <silent><buffer> <RightMouse>  :call <SID>display_paths('<parent>', getline(1))<cr>
-		nnoremap <silent><buffer> <space>       :call <SID>preview()<cr>
-		nnoremap <silent><buffer> R             :call <SID>display_paths(s:curdir(), getline('.'))<cr>
-		nnoremap <silent><buffer> s             :call <SID>toggle_hidden(getline('.'))<cr>
-		nnoremap <silent><buffer> gh            :call <SID>display_paths($HOME, 0)<cr>
-		nnoremap <silent><buffer> gs            :call <SID>get_obj_info()<cr>
-		xnoremap <silent><buffer> gs            :call <SID>get_obj_info()<cr>
-		nnoremap <silent><buffer> +             :call <SID>new_obj(s:curdir())<cr>
+		nnoremap <silent><buffer> - :call <SID>parent()<cr>
+		nnoremap <silent><buffer> <RightMouse> :call <SID>parent()<cr>
+		nnoremap <silent><buffer> <space> :call <SID>preview()<cr>
+		nnoremap <silent><buffer> R :call <SID>refresh()<cr>
+		nnoremap <silent><buffer> s :call <SID>toggle_hidden(getline('.'))<cr>
+		nnoremap <silent><buffer> gh :call <SID>display_paths($HOME, 0, b:navd['hidden'], $HOME)<cr>
+		nnoremap <silent><buffer> gs :call <SID>get_obj_info()<cr>
+		xnoremap <silent><buffer> gs :call <SID>get_obj_info()<cr>
+		nnoremap <silent><buffer> + :call <SID>new_obj()<cr>
 	else
 		nmapclear <buffer>
 	endif
-	nnoremap <silent><buffer> <cr>          :call <SID>enter()<cr>
+	nnoremap <silent><buffer> <cr> :call <SID>enter()<cr>
 	nnoremap <silent><buffer> <2-LeftMouse> :call <SID>enter()<cr>
-	nnoremap <silent><buffer> q             :call <SID>quit_navd()<cr>
+	nnoremap <silent><buffer> q :call <SID>quit_navd()<cr>
+	nnoremap <silent><buffer> <esc> :call <SID>quit_navd()<cr>
 
 	" Syntax highlighting of folders
 	syntax clear
-	syntax case match
-	if a:fs
-		let l:hw = len(s:curdir()) + 3
-" 		exe 'syn match NavdHead ''\v.*/\ze[^/]+/?$'' conceal'
-		exe 'syn match NavdHead ".*\%' . l:hw . 'c" conceal'
-	else
-		syn match NavdHead '^\w ' conceal
-	endif
+	syn match NavdHead '\v.*/\ze[^/]+/?$' conceal
+	syn match NavdHead '^\w ' conceal
 	syn match NavdPath    '^D .*$' contains=NavdHead
-	syn match NavdNoRead  '^R .*$' contains=NavdHead
-	syn match NavdNoWrite '^W .*$' contains=NavdHead
 	syn match NavdNoRead  '^r .*$' contains=NavdHead
 	syn match NavdNoWrite '^w .*$' contains=NavdHead
 	syn match NavdMod     '^m .*$' contains=NavdHead
@@ -219,12 +206,9 @@ function! s:setup_navd_buf(fs, paths, cursor) abort
 	hi! link NavdMod     Keyword
 	hi! link NavdCurDir  SpecialComment
 
-	let g:navd['paths'] = a:paths
 	setlocal modifiable
-	silent %delete _
-	call append(0, substitute(g:navd['message'], $HOME, '~', ''))
-	call append(1, map(copy(a:paths), '<SID>make_line(v:val)'))
-	$delete _
+	call append(0, map(copy(a:paths), '<SID>make_line(v:val)'))
+	silent $delete _
 	setlocal nomodifiable
 
 	" Find the correct line to highlight
@@ -235,49 +219,33 @@ function! s:setup_navd_buf(fs, paths, cursor) abort
 endfunction
 
 function! s:make_line(val)
-	let acc = a:val['access']
-	if a:val['type'] ==# 'D'
-		let acc = toupper(acc)
-	endif
-	return printf("%S %S", acc, a:val['path'])
+	let acc = a:val['access'] ==# 'C' ? '' : a:val['access'] . ' '
+	return acc . a:val['path']
 endfunction
 
 " Call the functions, sort out where we've come from and highlight that line.
-function! s:display_paths(path, cursor) abort
-	if a:path ==# '<parent>'
-		" Within the plugin to go up a level
-		let target_path = fnamemodify(s:curdir(), ':p:h:h')
-
-	elseif empty(a:path)
-		" Called from outside the plugin (:Navd no args)
-		let target_path = expand('%:p:h')
-
-	else
-		if isdirectory(a:path)
-			" Called from outside the plugin (:Navd directory)
-			" Or from within the plugin (enter())
-			let target_path = fnamemodify(a:path, ':p')
-
-		else
-			" Called from outside the plugin (:Navd file)
-			let target_path = fnamemodify(a:path, ':p:h')
-		endif
-	endif
+function! s:display_paths(path, cursor, hidden, curpath) abort
+	let target_path = fnamemodify(a:path, isdirectory(a:path) ? ':p' : ':p:h')
 	
 	" Add slash to end if not present
-	let target_path = s:tounix(target_path)
-	let target_path .= (target_path[-1:] ==# '/') ? '' : '/'
-	let g:navd['cur'] = target_path
-	let g:navd['message'] = target_path
-	let cursor = s:tounix(a:cursor)
+	let target_path = s:tounix(target_path . '/')
+	let cursor = empty(a:cursor) ? a:cursor : s:tounix(a:cursor)
 
 	" Check if target name is hidden and show hidden if true
-	let g:navd['hidden'] = fnamemodify(cursor, ':t')[0] ==# '.' ? 1 : g:navd['hidden']
+	let tail = fnamemodify(cursor, s:isdir(cursor) ? ':h:t' : ':t')
+	if tail[0] ==# '.' && strlen(tail) > 1
+		let hidden = 1
+	else
+		let hidden = a:hidden
+	endif
 
-	call s:setup_navd_buf(1, s:get_paths(target_path, g:navd['hidden']), cursor)
+	let paths = s:get_paths(target_path, hidden)
+	let current = {'path': a:curpath, 'type': 'd', 'access': 'C'}
+	call insert(paths, current)
+	call s:setup_navd_buf(1, paths, cursor)
 endfunction
 
-function! g:navd#navdbufs() abort
+function! navd#navdbufs() abort
 	let l:tot_bufs = bufnr('$')
 	if l:tot_bufs == 1 && bufname(1) ==# ''
 		return
@@ -299,23 +267,24 @@ function! g:navd#navdbufs() abort
 		endif
 	endfor
 
-	let g:navd['message'] = printf('%s :: %s/%s buffers', getcwd(), bufnum, tot_bufs)
-	call s:setup_navd_buf(0, paths, bufname('%'))
+	let message = printf('%s :: %s/%s buffers', getcwd(), bufnum, tot_bufs)
+	call insert(paths, {'path': message, 'type': 'f', 'access': 'C'})
+	let buf_name = fnamemodify(bufname('%'), ':~:.')
+	call s:setup_navd_buf(0, paths, buf_name)
 endfunction
 
-function! g:navd#navdall() abort
+function! navd#navdall() abort
 	let cmd = 'find . \( -type d -printf "%P/\n" , -type f -printf "%P\n" \)'
 	let cmd = 'find * -type f'
 	let output = systemlist(cmd)
 	call remove(output, 0)
 	call map(output, '{"path": v:val, "type": "f", "access": "f"}')
 
-	let g:navd['message'] = getcwd() . ' :: ' . len(output) . ' Files'
+	let b:navd['message'] = getcwd() . ' :: ' . len(output) . ' Files'
 	call s:setup_navd_buf(0, output, 0)
 endfunction
 
-function! g:navd#navd(path, hidden) abort
-	let g:navd['hidden'] = a:hidden
-	let path = s:tounix(a:path)
-	call s:display_paths(path, expand('%'))
+function! navd#navd(path, hidden) abort
+	let path = s:tounix(a:path) . '/'
+	call s:display_paths(path, expand('%'), a:hidden, path)
 endfunction
