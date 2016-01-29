@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Wed 27 Jan 2016
+" Modified: Fri 29 Jan 2016
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -265,10 +265,6 @@ function! functions#buffernext(incr) abort
 			endif
 		endif
 	endwhile
-	let mes = printf('Buffer [%s/%s] %s', current, last, bufname('%'))
-	if len(mes) > &columns - 20
-		let bufname = '<' . s:mirror(printf('%.' . (&columns-23) . 's', s:mirror(bufname('%'))))
-		let mes = printf('Buf [%s/%s] %s', bufnr('%'), bufnr('$'), bufname)
-	endif
+	let mes = printf('Buffer %s/%s', current, last)
 	echo mes
 endfunction
