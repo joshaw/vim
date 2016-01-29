@@ -1,7 +1,11 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Tue 08 Dec 2015
+" Modified: Thu 28 Jan 2016
 " Author:   Josh Wainwright
 " Filename: statusline.vim
+
+if &ruler
+	finish
+endif
 
 set laststatus=2 " Always show status line
 
