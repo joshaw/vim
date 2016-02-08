@@ -1,5 +1,5 @@
 " Created:  Fri 12 Jun 2015
-" Modified: Tue 26 Jan 2016
+" Modified: Fri 05 Feb 2016
 " Author:   Josh Wainwright
 " Filename: eunuch.vim
 
@@ -90,6 +90,9 @@ endfunction
 
 function! eunuch#FileSize(bang) abort
 	let bytes = getfsize(expand("%:p"))
+	if bytes < 0
+		return
+	endif
 	if a:bang
 		echo bytes
 		return bytes
