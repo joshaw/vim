@@ -1,5 +1,5 @@
 " Created:  Thu 07 Aug 2014
-" Modified: Wed 27 Jan 2016
+" Modified: Fri 05 Feb 2016
 " Author:   Josh Wainwright
 " Filename: filetype.vim
 
@@ -46,12 +46,4 @@ augroup filetypesettings
 	autocmd!
 	"au FileType * exe 'setlocal dict+='.fnameescape($VIMRUNTIME).'/syntax/'.&filetype.'.vim'
 	autocmd Filetype * exe 'setlocal dict+=$VIMHOME/spell/dicts/'.&filetype.'.dict'
-augroup END
-
-augroup vimp
-	autocmd!
-	autocmd BufEnter *.jgpg setf mypass.conf
-				\ | setlocal conceallevel=2
-				\ | syntax region hideup Conceal start='|' end='$'
-				\ | setlocal colorcolumn=0
 augroup END
