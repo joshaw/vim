@@ -1,5 +1,5 @@
 " Created:  Mon 11 Jan 2016
-" Modified: Mon 25 Jan 2016
+" Modified: Sun 07 Feb 2016
 " Author:   Josh Wainwright
 " Filename: cal.vim
 
@@ -67,6 +67,10 @@ function! s:getgrid(year, month, line)
 	while ( d < 7 && dom <= s:monthlength(a:year, a:month, cal) )
 		if ( thismonth && dom == today[2] )
 			let ret .= printf("%2d|", dom)
+		elseif (exists("g:highlight_dates") &&
+					\ has_key(g:highlight_dates, a:month+1) &&
+					\ index(g:highlight_dates[a:month+1], dom) >= 0)
+			let ret .= printf("%2d#", dom)
 		else
 			let ret .= printf("%2d ", dom)
 		endif
@@ -225,18 +229,17 @@ function! cal#calbuf(...)
 	setlocal modifiable
 	%delete _
 	call append(0, yearcal)
-	silent! %s/\s\+$//e
 	$delete _
 	setlocal nomodified
 	call cursor(1,1)
 	call search('\d|', 'cW')
-	redraw
 	echo "Year:" b:year
 	nnoremap <silent><buffer> H :call cal#calbuf(b:year - 1)<cr>
 	nnoremap <silent><buffer> L :call cal#calbuf(b:year + 1)<cr>
 	nnoremap <silent><buffer> t :call cal#calbuf(strftime("%Y"))<cr>
 	syntax match calendarKeyword "\d\{1,2}|" contains=calendarConceal
-	syntax match calendarConceal "|" conceal
+	syntax match calendarVariable "\d\{1,2}#" contains=calendarConceal
+	syntax match calendarConceal "|\|#" conceal
 	highlight! link Conceal Normal
 endfunction
 
