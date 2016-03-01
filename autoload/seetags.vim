@@ -1,5 +1,5 @@
 " Created:  Fri 04 Dec 2015
-" Modified: Wed 27 Jan 2016
+" Modified: Tue 09 Feb 2016
 " Author:   Josh Wainwright
 " Filename: seetags.vim
 
@@ -28,6 +28,7 @@ function! s:enter_handle() abort
 	let tag = g:seetags['tags'][line('.') - 2]
 	exe 'edit' tag['fname']
 	exe tag['cmd']
+	foldopen!
 	let &l:wrap = g:seetags['wrapsave']
 	unlet g:seetags['tags']
 endfunction
@@ -67,7 +68,7 @@ function! seetags#seetags(filename)
 
 	let startline = line('.')
 	let g:seetags['tags'] = []
-	let g:seetags['ctags'] = 'ctags -f - --sort=no --excmd=number --fields=Klz ' . filename
+	let g:seetags['ctags'] = "ctags -f - --sort=no --excmd=number --fields=Klz '" . filename . "'"
 	let tagsoutput = systemlist(g:seetags['ctags'])
 
 	if len(tagsoutput) == 0

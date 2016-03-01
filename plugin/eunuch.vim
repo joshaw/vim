@@ -13,7 +13,7 @@ command! -bar -bang -nargs=+ -complete=file Find   :call eunuch#Grep(<q-bang>, <
 command! -bar -bang -nargs=+ -complete=file Locate :call eunuch#Grep(<q-bang>, <q-args>, 'locate')
 command! -bar -bang -nargs=+ -complete=file GGrep :call eunuch#Grep(<q-bang>, <q-args>, 'git grep')
 command! -bar -bang -nargs=? -complete=dir Mkdir :call eunuch#Mkdir(<q-bang>, <q-args>)
-command! -bar -nargs=0 MaxLine call eunuch#MaxLine()
+command! -bar -bang -nargs=0 MaxLine call eunuch#MaxLine(<bang>0)
 command! -bar -bang -nargs=0 FileSize call eunuch#FileSize(<bang>0)
 
 " vim:set sw=2 sts=2:
