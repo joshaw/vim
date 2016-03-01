@@ -1,5 +1,5 @@
 " Created:  Fri 12 Jun 2015
-" Modified: Fri 05 Feb 2016
+" Modified: Fri 26 Feb 2016
 " Author:   Josh Wainwright
 " Filename: eunuch.vim
 
@@ -73,19 +73,26 @@ function! eunuch#Mkdir(bang, args) abort
 	endif
 endfunction
 
-function! eunuch#MaxLine() abort
+function! eunuch#MaxLine(iws) abort
 	let maxcol = 0
 	let lnum = 1
 	while lnum <= line('$')
-		call cursor(lnum, 0)
-		if col('$') > maxcol
-			let maxcol = col('$')
-			let maxline = lnum
+		if a:iws
+			let lenln = strlen(substitute(getline(lnum), '^\s*', '', ''))
+		else
+			let lenln = strlen(getline(lnum))
+		endif
+		if lenln > maxcol
+			let maxcol = lenln
+			let maxln = lnum
 		endif
 		let lnum += 1
 	endwhile
-	exec maxline
-	echo 'Line' maxline 'has' maxcol - 1 'characters'
+	exec maxln
+	let lnbytes = line2byte(maxln+1) - line2byte(maxln) - 1
+	let lndispw = strdisplaywidth(getline(maxln))
+	echo printf('Line %s has %s characters (%s bytes, %s cells)',
+				\ maxln, maxcol, lnbytes, lndispw)
 endfunction
 
 function! eunuch#FileSize(bang) abort
