@@ -81,3 +81,6 @@ command! -nargs=0 Wall :let buf=bufnr('.') | bufdo update | exec 'b' buf
 
 " Revs
 command! -nargs=0 GitLog :call revs#gitLog(expand('%'))
+
+" Lines
+command! -nargs=0 LinesToggle :call lines#lines()
