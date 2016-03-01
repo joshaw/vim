@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Thu 28 Jan 2016
+" Modified: Mon 15 Feb 2016
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -19,20 +19,20 @@ endif
 "
 
 """" Builtin Plugins
-let loaded_netrwPlugin     = 1
-let loaded_rrhelper        = 1
-let loaded_vimballPlugin   = 1
-let loaded_getscriptPlugin = 1
-let loaded_logipat         = 1
-let loaded_matchparen      = 1
-let loaded_2html_plugin    = 1
-let loaded_rrhelper        = 1
-" let loaded_zipPlugin       = 1
-" let loaded_tarPlugin       = 1
-" let loaded_gzip            = 1
-let g:skip_loading_mswin   = 1
-let loaded_spellfile_plugin = 1
-" let did_install_default_menus = 1
+let loaded_getscriptPlugin    = 1
+let loaded_gzip               = 1
+let loaded_logipat            = 1
+let loaded_matchparen         = 1
+let loaded_netrwPlugin        = 1
+let loaded_rrhelper           = 1
+let loaded_spellfile_plugin   = 1
+let loaded_tarPlugin          = 1
+let loaded_2html_plugin       = 1
+let loaded_vimballPlugin      = 1
+let loaded_zipPlugin          = 1
+let skip_loading_mswin        = 1
+let did_install_default_menus = 1
+let skip_loading_mswin = 1
 
 " Settings                       {{{1
 "
@@ -115,7 +115,7 @@ endif
 set shortmess=aoOstTI " list of flags to make messages shorter
 silent! set shortmess+=c
 set noshowcmd         " show (partial) command keys in the status line
-set ruler             " show cursor position below each window
+" set ruler             " show cursor position below each window
 exe 'set verbosefile='.g:vimhome . 'errors.log'
 set nomore            " pause listings when the screen is full
 
@@ -219,7 +219,6 @@ endif
 augroup vimrc_reload
 	autocmd!
 	autocmd BufWritePost $MYVIMRC source $MYVIMRC
-				\ | call statusline#colour()
 augroup END
 
 if has('win32')
