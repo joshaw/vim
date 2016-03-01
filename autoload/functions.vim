@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Fri 29 Jan 2016
+" Modified: Fri 19 Feb 2016
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -267,4 +267,28 @@ function! functions#buffernext(incr) abort
 	endwhile
 	let mes = printf('Buffer %s/%s', current, last)
 	echo mes
+endfunction
+
+" Test Features {{{1
+function! functions#testfeatures()
+	let feats = []
+	for feat in ['conceal', 'autocmd', 'eval', 'lua', 'persistent_undo', 'python',
+				\ 'python3', 'visual']
+		if ! has(feat)
+			call add(feats, 'Missing: ' . feat)
+		endif
+	endfor
+	for feat in ['arabic', 'cryptv', 'farsi', 'hangul_input', 'netbeans_intg',
+				\ 'mzscheme', 'tcl']
+		if has(feat)
+			call add(feats, 'Remove: ' . feat)
+		endif
+	endfor
+	if empty(feats)
+		echo "All present and correct"
+	else
+		for feat in feats
+			echo feat
+		endfor
+	endif
 endfunction
