@@ -1,5 +1,5 @@
 " Created:  Tue 12 Jan 2016
-" Modified: Fri 29 Jan 2016
+" Modified: Mon 29 Feb 2016
 " Author:   Josh Wainwright
 " Filename: scratch.vim
 
@@ -22,6 +22,7 @@ function! scratch#scratch(...) abort
 		endif
 	endfor
 	setlocal filetype<
+	setlocal bufhidden=delete
 	setlocal buftype=nofile
 	setlocal modifiable
 	silent %delete _
