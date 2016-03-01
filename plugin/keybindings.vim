@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Wed 27 Jan 2016
+" Modified: Tue 01 Mar 2016
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -101,7 +101,6 @@ nnoremap <silent> ]<space> :put _<cr>k
 " Navigate buffers
 nnoremap ]b :call functions#buffernext(1)<cr>
 nnoremap [b :call functions#buffernext(-1)<cr>
-nnoremap <silent> <space> :<c-u>exe 'buffer ' . v:count1<cr>
 
 " N/P File in dir
 nnoremap ]f :call functions#nextFileInDir(1)<cr>
