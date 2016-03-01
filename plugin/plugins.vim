@@ -89,3 +89,6 @@ command! -nargs=1 -bar Langton :call langton#langton(<f-args>)
 
 " TestFeatures
 command! -nargs=0 TestFeatures :call functions#testfeatures()
+
+" Revs
+command! -nargs=0 GitLog :call revs#gitLog(expand('%'))
