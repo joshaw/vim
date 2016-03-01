@@ -1,12 +1,13 @@
 " Created:  Tue 27 Oct 2015
-" Modified: Fri 20 Nov 2015
+" Modified: Thu 28 Jan 2016
 " Author:   Josh Wainwright
 " Filename: align.vim
 
 function! g:align#align(char, delspace, alignright) range abort
 	" Set default align character if none is given
-	let char = len(a:char) == 0 ? '|' : a:char
+	let char = empty(a:char) ? '|' : a:char
 	let char = substitute(char, '\\ ', ' ', 'g')
+	let char = substitute(char, '\\t', '	', 'g')
 	let linesplit = []
 	let mem = {}
 
@@ -77,10 +78,10 @@ endfunction
 " five | five | five
 
 " |
-" one | two two two | three | four
-" four | three | two two two | one
-" two two two | three | one | four
-" three | one | four | two two two
+" one 	 two two two 	 three 	 four
+" four 	 three 	 two two two 	 one
+" two two two 	 three 	 one 	 four
+" three 	 one 	 four 	 two two two
 
 " s
 " josh wainwright
