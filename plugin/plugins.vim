@@ -72,9 +72,6 @@ command! -nargs=0 Clock :call cal#clock()
 " Langton's Ant
 command! -nargs=1 -bar Langton :call langton#langton(<f-args>)
 
-" PrevNavd
-command! -nargs=* -bar -complete=file PrevNavd :call prevnavd#PrevNavd(<f-args>)
-
 " TestFeatures
 command! -nargs=0 TestFeatures :call functions#testfeatures()
 
