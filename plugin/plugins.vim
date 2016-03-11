@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Tue 01 Mar 2016
+" Modified: Fri 11 Mar 2016
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -58,7 +58,7 @@ command! FirstTimeRun :call functions#FirstTimeRun()
 command! -nargs=? -bar Html2Text :call functions#html2text(<args>)
 
 " Show non-ascii characters in text
-command! -nargs=0 AsciiToggle :call functions#AsciiToggle()
+command! -nargs=0 -bar AsciiToggle :call functions#AsciiToggle()
 
 " Align text on character
 command! -range=% -nargs=? -bang Align :<line1>,<line2>call align#align('<args>', <bang>0, 0)
@@ -83,6 +83,9 @@ command! -nargs=0 GitLog :call revs#gitLog(expand('%'))
 
 " Lines
 command! -nargs=0 LinesToggle :call lines#lines()
+
+" Convert Dates
+command! -nargs=0 ConvertDates :%s#\v(\d{2})/(\d{2})/(\d{4})#\3\2\1#g
 
 " Get Patch for modifications
 command! -nargs=0 Patch :call patch#patch(expand('%'), '-u')

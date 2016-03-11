@@ -1,13 +1,10 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Fri 20 Nov 2015
+" Modified: Tue 08 Mar 2016
 " Author:   Josh Wainwright
 " Filename: whitespace.vim
 "
 " Remove trailing spaces
 function! whitespace#StripTrailing(firstl, lastl) range abort
-" 	if &ft == 'markdown' || &ft == 'dat'
-" 		return
-" 	endif
 	if stridx(&formatoptions, 'a') > 0
 		return
 	endif
