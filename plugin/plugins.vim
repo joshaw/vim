@@ -83,3 +83,6 @@ command! -nargs=0 GitLog :call revs#gitLog(expand('%'))
 
 " Lines
 command! -nargs=0 LinesToggle :call lines#lines()
+
+" Get Patch for modifications
+command! -nargs=0 Patch :call patch#patch(expand('%'), '-u')
