@@ -5,6 +5,7 @@
 
 function! navd#navd(path, hidden) abort
 	let cursor = bufname('%')
+	let g:altreg = @%
 	if empty(cursor)
 		let cursor = getcwd()
 	endif
@@ -75,7 +76,7 @@ function! s:display_paths(path, cursor, hidden) abort
 	endif
 endfunction
 
-function! s:norm_path(path)
+function! s:norm_path(path) abort
 	let path = a:path
 	if empty(path)
 		let path = getcwd()
@@ -106,7 +107,7 @@ function! s:get_paths(path, hidden) abort
 	return paths
 endfunction
 
-function! s:setup_navd_buf(paths, cursor)
+function! s:setup_navd_buf(paths, cursor) abort
 	setlocal modifiable
 	silent! %delete _
 	call append(0, a:paths)
@@ -132,7 +133,7 @@ function! s:setup_navd_buf(paths, cursor)
 	endif
 endfunction
 
-function! s:keybindings(fs)
+function! s:keybindings(fs) abort
 	if a:fs
 		nnoremap <silent><buffer> - :call <SID>parent()<cr>
 		nnoremap <silent><buffer> <space> :call <SID>preview()<cr>
@@ -182,6 +183,8 @@ function! s:enter() abort
 	let path = substitute(getline('.'), '^\s*', '', '')
 	if filereadable(path)
 		exe 'edit' fnameescape(path)
+		let @# = g:altreg
+		unlet g:altreg
 	elseif isdirectory(path)
 		call s:display_paths(path, '', b:navd_hidden)
 	else
@@ -189,13 +192,13 @@ function! s:enter() abort
 	endif
 endfunction
 
-function! s:parent()
+function! s:parent() abort
 	let path = fnamemodify(getline(1), ':p:h:h') . '/'
 	let cursor = getline(1)
 	call s:display_paths(path, cursor, b:navd_hidden)
 endfunction
 
-function! s:refresh()
+function! s:refresh() abort
 	let path = getline(1)
 	let cursor = getline('.')
 	call s:display_paths(path, cursor, b:navd_hidden)
@@ -210,7 +213,9 @@ function! s:quit_navd() abort
 		buffer 1
 	else
 		exe 'buffer' l:alt
+		let @# = g:altreg
 	endif
+	silent! unlet g:altreg
 endfunction
 
 " Pipe file through less or dir through tree to see preview
