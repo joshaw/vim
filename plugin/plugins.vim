@@ -54,8 +54,8 @@ command! IPtablesSort :call functions#IPtablesSort()
 " FirstTimeRun
 command! FirstTimeRun :call functions#FirstTimeRun()
 
-" Nroff formatting of html files
-command! -nargs=? Html2Nroff :call functions#html2nroff(<args>)
+" Html2Text
+command! -nargs=? -bar Html2Text :call functions#html2text(<args>)
 
 " Show non-ascii characters in text
 command! -nargs=0 AsciiToggle :call functions#AsciiToggle()

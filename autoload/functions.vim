@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Fri 19 Feb 2016
+" Modified: Fri 04 Mar 2016
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -157,19 +157,23 @@ function! functions#nextFileInDir(direction) abort
 	endif
 endfunction
 
-" Nroff formatting of HTML file {{{1
-function! functions#html2nroff(...) abort
-	let l:tw = a:0 > 0 ? a:1 : &textwidth
+" Html2Text {{{1
+function! functions#html2text(...) abort
+	if !executable('iconv') || !executable('lynx')
+		echoerr 'Required commands are not available (iconv, lynx)'
+		return
+	endif
+	silent %!iconv -f utf-8 -t ascii//translit
+	let tw = a:0 > 0 ? a:1 : &textwidth
+	silent exe '%!lynx -justify -dump -stdin -width=' . tw
+	return
+
 	silent StripTrailing
 	keeppatterns silent! %s/<\(h\d\).\{-}>\(.\{-}\)<\/\1>/.tl '\2'''/
 	keeppatterns silent! %s/<\(title\).\{-}>\(.\{-}\)<\/\1>/.ce 1\r\2/
 	keeppatterns silent! %s/<.\{-}>//ge
 	keeppatterns silent! %s/^\s\+//e
-	let htmlents = {'\s\?…\s\?': '...', '“': '"', '”': '"', '’': "'", '—': '--'}
-	for [ent, rep] in items(htmlents)
-		exe 'keeppatterns silent! %s/\V' . ent . '/' . rep . '/ge'
-		unlet ent rep
-	endfor
+	let l:tw = a:0 > 0 ? a:1 : &textwidth
 	call append(0, '.ll '.l:tw)
 	call append(0, '.nh')
 	silent %!nroff
