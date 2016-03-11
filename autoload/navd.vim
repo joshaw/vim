@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Sat 27 Feb 2016
+" Modified: Tue 08 Mar 2016
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -16,6 +16,9 @@ function! navd#navd(path, hidden) abort
 endfunction
 
 function! navd#navdall(path, indent) abort
+	if ! has('python3')
+		return
+	endif
 	let path = s:norm_path(a:path)
 	call ScratchBuf()
 python3 << EOP
@@ -61,7 +64,7 @@ function! navd#navdbufs() abort
 	let message = printf('%s :: %s/%s buffers', getcwd(), bufnum, tot_bufs)
 	call insert(paths, message)
 	let buf_name = fnamemodify(bufname('%'), ':~:.')
-	call s:display_paths(paths, buf_name)
+	call s:setup_navd_buf(paths, buf_name)
 	call s:keybindings(0)
 endfunction
 
@@ -72,7 +75,7 @@ function! s:display_paths(path, cursor, hidden) abort
 	if !empty(path)
 		let paths = s:get_paths(path, hidden)
 		call insert(paths, path)
-		call s:setup_navd_buf(paths, a:cursor)
+		call s:setup_navd_buf(paths, s:norm_path(a:cursor))
 	endif
 endfunction
 
@@ -139,7 +142,7 @@ function! s:keybindings(fs) abort
 		nnoremap <silent><buffer> <space> :call <SID>preview()<cr>
 		nnoremap <silent><buffer> R :call <SID>refresh()<cr>
 		nnoremap <silent><buffer> s :call <SID>toggle_hidden(getline('.'))<cr>
-		nnoremap <silent><buffer> gh :call navd#navd($HOME, b:navd_hidden)<cr>
+		nnoremap <silent><buffer> gh :call navd#navd($HOME . '/', b:navd_hidden)<cr>
 		nnoremap <silent><buffer> gs :call <SID>get_obj_info()<cr>
 		xnoremap <silent><buffer> gs :call <SID>get_obj_info()<cr>
 		nnoremap <silent><buffer> + :call <SID>new_obj()<cr>
@@ -230,6 +233,9 @@ function! s:preview() abort
 endfunction
 
 function! s:get_obj_info() abort
+	if line('.') == 1
+		return
+	endif
 	let path = fnamemodify(getline('.'), ':p')
 	if isdirectory(path)
 		let path = shellescape(path)
