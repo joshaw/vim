@@ -1,5 +1,5 @@
 " Created:  Sat 18 Oct 2014
-" Modified: Tue 26 Jan 2016
+" Modified: Thu 03 Mar 2016
 " Author:   Josh Wainwright
 " Filename: display.vim
 
@@ -20,6 +20,7 @@ let s:reading_mode_def = {
 			\ 'colorcolumn': 0,
 			\ 'scrolloff': 999,
 			\ 'Colorscheme': 'reading',
+			\ 'guicursor': '"a:block-Normal-blinkon0"',
 			\ }
 
 let s:display_mode_def = {
