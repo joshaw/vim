@@ -1,5 +1,5 @@
 " Created:  Fri 04 Dec 2015
-" Modified: Tue 09 Feb 2016
+" Modified: Fri 11 Mar 2016
 " Author:   Josh Wainwright
 " Filename: seetags.vim
 
@@ -71,11 +71,11 @@ function! seetags#seetags(filename)
 	let g:seetags['ctags'] = "ctags -f - --sort=no --excmd=number --fields=Klz '" . filename . "'"
 	let tagsoutput = systemlist(g:seetags['ctags'])
 
-	if len(tagsoutput) == 0
-		echo fnamemodify(filename, ':~:.') ": no tags found"
-		return
-	elseif v:shell_error
+	if v:shell_error
 		echo "Error running Ctags"
+		return
+	elseif len(tagsoutput) == 0
+		echo fnamemodify(filename, ':~:.') ": no tags found"
 		return
 	endif
 
