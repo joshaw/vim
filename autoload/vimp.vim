@@ -1,22 +1,14 @@
 " Created:  Mon 02 Nov 2015
-" Modified: Wed 06 Jan 2016
+" Modified: Tue 08 Mar 2016
 " Author:   Josh Wainwright
 " Filename: vimp.vim
 
-function! s:check_gpg() abort
-	if executable('gpg')
-		return 1
-	endif
-	return 0
-endfunction
-
 function! vimp#encrypt(file) abort
-	if ! s:check_gpg()
+	if ! executable('gpg')
 		echoerr 'GPG executable not found. Cannot encrypt'
 		return
 	endif
 
-	let pass = ''
 	let pass = inputsecret('Passphrase: ')
 	if empty(pass)
 		echo 'cannot be empty'
@@ -36,7 +28,7 @@ function! vimp#encrypt(file) abort
 endfunction
 
 function! vimp#decrypt(file) abort
-	if s:check_gpg()
+	if executable('gpg')
 		let pass = inputsecret('Passphrase: ')
 		let dec_cmd = 'gpg --quiet --yes --passphrase ' . pass . ' -d '
 		call append(0, systemlist(dec_cmd . a:file))
