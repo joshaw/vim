@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Tue 08 Mar 2016
+" Modified: Wed 16 Mar 2016
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -65,8 +65,11 @@ function! navd#navdbufs() abort
 	let message = printf('%s :: %s/%s buffers', getcwd(), bufnum, tot_bufs)
 	call insert(paths, message)
 	let buf_name = fnamemodify(bufname('%'), ':~:.')
+	let g:altreg = @%
+	call ScratchBuf()
 	call s:setup_navd_buf(paths, buf_name)
 	call s:keybindings(0)
+	nnoremap <silent><buffer> <cr> :call <SID>goto_buffer()<cr>
 endfunction
 
 function! s:display_paths(path, cursor, hidden) abort
@@ -147,10 +150,10 @@ function! s:keybindings(fs) abort
 		nnoremap <silent><buffer> gs :call <SID>get_obj_info()<cr>
 		xnoremap <silent><buffer> gs :call <SID>get_obj_info()<cr>
 		nnoremap <silent><buffer> + :call <SID>new_obj()<cr>
+		nnoremap <silent><buffer> <cr> :call <SID>goto_file()<cr>
 	else
 		nmapclear <buffer>
 	endif
-	nnoremap <silent><buffer> <cr> :call <SID>enter()<cr>
 	nnoremap <silent><buffer> q :call <SID>quit_navd()<cr>
 endfunction
 
@@ -183,7 +186,7 @@ function! s:toggle_hidden(curline) abort
 	echo (b:navd_hidden == 1 ? 'S' : 'Not s') . 'howing hidden files'
 endfunction
 
-function! s:enter() abort
+function! s:goto_file() abort
 	let path = substitute(getline('.'), '^\s*', '', '')
 	if filereadable(path)
 		exe 'edit' fnameescape(path)
@@ -194,6 +197,20 @@ function! s:enter() abort
 	else
 		echo 'Cannot access' path
 	endif
+endfunction
+
+function! s:goto_buffer() abort
+	if line('.') == 1
+		return
+	endif
+	let path = getline('.')
+	for buf in range(1, bufnr('$'))
+		if bufexists(buf)
+			if bufname(buf) ==# path
+				exe 'buffer ' . buf
+			endif
+		endif
+	endfor
 endfunction
 
 function! s:parent() abort
