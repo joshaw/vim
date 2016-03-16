@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Tue 01 Mar 2016
+" Modified: Wed 16 Mar 2016
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -145,8 +145,8 @@ else
 	xnoremap <c-a> :call functions#BlockIncr(1)<cr>gv
 	xnoremap <c-x> :call functions#BlockIncr(-1)<cr>gv
 endif
-nnoremap <silent> <c-a> :<c-u>call incremental#incremental(expand('<cword>'), 1)<cr>
-nnoremap <silent> <c-x> :<c-u>call incremental#incremental(expand('<cword>'), -1)<cr>
+nnoremap <silent> <c-a> :<c-u>call incremental#incremental(expand('<cword>'), v:count1 * 1)<cr>
+nnoremap <silent> <c-x> :<c-u>call incremental#incremental(expand('<cword>'), v:count1 * -1)<cr>
 nnoremap <silent> g<c-a> :<c-u>call incremental#incChar(<SID>cchar(), 1)<cr>
 nnoremap <silent> g<c-x> :<c-u>call incremental#incChar(<SID>cchar(), -1)<cr>
 
