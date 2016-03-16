@@ -19,6 +19,7 @@ function! navd#navdall(path, indent) abort
 	if ! has('python3')
 		return
 	endif
+	let g:altreg = @%
 	let path = s:norm_path(a:path)
 	call ScratchBuf()
 python3 << EOP
