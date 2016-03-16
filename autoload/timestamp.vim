@@ -1,13 +1,13 @@
 " Created:  Thu 17 Apr 2014
-" Modified: Fri 20 Nov 2015
+" Modified: Wed 16 Mar 2016
 " Author:   Josh Wainwright
 " Filename: timestamp.vim
 
 " Update timestamp if found in the first few lines of a file.
 " Triggered on file read but not set as modified.
 function! timestamp#Timestamp() abort
-	if &readonly
-		return
+	if &readonly || ! &modifiable
+		return -1
 	endif
 	let l:winview = winsaveview()
 
