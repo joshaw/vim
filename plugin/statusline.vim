@@ -12,17 +12,17 @@ set statusline=%!Status_info()
 let g:c = 0
 
 function! Status_info()
-	if !exists('b:buf_stl')
-		let b:buf_stl = s:status_static_info()
+	if !exists('w:buf_stl')
+		let w:buf_stl = s:status_static_info()
 	endif
-	let b:vissize = ''
+	let w:vissize = ''
 	let mde = char2nr(mode())
 	" ^V=22, V=86, v=118
 	if mde == 22 || mde == 86 || mde == 118 
-		let b:vissize = ' ' . (abs(line('v') - line('.')) + 1)
+		let w:vissize = ' ' . (abs(line('v') - line('.')) + 1)
 	endif
 	if mde == 22
-		let b:vissize .= '-' . (abs(getpos('v')[2] - getpos('.')[2]) + 1)
+		let w:vissize .= '-' . (abs(getpos('v')[2] - getpos('.')[2]) + 1)
 	endif
 	return '%f%{b:buf_stl}%=%m%{b:vissize} %l/%L,%2v %P'
 endfunction
@@ -70,9 +70,9 @@ endfunction
 
 augroup ruler_info
 	au!
-	autocmd BufEnter     * unlet! b:buf_stl
-	autocmd InsertLeave  * unlet! b:buf_stl
-	autocmd BufWritePost * unlet! b:buf_stl
-	autocmd TextChanged  * unlet! b:buf_stl
-	autocmd OptionSet    * unlet! b:buf_stl
+	autocmd BufEnter     * unlet! w:buf_stl
+	autocmd InsertLeave  * unlet! w:buf_stl
+	autocmd BufWritePost * unlet! w:buf_stl
+	autocmd TextChanged  * unlet! w:buf_stl
+	autocmd OptionSet    * unlet! w:buf_stl
 augroup END
