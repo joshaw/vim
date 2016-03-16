@@ -1,10 +1,9 @@
 " Created:  Mon 14 Mar 2016
-" Modified: Mon 14 Mar 2016
+" Modified: Wed 16 Mar 2016
 " Author:   Josh Wainwright
 " Filename: test.vimrc
 
 set nocompatible
-set verbosefile=output.log
 set shortmess=aoOsWAIc
 
 function! Assert_print(one, two) abort
@@ -37,3 +36,16 @@ function! Assert_print(one, two) abort
 		call add(v:errors, "=====")
 	endif
 endfunction
+
+function! s:printtests()
+	edit! output.log
+	call append(line('$'), v:errors)
+	call append(line('$'), v:errmsg)
+	let v:errmsg = ''
+	write
+endfunction
+
+augroup end_of_tests
+	au!
+	autocmd VimLeave * call s:printtests()
+augroup END
