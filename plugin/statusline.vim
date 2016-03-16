@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Mon 29 Feb 2016
+" Modified: Tue 15 Mar 2016
 " Author:   Josh Wainwright
 " Filename: statusline.vim
 
@@ -24,7 +24,9 @@ function! Status_info()
 	if mde == 22
 		let w:vissize .= '-' . (abs(getpos('v')[2] - getpos('.')[2]) + 1)
 	endif
-	return '%f%{b:buf_stl}%=%m%{b:vissize} %l/%L,%2v %P'
+	let buf_stl = "exists('w:buf_stl') ? w:buf_stl : ''"
+	let vissize = "exists('w:vissize') ? w:vissize : ''"
+	return '%f%{' . buf_stl . '}%=%m%{' . vissize . '} %l/%L,%2v %P'
 endfunction
 
 function! s:bufsize(bytes)
