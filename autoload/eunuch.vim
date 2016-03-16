@@ -1,5 +1,5 @@
 " Created:  Fri 12 Jun 2015
-" Modified: Fri 26 Feb 2016
+" Modified: Mon 14 Mar 2016
 " Author:   Josh Wainwright
 " Filename: eunuch.vim
 
@@ -93,6 +93,7 @@ function! eunuch#MaxLine(iws) abort
 	let lndispw = strdisplaywidth(getline(maxln))
 	echo printf('Line %s has %s characters (%s bytes, %s cells)',
 				\ maxln, maxcol, lnbytes, lndispw)
+	return maxln
 endfunction
 
 function! eunuch#FileSize(bang) abort
