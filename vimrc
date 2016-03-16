@@ -177,6 +177,10 @@ if has('win32')
 	set shellxquote=\"
 endif
 set keywordprg="" " program used for the "K" command
+if executable('ag')
+	setlocal grepprg=ag\ --vimgrep\ --smart-case
+	setlocal grepformat=%f:%l:%c:%m
+endif
 
 "23 running make and jumping to errors {{{2
 set makeprg=make\ >\ /dev/null " program used for the ":make" command
