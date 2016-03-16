@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Fri 20 Nov 2015
+" Modified: Tue 15 Mar 2016
 " Author:   Josh Wainwright
 " Filename: incremental.vim
 
@@ -34,40 +34,48 @@ function! s:replace_word(line, col, word, replace) abort
 	let idx = match(a:line, a:word, a:col-len(a:word), 1)
 	let after = a:line[idx + len(a:word):]
 	if idx == 0
-		call setline('.', a:replace . after)
+		let line = a:replace . after
 	else
 		let before = a:line[:idx-1]
-		call setline('.', before . a:replace . after)
+		let line = before . a:replace . after
 	endif
+	return line
 endfunction
 
-function! incremental#incremental(arg, direction) abort
+function! s:increment_word(word, direction) abort
 	let retval = ''
-	let w = tolower(a:arg)
+	let w = tolower(a:word)
 
 	for lst in s:mods
 		let idx = index(lst, w)
 		if idx >= 0
-			let retval = lst[(idx + v:count1 * a:direction) % len(lst)]
-			if a:arg =~# '^\l*$'
+			let retval = lst[(idx + a:direction) % len(lst)]
+			if a:word =~# '^\l*$'
 				" don't need to change retval
-			elseif a:arg =~# '^\u*$'
+			elseif a:word =~# '^\u*$'
 				let retval = toupper(retval)
-			elseif a:arg =~# '^\u\l*$'
+			elseif a:word =~# '^\u\l*$'
 				let retval = toupper(retval[0]) . retval[1:]
 			else
-				echoerr 'Error encountered with argument:' a:arg
-				return
+				echoerr 'Error encountered with argument:' a:word
+				return -1
 			endif
 			break
 		endif
 	endfor
+	return retval
+endfunction
 
-	if retval ==# ''
-		silent exe 'normal! '.v:count1.(a:direction==1 ? "\<C-a>" : "\<C-x>")
+function! incremental#incremental(arg, direction) abort
+	let newword = s:increment_word(a:arg, a:direction)
+	if newword ==# ''
+		silent exe 'normal! ' . abs(a:direction) . (a:direction>0 ? "\<C-a>" : "\<C-x>")
+		let newline = getline('.')
 	else
-		call s:replace_word(getline('.'), col('.'), a:arg, retval)
+		let newline = s:replace_word(getline('.'), col('.'), a:arg, newword)
+		call setline('.', newline)
 	endif
+	return newline
 endfunction
 
 function! incremental#incChar(arg, direction) abort
@@ -75,5 +83,6 @@ function! incremental#incChar(arg, direction) abort
 	for char in split(a:arg, '.\zs')
 		let w = w . nr2char(char2nr(char) + v:count1 * a:direction)
 	endfor
-	call s:replace_word(getline('.'), col('.'), a:arg, w)
+	let newline = s:replace_word(getline('.'), col('.'), a:arg, w)
+	call setline('.', newline)
 endfunction
