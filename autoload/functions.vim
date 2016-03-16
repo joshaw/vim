@@ -1,29 +1,7 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Fri 04 Mar 2016
+" Modified: Wed 16 Mar 2016
 " Author:   Josh Wainwright
 " Filename: functions.vim
-
-" GrepString {{{1
-" Set the grepprg depending on context
-function! functions#GrepString() abort
-	if ( exists('b:git_dir') && b:git_dir !=# '')
-				\ || isdirectory('.git')
-				\ || isdirectory('../.git')
-				\ || isdirectory('../../.git')
-				\ || isdirectory('../../../.git')
-				\ || isdirectory('../../../../.git')
-		setlocal grepformat=%f:%l:%m
-		setlocal grepprg=git\ --no-pager\ grep\ -H\ --line-number\ --no-color
-					\\ --ignore-case\ -I\ -e
-	elseif executable('ag')
-		setlocal grepformat=%f:%l:%c:%m
-		setlocal grepprg=ag\ --vimgrep\ --smart-case
-	else
-		setlocal grepformat=%f:%l:%m
-		setlocal grepprg=grep\ --binary-files=without-match\ --with-filename
-					\\ --line-number\ --dereference-recursive\ --ignore-case\ $*
-	endif
-endfunction
 
 " BufGrep {{{1
 " Search and Replace through all buffers

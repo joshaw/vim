@@ -151,7 +151,7 @@ nnoremap <silent> g<c-a> :<c-u>call incremental#incChar(<SID>cchar(), 1)<cr>
 nnoremap <silent> g<c-x> :<c-u>call incremental#incChar(<SID>cchar(), -1)<cr>
 
 " GrepString
-nnoremap <c-g> :call functions#GrepString()<cr>:grep<space>
+nnoremap <c-g> :grep<space>
 
 " Jump to start and end of line in insert mode
 inoremap <C-a> <esc>I
