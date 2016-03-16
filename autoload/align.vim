@@ -1,5 +1,5 @@
 " Created:  Tue 27 Oct 2015
-" Modified: Thu 28 Jan 2016
+" Modified: Tue 15 Mar 2016
 " Author:   Josh Wainwright
 " Filename: align.vim
 
@@ -8,29 +8,50 @@ function! g:align#align(char, delspace, alignright) range abort
 	let char = empty(a:char) ? '|' : a:char
 	let char = substitute(char, '\\ ', ' ', 'g')
 	let char = substitute(char, '\\t', '	', 'g')
+	
+	let text = getline(a:firstline, a:lastline)
+	let text = s:align(text, char, a:delspace, a:alignright)
+
+	call setline(a:firstline, text)
+
+	redraw
+	echo len(text) . ' lines aligned.'
+endfunction
+
+function! align#alignmap(type, ...) abort
+	let [lnum1, lnum2] = [line("'["), line("']")]
+	exe lnum1 . ',' . lnum2. 'call align#align_getchar()'
+endfunction
+
+function! align#align_getchar() range abort
+	echon 'Char: '
+	let char = nr2char(getchar())
+	exe a:firstline . ',' . a:lastline . 'call align#align(char, 0, 0)'
+endfunction
+
+function! s:align(text, char, delspace, alignright) abort
 	let linesplit = []
+	let alignedtext = []
 	let mem = {}
 
 	" Split all lines in range using char
-	for l:i in range(a:firstline, a:lastline)
-		let line = getline(l:i)
-		let cols = split(line, '\s*'.char.'\s*', 1)
+	for line in a:text
+		let cols = split(line, '\s*' . a:char . '\s*', 1)
 		let linesplit = add(linesplit, cols)
 
 		" For each column, check if it is the longest
-		for l:j in range(0, len(cols)-1)
-			let len = strwidth(cols[l:j])
-			if !has_key(mem, l:j) || len > mem[l:j]
-				let mem[l:j] = len
+		for j in range(0, len(cols)-1)
+			let len = strwidth(cols[j])
+			if !has_key(mem, j) || len > mem[j]
+				let mem[j] = len
 			endif
 		endfor
 	endfor
 	unlet line
 
 	" Set separator char depending on options set
-	let joinchar = a:delspace ? char : ' ' . char . ' '
+	let joinchar = a:delspace ? a:char : ' ' . a:char . ' '
 	let newlines = []
-	let lcount = 0
 	for line in linesplit
 		let newline = ''
 
@@ -52,22 +73,10 @@ function! g:align#align(char, delspace, alignright) range abort
 		endif
 
 		" Replace lines with aligned lines
-		call setline(a:firstline + lcount, newline)
-		let lcount += 1
+" 		call setline(a:firstline + lcount, newline)
+		call add(alignedtext, newline)
 	endfor
-	redraw
-	echo lcount . ' lines aligned.'
-endfunction
-
-function! align#alignmap(type, ...) abort
-	let [lnum1, lnum2] = [line("'["), line("']")]
-	exe lnum1 . ',' . lnum2. 'call align#align_getchar()'
-endfunction
-
-function! align#align_getchar() range abort
-	echon 'Char: '
-	let char = nr2char(getchar())
-	exe a:firstline . ',' . a:lastline . 'call align#align(char, 0, 0)'
+	return alignedtext
 endfunction
 
 " |
