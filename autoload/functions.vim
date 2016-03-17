@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Wed 16 Mar 2016
+" Modified: Thu 17 Mar 2016
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -87,6 +87,7 @@ function! functions#toggleComment() abort
 	let dict = {
 			\ 'bash': '#',
 			\ 'c': '//',
+			\ 'conf': '#',
 			\ 'cpp': '//',
 			\ 'dosbatch': '::',
 			\ 'dot': '//',
@@ -94,6 +95,7 @@ function! functions#toggleComment() abort
 			\ 'gnuplot': '#',
 			\ 'haskell': '--',
 			\ 'java': '//',
+			\ 'lua': '--',
 			\ 'mail': '>',
 			\ 'make': '#',
 			\ 'markdown': '<!--',
