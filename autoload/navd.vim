@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Wed 16 Mar 2016
+" Modified: Thu 17 Mar 2016
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -17,6 +17,7 @@ endfunction
 
 function! navd#navdall(path, indent) abort
 	if ! has('python3')
+		echoerr 'Python3 not available'
 		return
 	endif
 	let g:altreg = @%
