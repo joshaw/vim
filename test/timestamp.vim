@@ -1,5 +1,5 @@
 " Created:  Wed 16 Mar 2016
-" Modified: Wed 16 Mar 2016
+" Modified: Thu 17 Mar 2016
 " Author:   Josh Wainwright
 " Filename: timestamp.vim
 
@@ -7,9 +7,7 @@
 
 let expected = ['Created: ' . 'TIMESTAMP', 'Modified: ' . 'TIMESTAMP']
 silent edit tmp/timestamp.t
-%delete _
 call append(0, expected)
-write
 setlocal nomodifiable
 call timestamp#Timestamp()
 call assert_equal(getline(1,2), expected)

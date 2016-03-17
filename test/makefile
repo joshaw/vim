@@ -1,10 +1,10 @@
 # Created:  Sat 12 Mar 2016
-# Modified: Wed 16 Mar 2016
+# Modified: Thu 17 Mar 2016
 # Author:   Josh Wainwright
 # Filename: makefile
 
 VIM ?= vim
-VIMARGS := -i NONE -U NONE --noplugin -nN --startuptime start.log
+VIMARGS := -i NONE -U NONE --noplugin -nN
 ifndef UI
 VIMARGS += -Es -c':qall!'
 ifeq ($(VIM),nvim)
@@ -32,14 +32,13 @@ tmp:
 	@mkdir -p tmp
 
 %.vim: FORCE
-	@rm -f output.log
 	@$(GCC) -include test.vimrc $@ 2> /dev/null > $@.test
 	@$(VIM_CMD) -u $@.test 2>&1
 	$(eval NTESTS = $(shell grep -E $(ASSERT_SEARCH) $@ | wc -l))
 	$(eval TOT_TESTS = $(shell expr $(TOT_TESTS) + $(NTESTS)))
 	@printf '=> $@ : '
 	@grep . output.log && printf '\n' || printf 'Passed $(NTESTS)\n'
-	@rm -f $@.test
+	@rm -f $@.test output.log
 
 %.vim.test: %.vim
 	$(GCC) -include test.vimrc $< 2> /dev/null > $@

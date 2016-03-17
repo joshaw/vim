@@ -1,5 +1,5 @@
 " Created:  Mon 14 Mar 2016
-" Modified: Wed 16 Mar 2016
+" Modified: Thu 17 Mar 2016
 " Author:   Josh Wainwright
 " Filename: eunuch.vim
 
@@ -26,17 +26,16 @@ silent edit tmp/eunuch.t
 call eunuch#MoveFile('', 'tmp/eunuch.renamed')
 call assert_false(filereadable('tmp/eunuch.t'))
 call assert_true(filereadable('tmp/eunuch.renamed'))
+call delete('tmp/eunuch.renamed')
 
 " Move file into folder
 call writefile([1, 2, 3, 4], 'tmp/eunuch.t')
-if !isdirectory('tmp/eunuch')
-	call mkdir('tmp/eunuch/')
-endif
-call delete('tmp/eunuch/eunuch.t')
+call mkdir('tmp/eunuch/')
 silent edit tmp/eunuch.t
 call eunuch#MoveFile('', 'tmp/eunuch/eunuch.t')
 call assert_false(filereadable('tmp/eunuch.t'))
 call assert_true(filereadable('tmp/eunuch/eunuch.t'))
+call delete('tmp/eunuch/', 'rf')
 
 " Get maximum line length
 let strings = []

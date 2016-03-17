@@ -1,5 +1,5 @@
 " Created:  Sat 12 Mar 2016
-" Modified: Wed 16 Mar 2016
+" Modified: Thu 17 Mar 2016
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -8,7 +8,6 @@ source ../plugin/navd.vim
 source ../autoload/scratch.vim
 source ../plugin/scratch.vim
 
-call delete('tmp/navd', 'rf')
 call mkdir('tmp/navd/a', 'p')
 call mkdir('tmp/navd/a/d', 'p')
 call mkdir('tmp/navd/a/e', 'p')
@@ -43,3 +42,5 @@ Navd! tmp/navd/
 let expected = ['tmp/navd/', 'tmp/navd/.h/', 'tmp/navd/a/', 'tmp/navd/b/',
 			\ 'tmp/navd/c/', 'tmp/navd/.h.t', 'tmp/navd/1.t']
 call assert_equal(getline(1, '$'), expected)
+
+call delete('tmp/navd', 'rf')
