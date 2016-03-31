@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Tue 15 Mar 2016
+" Modified: Thu 17 Mar 2016
 " Author:   Josh Wainwright
 " Filename: statusline.vim
 
@@ -15,18 +15,18 @@ function! Status_info()
 	if !exists('w:buf_stl')
 		let w:buf_stl = s:status_static_info()
 	endif
-	let w:vissize = ''
+	let w:v_size = ''
 	let mde = char2nr(mode())
 	" ^V=22, V=86, v=118
-	if mde == 22 || mde == 86 || mde == 118 
-		let w:vissize = ' ' . (abs(line('v') - line('.')) + 1)
+	if mde == 22 || mde == 86 || mde == 118
+		let w:v_size = ' ' . (abs(line('v') - line('.')) + 1)
+		if mde == 22
+			let w:v_size .= '-' . (abs(getpos('v')[2] - getpos('.')[2]) + 1)
+		endif
 	endif
-	if mde == 22
-		let w:vissize .= '-' . (abs(getpos('v')[2] - getpos('.')[2]) + 1)
-	endif
-	let buf_stl = "exists('w:buf_stl') ? w:buf_stl : ''"
-	let vissize = "exists('w:vissize') ? w:vissize : ''"
-	return '%f%{' . buf_stl . '}%=%m%{' . vissize . '} %l/%L,%2v %P'
+	let buf_stl = "%{exists('w:buf_stl') ? w:buf_stl : ''}"
+	let v_size = "%{exists('w:v_size') ? w:v_size : ''}"
+	return '%f' . buf_stl . '%=%( [%M%R%H]%)' . v_size . ' %l/%L,%2v %P'
 endfunction
 
 function! s:bufsize(bytes)
@@ -49,12 +49,6 @@ function! s:optflags()
 " 	let flags.=(&wrap ? 'w' : '')
 " 	let flags.=(&list ? 'l' : '')
 	let flags.=(&binary ? 'b' : '')
-
-	let flg =(&readonly || !&modifiable) ? '-' : ''
-	let flg.=(&modified ? '+' : '')
-	if strlen(flg) > 0
-		let flags.='[' . flg . ']'
-	endif
 	if len(flags) > 0
 		let flags= ' | ' . flags
 	endif
@@ -76,5 +70,4 @@ augroup ruler_info
 	autocmd InsertLeave  * unlet! w:buf_stl
 	autocmd BufWritePost * unlet! w:buf_stl
 	autocmd TextChanged  * unlet! w:buf_stl
-	autocmd OptionSet    * unlet! w:buf_stl
 augroup END
