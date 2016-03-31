@@ -1,5 +1,5 @@
 " Created:  Mon 12 Jan 2015
-" Modified: Thu 17 Mar 2016
+" Modified: Thu 31 Mar 2016
 " Author:   Josh Wainwright
 " Filename: functions.vim
 
@@ -262,8 +262,7 @@ function! functions#testfeatures()
 			call add(feats, 'Missing: ' . feat)
 		endif
 	endfor
-	for feat in ['arabic', 'cryptv', 'farsi', 'hangul_input', 'netbeans_intg',
-				\ 'mzscheme', 'tcl']
+	for feat in ['hangul_input', 'netbeans_intg', 'mzscheme', 'tcl']
 		if has(feat)
 			call add(feats, 'Remove: ' . feat)
 		endif
