@@ -85,7 +85,7 @@ command! -nargs=0 GitLog :call revs#gitLog(expand('%'))
 command! -nargs=0 LinesToggle :call lines#lines()
 
 " Convert Dates
-command! -nargs=0 ConvertDates :%s#\v(\d{2})/(\d{2})/(\d{4})#\3\2\1#g
+command! -range=% -nargs=0 -bar ConvertTransactions :call functions#converttransactions()
 
 " Get Patch for modifications
 command! -nargs=0 Patch :call patch#patch(expand('%'), '-u')

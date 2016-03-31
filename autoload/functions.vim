@@ -276,3 +276,14 @@ function! functions#testfeatures()
 		endfor
 	endif
 endfunction
+
+" Convert Transactions {{{1
+function! functions#converttransactions() range
+	" Convert dates from dd/mm/yyyy to yyyymmdd
+	echo a:firstline a:lastline
+	exe a:firstline . ',' . a:lastline . 's#\v(\d{2})/(\d{2})/(\d{4})#\3\2\1#ge'
+	" Remove quotes and replace commas inside quotes with #
+	exe a:firstline . ',' . a:lastline . 's/' .
+				\ '"\([^,"]\{-1,}\(,[^,"]\{-}\)\{-}\)"/' .
+				\ '\=substitute(submatch(1), ",", "#", "g")/g'
+endfunction
