@@ -1,5 +1,5 @@
 " Created:  Mon 11 Jan 2016
-" Modified: Sun 07 Feb 2016
+" Modified: Thu 31 Mar 2016
 " Author:   Josh Wainwright
 " Filename: cal.vim
 
@@ -124,7 +124,7 @@ function! s:highlightline(line)
 		let split = split(a:line, '|', 1)
 		echo ""
 		echon split[0][0:-3]
-		echohl StatusLine
+		echohl DiffText
 		echon split[0][-2:]
 		echohl None
 		echon ' ' . split[1]
