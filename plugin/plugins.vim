@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Fri 11 Mar 2016
+" Modified: Wed 30 Mar 2016
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -75,8 +75,8 @@ command! -nargs=1 -bar Langton :call langton#langton(<f-args>)
 " TestFeatures
 command! -nargs=0 TestFeatures :call functions#testfeatures()
 
-" Update all changed
-command! -nargs=0 Wall :let buf=bufnr('.') | bufdo update | exec 'b' buf
+" Update all changed buffers
+command! -nargs=0 -bang Wall :call functions#Wall(<bang>0)
 
 " Revs
 command! -nargs=0 GitLog :call revs#gitLog(expand('%'))

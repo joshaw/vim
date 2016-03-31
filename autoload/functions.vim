@@ -287,3 +287,30 @@ function! functions#converttransactions() range
 				\ '"\([^,"]\{-1,}\(,[^,"]\{-}\)\{-}\)"/' .
 				\ '\=substitute(submatch(1), ",", "#", "g")/g'
 endfunction
+
+" Wall save all buffers {{{1
+function! functions#Wall(quiet) abort
+	let save_buffer = bufnr('%')
+	let buflist = []
+	for buf in range(1, bufnr('$'))
+		if getbufvar(buf, '&modified')
+			exe 'buffer ' . buf
+			if a:quiet
+				update!
+			else
+				update
+			endif
+			call add(buflist, bufname(buf))
+		endif
+	endfor
+
+	" Return to previous place
+	exec 'buffer ' . save_buffer
+
+	if !a:quiet
+		echo 'Wrote buffers:'
+		for buf in buflist
+			echo '    ' . buf
+		endfor
+	endif
+endfunction
