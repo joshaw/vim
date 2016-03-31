@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Mon 15 Feb 2016
+" Modified: Thu 24 Mar 2016
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -167,19 +167,19 @@ set undofile                    " automatically save and restore undo history
 exe 'set undodir='.g:vimhome.'/tmp/undo//'
 
 "22 executing external commands {{{2
-if has('win32')
+" if has('win32')
 " 	set shell=C:/cygwin/bin/bash
 " 	set shellcmdflag=--login\ -c\ 'cd\ $PWD'\ -c
 " 	set shellxquote=\"
-
-	let &shell='C:/cygwin/bin/bash.exe --rcfile c:/cygwin/home/' . $USERNAME . '/.bashrc ' . '-i '
-	set shellcmdflag=-c
-	set shellxquote=\"
-endif
+" 
+" 	let &shell='C:/cygwin/bin/bash.exe --rcfile c:/cygwin/home/' . $USERNAME . '/.bashrc ' . '-i '
+" 	set shellcmdflag=-c
+" 	set shellxquote=\"
+" endif
 set keywordprg="" " program used for the "K" command
 if executable('ag')
-	setlocal grepprg=ag\ --vimgrep\ --smart-case
-	setlocal grepformat=%f:%l:%c:%m
+	set grepprg=ag\ --vimgrep\ --smart-case
+	set grepformat=%f:%l:%c:%m
 endif
 
 "23 running make and jumping to errors {{{2
@@ -281,6 +281,9 @@ iabbrev tbmanager TBmanager
 iabbrev tbreq TBreq
 iabbrev tbrun TBrun
 iabbrev tbvision TBvision
+iabbrev matlab MATLAB
+iabbrev mathworks MathWorks
+iabbrev Doors DOORS
 
 command! TBini :e C:\ProgramData\LDRA\TESTBED.ini
 nnoremap <F11> :<C-U>e ~/Documents/Details/ldra-learnt.md<cr>
