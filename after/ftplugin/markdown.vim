@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Tue 24 Nov 2015
+" Modified: Fri 01 Apr 2016
 " Author:   Josh Wainwright
 " Filename: markdown.vim
 
@@ -33,22 +33,6 @@ function! FormatTable()
 	exe tabhead.'s/[^|]/-/g'
 
 	call winrestview(w)
-endfunction
-
-nnoremap <buffer> <cr> :call Goto_file_num()<cr>
-function! Goto_file_num()
-	" If the cursor is past the first space and the line starts with a digit
-	let curr = getline('.') + 0
-	if curr > 0 && stridx(getline('.'), ' ')+1 > col('.')
-
-		" Match item heading: 1 Something
-		"                     -----------
-		" Or toc entry:       1. Something
-		call search('\v^'.curr.'.*\n---|^'.curr.'\. ', 'ws')
-		normal zt
-	else
-		silent! normal gf
-	endif
 endfunction
 
 " Markdown headings
