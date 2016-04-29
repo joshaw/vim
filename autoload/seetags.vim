@@ -1,5 +1,5 @@
 " Created:  Fri 04 Dec 2015
-" Modified: Fri 11 Mar 2016
+" Modified: Wed 06 Apr 2016
 " Author:   Josh Wainwright
 " Filename: seetags.vim
 
@@ -28,7 +28,7 @@ function! s:enter_handle() abort
 	let tag = g:seetags['tags'][line('.') - 2]
 	exe 'edit' tag['fname']
 	exe tag['cmd']
-	foldopen!
+	silent! foldopen!
 	let &l:wrap = g:seetags['wrapsave']
 	unlet g:seetags['tags']
 endfunction
