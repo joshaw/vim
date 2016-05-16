@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Thu 24 Mar 2016
+" Modified: Mon 16 May 2016
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -83,6 +83,9 @@ set number                 " show the line number for each line
 " 5 syntax, highlighting and spelling {{{2
 set hlsearch           " highlight all matches for the last used search pattern
 " set cursorline         " highlight the screen line of the cursor
+if !has('gui_running')
+	set termguicolors      " use GUI colors for the terminal
+endif
 set colorcolumn=+1     " columns to highlight
 
 " 6 multiple windows {{{2
