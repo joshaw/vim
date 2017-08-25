@@ -1,7 +1,61 @@
 " Created:  Mon 29 Feb 2016
-" Modified: Tue 01 Mar 2016
+" Modified: Thu 03 Mar 2016
 " Author:   Josh Wainwright
 " Filename: lines.vim
+
+function! lines#randomlines()
+	%s/.*//g
+	setlocal nohlsearch
+
+	let prevrand = 2
+	py import random
+	while 1
+		let pos = getpos('.')
+		let attop = 0
+		let atbottom = 0
+		let atleft = 0
+		let atright = 0
+
+		if pos[1] == 1
+			let attop = 1
+		elseif pos[1] == line('$')
+			let atbottom = 1
+		endif
+
+		if pos[2] == 1
+			let atleft = 1
+		elseif pos[2] == strlen(getline('.'))
+			let atright = 1
+		endif
+
+		if prevrand == 2
+			let random = pyeval('random.choice([2,2,2,2,4,6])')
+		elseif prevrand == 4
+			let random = pyeval('random.choice([2,4,4,4,4,8])')
+		elseif prevrand == 6
+			let random = pyeval('random.choice([2,6,6,6,6,8])')
+		elseif prevrand == 8
+			let random = pyeval('random.choice([4,6,8,8,8,8])')
+		else
+			continue
+		endif
+
+		if pos[1] == 1 && random == 8
+			continue
+		elseif pos[2] == 1 && random == 4
+			continue
+		elseif pos[1] == line('$') && random == 2
+			continue
+		elseif pos[2] == strlen(getline('.')) && random == 6
+			continue
+		endif
+				
+		let prevrand = random
+		call lines#key(random)
+		redraw
+		sleep 10m
+	endwhile
+endfunction
 
 function! lines#lines()
 	if exists("b:drawlines")

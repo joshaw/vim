@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Mon 16 May 2016
+" Modified: Thu 27 Apr 2017
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -269,7 +269,8 @@ Snip Copyr Copyright: 2015, LDRA Ltd.
 iabbrev <expr> Weeklyr "Weekly Report<CR>
                        \=============<CR>
                        \Josh Wainwright<CR>
-                       \Week ending " . DateOnFri('/') . "<CR>
+                       \Week ending " . EndOfWeek('-') . "<CR>
+                       \<CR>
                        \- <CR>
                        \<CR>
                        \Customer Site Visits<CR>
@@ -277,7 +278,9 @@ iabbrev <expr> Weeklyr "Weekly Report<CR>
                        \<CR>
                        \Vacation<CR>
                        \--------<CR>
-                       \- None"
+                       \<CR>
+                       \Actions<CR>
+                       \-------<CR>"
 
 iabbrev toolsuite tool suite
 iabbrev tbmanager TBmanager
@@ -290,7 +293,6 @@ iabbrev Doors DOORS
 
 command! TBini :e C:\ProgramData\LDRA\TESTBED.ini
 nnoremap <F11> :<C-U>e ~/Documents/Details/ldra-learnt.md<cr>
-command! FormatWikiEntry :Tabularize /\(\( \|^\)\zs|\)\|\^
 
 if !has('nvim') && has('gui_running') && !exists('g:vim_started')
 	set lines=40

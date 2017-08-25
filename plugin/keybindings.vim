@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Wed 16 Mar 2016
+" Modified: Wed 16 Nov 2016
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -31,6 +31,20 @@ inoremap <s-tab> <c-p>
 " Jump to file under cursor with cr, leader cr edits a non existing file
 " Ensure quickfix and cmd windows still behave
 nnoremap <cr> gf
+nnoremap <F11> :call <SID>do_cmd_under_cursor()<cr>
+function s:do_cmd_under_cursor()
+	let line = getline('.')
+	if line =~# '^vim> '
+		let line = line[5:-1]
+		let save_pos = winsaveview()
+		silent exe line
+		call winrestview(save_pos)
+		echo line
+	else
+		echo 'Does not apply: ' . line
+	endif
+endfunction
+
 nnoremap <leader><cr> :e <cfile><cr>
 augroup vimrc_cr
 	autocmd!
@@ -94,6 +108,10 @@ nnoremap S i<cr><esc>^mwgk:keeppatterns silent! s/\v +$//<cr>:noh<cr>`w
 
 nnoremap ; :
 nnoremap , ;
+
+" Search for visually highlighted text
+vnoremap * y/<C-R>"<CR>
+vnoremap # y?<C-R>"<CR>
 
 nnoremap <silent> [<space> :put! _<cr>j
 nnoremap <silent> ]<space> :put _<cr>k

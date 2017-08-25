@@ -277,14 +277,17 @@ function! functions#testfeatures()
 endfunction
 
 " Convert Transactions {{{1
-function! functions#converttransactions() range
+function! functions#converttransactions()
 	" Convert dates from dd/mm/yyyy to yyyymmdd
-	echo a:firstline a:lastline
-	exe a:firstline . ',' . a:lastline . 's#\v(\d{2})/(\d{2})/(\d{4})#\3\2\1#ge'
+" 	echo a:firstline a:lastline
+" 	exe a:firstline . ',' . a:lastline . 's#\v(\d{2})/(\d{2})/(\d{4})#\3\2\1#ge'
+" 	" Remove quotes and replace commas inside quotes with #
+" 	exe a:firstline . ',' . a:lastline . 's/' .
+" 				\ '"\([^,"]\{-1,}\(,[^,"]\{-}\)\{-}\)"/' .
+" 				\ '\=substitute(submatch(1), ",", "#", "g")/g'
+	%s#\v(\d{2})/(\d{2})/(\d{4})#\3\2\1#ge
 	" Remove quotes and replace commas inside quotes with #
-	exe a:firstline . ',' . a:lastline . 's/' .
-				\ '"\([^,"]\{-1,}\(,[^,"]\{-}\)\{-}\)"/' .
-				\ '\=substitute(submatch(1), ",", "#", "g")/g'
+	%s/"\([^,"]\{-1,}\(,[^,"]\{-}\)\{-}\)"/\=substitute(submatch(1), ",", "#", "g")/ge
 endfunction
 
 " Wall save all buffers {{{1

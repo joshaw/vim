@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Tue 08 Mar 2016
+" Modified: Tue 27 Sep 2016
 " Author:   Josh Wainwright
 " Filename: whitespace.vim
 "
@@ -22,4 +22,10 @@ function! whitespace#TrimEndLines() abort
 	while getline('$') ==# ''
 		$delete _
 	endwhile
+endfunction
+
+function! whitespace#Fmt() abort
+	call whitespace#StripTrailing(1, line('$'))
+	call whitespace#TrimEndLines()
+	set fileformat=unix
 endfunction

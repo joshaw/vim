@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Wed 30 Mar 2016
+" Modified: Tue 27 Sep 2016
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -15,6 +15,7 @@ augroup END
 "Whitespace
 command! -range=% -nargs=0 StripTrailing :call whitespace#StripTrailing(<line1>,<line2>)
 command! -nargs=0 TrimEndLines :call whitespace#TrimEndLines()
+command! -nargs=0 Fmt :call whitespace#Fmt()
 
 " DisplayMode
 command! -nargs=0 ReadingMode call display#Reading_mode_toggle()

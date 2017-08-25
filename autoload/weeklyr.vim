@@ -1,18 +1,20 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Mon 25 Jan 2016
+" Modified: Thu 27 Apr 2017
 " Author:   Josh Wainwright
 " Filename: weeklyr.vim
 
-function! DateOnFri(sep)
-python3 << EOP
-import vim, datetime as dt
-t = dt.date.today()
-f = t + dt.timedelta((4 - t.weekday()) % 7)
-sep = vim.eval('a:sep')
-f = str(f.strftime('%Y{0}%m{0}%d'.format(sep)))
-vim.command('let date = \'%s\'' % f)
-EOP
-return date
+function! EndOfWeek(sep)
+	let wnum = strftime('%w')
+	let cur = wnum
+	let tday = 5 " Friday
+	if cur > tday
+		let tday += 7
+	endif
+	while cur < tday
+		let cur += 1
+	endwhile
+	let eow = localtime() + (86400 * (cur - wnum))
+	return strftime(printf('%%Y%s%%m%s%%d', a:sep, a:sep), eow)
 endfunction
 
 function! weeklyr#EditReport(monthly, retval, ...)
@@ -29,8 +31,7 @@ function! weeklyr#EditReport(monthly, retval, ...)
 			let date = strftime("%Y%m")
 			let suffix = 'MonthlyJAW'
 		else
-			"let date = system("echo -n `date -d Fri '+%Y%m%d'`")
-			let date = DateOnFri('')
+			let date = EndOfWeek('')
 		endif
 	endif
 	let thisweek = '$HOME/Documents/Forms/WeeklyReports/'.date.suffix
