@@ -160,22 +160,6 @@ function! functions#html2text(...) abort
 	silent StripTrailing
 endfunction
 
-" Count occurances {{{1
-function! functions#count(...) range abort
-	let w = winsaveview()
-	let word = @/
-
-	redir => soutput
-		exe 'silent %s#\V' . word . '##nge'
-	redir END
-
-	let soutput = soutput[1:]
-	echo '"' . word . '": ' . soutput
-
-	call histdel('/', -1)
-	call winrestview(w)
-endfunction
-
 " smart_TabCompete {{{1
 " Smart completion on tab
 function! functions#smart_TabComplete() abort
@@ -221,73 +205,6 @@ function! functions#AsciiToggle() abort
 		let @/ = nonasciisearch
 		let g:status_var = 'NA'
 	endif
-endfunction
-
-" Mirror {{{1
-function! s:mirror(str)
-	return join(reverse(split(a:str, '.\zs')), '')
-endfunction
-
-" Buffer Navigation {{{1
-function! functions#buffernext(incr) abort
-	let current = bufnr('%')
-	let last = bufnr('$')
-	let newnr = current + a:incr
-	while 1
-		if newnr != 0 && bufexists(newnr) && buflisted(newnr)
-			silent execute ':buffer '.newnr
-			break
-		else
-			let newnr += a:incr
-			if newnr < 1
-				let newnr = last
-			elseif newnr > last
-				let newnr = 1
-			endif
-			if newnr == current
-				break
-			endif
-		endif
-	endwhile
-	let mes = printf('Buffer %s/%s', current, last)
-	echo mes
-endfunction
-
-" Test Features {{{1
-function! functions#testfeatures()
-	let feats = []
-	for feat in ['conceal', 'autocmd', 'eval', 'lua', 'persistent_undo', 'python',
-				\ 'python3', 'visual']
-		if ! has(feat)
-			call add(feats, 'Missing: ' . feat)
-		endif
-	endfor
-	for feat in ['hangul_input', 'netbeans_intg', 'mzscheme', 'tcl']
-		if has(feat)
-			call add(feats, 'Remove: ' . feat)
-		endif
-	endfor
-	if empty(feats)
-		echo "All present and correct"
-	else
-		for feat in feats
-			echo feat
-		endfor
-	endif
-endfunction
-
-" Convert Transactions {{{1
-function! functions#converttransactions()
-	" Convert dates from dd/mm/yyyy to yyyymmdd
-" 	echo a:firstline a:lastline
-" 	exe a:firstline . ',' . a:lastline . 's#\v(\d{2})/(\d{2})/(\d{4})#\3\2\1#ge'
-" 	" Remove quotes and replace commas inside quotes with #
-" 	exe a:firstline . ',' . a:lastline . 's/' .
-" 				\ '"\([^,"]\{-1,}\(,[^,"]\{-}\)\{-}\)"/' .
-" 				\ '\=substitute(submatch(1), ",", "#", "g")/g'
-	%s#\v(\d{2})/(\d{2})/(\d{4})#\3\2\1#ge
-	" Remove quotes and replace commas inside quotes with #
-	%s/"\([^,"]\{-1,}\(,[^,"]\{-}\)\{-}\)"/\=substitute(submatch(1), ",", "#", "g")/ge
 endfunction
 
 " Wall save all buffers {{{1

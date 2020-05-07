@@ -3,9 +3,6 @@
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
-" BookReformatCmd
-command! BookReformatCmd call booksreformat#BookReformatCmd()
-
 " Timestamp
 augroup timestamp
 	autocmd!
@@ -29,9 +26,6 @@ command! -nargs=? -range=% Space2Tab call super_retab#IndentConvert(<line1>,<lin
 command! -nargs=? -range=% Tab2Space call super_retab#IndentConvert(<line1>,<line2>,1,<q-args>)
 command! -nargs=? -range=% RetabIndent call super_retab#IndentConvert(<line1>,<line2>,&et,<q-args>)
 
-" Weekly Report
-command! -nargs=* -bang EditReport :call weeklyr#EditReport('<bang>' == '!', 0, <f-args>)
-
 " DiffOrig
 " View the difference between the buffer and the file the last time it was saved
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
@@ -48,12 +42,6 @@ command! -range=999998 -nargs=1 -complete=command Verbose
 
 " Oldfiles
 command! -nargs=0 Oldfiles :call functions#Oldfiles()
-
-" IPtables
-command! IPtablesSort :call functions#IPtablesSort()
-
-" FirstTimeRun
-command! FirstTimeRun :call functions#FirstTimeRun()
 
 " Html2Text
 command! -nargs=? -bar Html2Text :call functions#html2text(<args>)
@@ -73,9 +61,6 @@ command! -nargs=0 Clock :call cal#clock()
 " Langton's Ant
 command! -nargs=1 -bar Langton :call langton#langton(<f-args>)
 
-" TestFeatures
-command! -nargs=0 TestFeatures :call functions#testfeatures()
-
 " Update all changed buffers
 command! -nargs=0 -bang Wall :call functions#Wall(<bang>0)
 
@@ -84,9 +69,6 @@ command! -nargs=0 GitLog :call revs#gitLog(expand('%'))
 
 " Lines
 command! -nargs=0 LinesToggle :call lines#lines()
-
-" Convert Dates
-command! -range=% -nargs=0 -bar ConvertTransactions :call functions#converttransactions()
 
 " Get Patch for modifications
 command! -nargs=0 Patch :call patch#patch(expand('%'), '-u')

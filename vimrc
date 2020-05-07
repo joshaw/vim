@@ -241,64 +241,6 @@ function! s:snipfunc(name, ...)
 	exe 'iabbrev <buffer> '.a:name.'# '.repl
 endfunction
 
-command! -nargs=+ Snip :call s:snipfunc(<f-args>)
-
-cabbrev help vert help
-cabbrev w!! w !sudo tee > /dev/null %
-
-iabbrev <expr> dts strftime("%d/%m/%Y")
-iabbrev <expr> dty strftime("%Y%m%d")
-iabbrev <expr> dtyd strftime("%Y-%m-%d")
-iabbrev <expr> dtl strftime("%c")
-
-function! CreatedHeader()
-	return "Created:  TIMESTAMP\<CR>"
-	    \ ."Modified: TIMESTAMP\<CR>"
-	    \ ."Author:   Josh Wainwright\<CR>"
-	    \ .'Filename: ' . expand('%:t')
-endfunction
-
-iabbrev <expr> Cre: CreatedHeader()
-
-Snip TST TIMESTAMP
-Snip Copyr Copyright: 2015, LDRA Ltd.
-
-" LDRA                           {{{1
-"
-
-iabbrev <expr> Weeklyr "Weekly Report<CR>
-                       \=============<CR>
-                       \Josh Wainwright<CR>
-                       \Week ending " . EndOfWeek('-') . "<CR>
-                       \<CR>
-                       \- <CR>
-                       \<CR>
-                       \Customer Site Visits<CR>
-                       \--------------------<CR>
-                       \<CR>
-                       \Vacation<CR>
-                       \--------<CR>
-                       \<CR>
-                       \Actions<CR>
-                       \-------<CR>"
-
-iabbrev toolsuite tool suite
-iabbrev tbmanager TBmanager
-iabbrev tbreq TBreq
-iabbrev tbrun TBrun
-iabbrev tbvision TBvision
-iabbrev matlab MATLAB
-iabbrev mathworks MathWorks
-iabbrev Doors DOORS
-
-command! TBini :e C:\ProgramData\LDRA\TESTBED.ini
-nnoremap <F11> :<C-U>e ~/Documents/Details/ldra-learnt.md<cr>
-
-if !has('nvim') && has('gui_running') && !exists('g:vim_started')
-	set lines=40
-	exe 'set columns=' . (82+&numberwidth)
-	let g:vim_started = 1
-endif
 " }}}
 
 " Keybindings
