@@ -1,5 +1,5 @@
 " Created:  Mon 26 Oct 2015
-" Modified: Mon 26 Oct 2015
+" Modified: Mon 15 Feb 2021
 " Author:   Josh Wainwright
 " Filename: objects.vim
 
@@ -10,10 +10,16 @@ onoremap il :normal vil<cr>
 onoremap al :normal val<cr>
 
 " Whole file object
-xnoremap if :<c-u>normal! gg0VG<cr>
-xnoremap af :<c-u>normal! gg0VG<cr>
-onoremap if :normal vif<cr>
-onoremap af :normal vaf<cr>
+xnoremap if :<c-u>keepjumps normal! gg0VG<cr>
+xnoremap af :<c-u>keepjumps normal! gg0VG<cr>
+onoremap if :keepjumps normal vif<cr>
+onoremap af :keepjumps normal vaf<cr>
+
+" Indent object
+onoremap <silent>ai :<C-U>call indent#IndTxtObj(0)<CR>
+onoremap <silent>ii :<C-U>call indent#IndTxtObj(1)<CR>
+vnoremap <silent>ai :<C-U>call indent#IndTxtObj(0)<CR><Esc>gv
+vnoremap <silent>ii :<C-U>call indent#IndTxtObj(1)<CR><Esc>gv
 
 " custom text-objects
 for char in [ '_', '.', ':', ',', ';', '<bar>', '/', '<bslash>', '*', '+', '%', '`' ]

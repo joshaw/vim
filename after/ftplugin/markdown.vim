@@ -1,21 +1,18 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Fri 01 Apr 2016
+" Modified: Tue 23 Feb 2021
 " Author:   Josh Wainwright
 " Filename: markdown.vim
 
-exe 'setlocal dict+='.dictfile
-setlocal keywordprg=define
-nnoremap <buffer> K :cgetexpr system('define ' . expand('<cword>'))<cr>
+"exe 'setlocal dict+='.dictfile
+"setlocal keywordprg=define
+"nnoremap <buffer> K :cgetexpr system('define ' . expand('<cword>'))<cr>
 
 " Automatic formating of paragraphs whenever text is inserted
 setlocal formatoptions=tcqwan1
 setlocal nosmartindent
-
-if !filereadable('makefile')
-	setlocal makeprg=md.py\ %
-endif
-
-syntax match markdownOrderedListMarker "\%(\t\| \{0,4}\)\<\%(\d\+\|\a\)\.\%(\s\+\S\)\@=" contained
+setlocal tabstop=2
+setlocal shiftwidth=2
+setlocal expandtab
 
 function! FormatTable()
 	let w = winsaveview()

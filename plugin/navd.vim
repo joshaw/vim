@@ -1,5 +1,5 @@
 " Created:  Tue 25 Aug 2015
-" Modified: Mon 29 Feb 2016
+" Modified: Tue 11 Feb 2020
 " Author:   Josh Wainwright
 " Filename: navd.vim
 
@@ -9,8 +9,8 @@ command! -nargs=? -bar -bang -complete=file Navd :call navd#navd(<q-args>, <bang
 command! -nargs=? -bar -bang -complete=dir NavdRecursive :call navd#navdall(<q-args>, <bang>1)
 command! -nargs=0 NavdBuf :call navd#navdbufs()
 
-nnoremap <silent> - :Navd %:p:h/<cr>
-nnoremap <silent> _ :NavdBuf<cr>
+"nnoremap <silent> - :Navd %:p:h/<cr>
+"nnoremap <silent> _ :NavdBuf<cr>
 
 augroup navd_bufevents
   au!

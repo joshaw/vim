@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Thu 10 Dec 2015
+" Modified: Thu 09 Jan 2020
 " Author:   Josh Wainwright
 " Filename: dmenuOpen.vim
 
@@ -7,26 +7,21 @@
 function! dmenuOpen#DmenuOpen(cmd, ...) abort
 
 	let l:global = a:0 > 0 ? a:1 : 0
-	let l:amhome = getcwd() == $HOME
-	let l:filesfile = '~/.files'
 
-	if (l:global || l:amhome) && filereadable(expand(l:filesfile))
-		let command = 'cat ' . l:filesfile
-	elseif exists('b:git_dir') && b:git_dir !=# ''
-		let command = 'cd '. fnamemodify(b:git_dir, ':h') .'; git ls-files'
-	elseif executable('lsall')
-		let command = 'lsall -n'
-	elseif executable('ag')
-		let command = 'ag --hidden -g \"\"'
+	if l:global
+		silent let foptions = systemlist('find ~ -type f 2> /dev/null')
 	else
-		let command = 'find *'
+		silent let foptions = systemlist('git ls-files 2> /dev/null')
+		if empty(foptions)
+			silent let foptions = systemlist('find . -type f 2> /dev/null')
+		endif
 	endif
-	
-	let fnames = systemlist(command . ' | dmenu -b -i -l 20 -p ' . a:cmd)
+
+	silent let fnames = systemlist('dmenu -b -i -l 20 -p ' . a:cmd, foptions)
 	if empty(fnames)
 		return
 	endif
-	let fname = fnameescape(expand(fnames[0][0:-2]))
+	let fname = fnameescape(expand(fnames[0][0:-1]))
 	if !filereadable(fname)
 		return
 	endif

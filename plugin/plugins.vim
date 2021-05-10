@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Tue 27 Sep 2016
+" Modified: Tue 30 Mar 2021
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -17,9 +17,6 @@ command! -nargs=0 Fmt :call whitespace#Fmt()
 " DisplayMode
 command! -nargs=0 ReadingMode call display#Reading_mode_toggle()
 command! -nargs=0 DisplayMode call display#Display_mode_toggle()
-augroup DisplayMode
-	autocmd VimEnter * call display#Display_mode_start()
-augroup END
 
 " Super Retab
 command! -nargs=? -range=% Space2Tab call super_retab#IndentConvert(<line1>,<line2>,0,<q-args>)
@@ -28,7 +25,7 @@ command! -nargs=? -range=% RetabIndent call super_retab#IndentConvert(<line1>,<l
 
 " DiffOrig
 " View the difference between the buffer and the file the last time it was saved
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+"command! Diff :w !diff --color=always --unified % - || true
 
 " BufGrep
 command! -nargs=1 BufGrep :call functions#BufGrep(<f-args>)
@@ -58,17 +55,62 @@ command! -nargs=* -bang -bar Cal :call cal#cal(<bang>0, <f-args>)
 command! -nargs=* -bar CalBuf :call cal#calbuf(<f-args>)
 command! -nargs=0 Clock :call cal#clock()
 
-" Langton's Ant
-command! -nargs=1 -bar Langton :call langton#langton(<f-args>)
-
 " Update all changed buffers
 command! -nargs=0 -bang Wall :call functions#Wall(<bang>0)
 
-" Revs
-command! -nargs=0 GitLog :call revs#gitLog(expand('%'))
-
-" Lines
-command! -nargs=0 LinesToggle :call lines#lines()
-
 " Get Patch for modifications
 command! -nargs=0 Patch :call patch#patch(expand('%'), '-u')
+
+" Custom one-sided folder markers
+command! -nargs=1 FoldMarker :set foldmethod=expr|set foldexpr=getline(v:lnum)=~'<args>'?'>1':'='
+
+" Indent sort
+command! -nargs=0 -range SortIndent :call functions#sort_indent()
+
+" Bitbucket links
+command! -range -bang Bitbucket silent exe "!bitbucket " ("<bang>" == "!" ? "--use-commit " : "") "--git-dir" expand("%:h") expand("%") "<line1>:<line2>" | redraw!
+
+" Populate qflist with filename pattern
+command! -nargs=1 Cadd :call functions#cadd("git ls-files <args>")
+command! -nargs=1 CaddCmd :call functions#cadd("<args>")
+
+" HightlightRepeats
+command! -range=% RepeatedLines normal /\%><line1>l\%<<line2>l^\(.*\)$\n\1$/\<CR>
+
+" Using a program with formatexpr
+function! Formatexpr_prg(cmd)
+	if v:char != ''
+		return
+	endif
+	let l:s = winsaveview()
+	silent execute v:lnum . ',+' . (v:count - 1) . '!' . a:cmd
+	call winrestview(l:s)
+endfunction
+
+" Run tig
+function! <SID>Tig(...)
+	let cmd = ["tig", "status"]
+	if a:0 > 0
+		let cmd = ["tig"] + a:000
+	endif
+	call functions#popup_cmd(cmd, "win", {})
+endfunction
+command! -nargs=* Tig call <SID>Tig(<f-args>)
+
+" View a diff of the current file
+function! <SID>Diff()
+	let filename = expand('%')
+	let tempfile = tempname()
+	execute "write " . tempfile
+
+	let cmd = "diff -u --color=always " . tempfile . " '" . filename . "' | less -SR +g"
+	call functions#popup_cmd(cmd, "editor", {})
+endfunction
+command! -nargs=0 Diff call <SID>Diff()
+
+" View a git diff of the current file
+function! <SID>GitDiff(...)
+	let cmd = "git diff --color " . expand('%') . " | less -SR +g"
+	call functions#popup_cmd(cmd, "editor", {})
+endfunction
+command! -nargs=* GitDiff call <SID>GitDiff()

@@ -1,5 +1,5 @@
 " Created:  Sat 18 Oct 2014
-" Modified: Thu 03 Mar 2016
+" Modified: Mon 15 Feb 2021
 " Author:   Josh Wainwright
 " Filename: display.vim
 
@@ -18,8 +18,7 @@ let s:reading_mode_def = {
 			\ 'showtabline': 0,
 			\ 'list': 0,
 			\ 'colorcolumn': 0,
-			\ 'scrolloff': 999,
-			\ 'Colorscheme': 'reading',
+			\ 'scrolloff': 0,
 			\ 'guicursor': '"a:block-Normal-blinkon0"',
 			\ }
 
@@ -30,7 +29,6 @@ let s:display_mode_def = {
 			\ 'list': 0,
 			\ 'relativenumber': 0,
 			\ 'statusline': '"%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P"',
-			\ 'Colorscheme': 'simplon',
 			\ }
 
 function! display#Reading_mode_toggle() abort

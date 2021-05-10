@@ -1,6 +1,6 @@
-" Created:  Mon 12 Jan 2015
-" Modified: Thu 31 Mar 2016
-" Author:   Josh Wainwright
+" Created:	Mon 12 Jan 2015
+" Modified: Tue 30 Mar 2021
+" Author:	Josh Wainwright
 " Filename: functions.vim
 
 " BufGrep {{{1
@@ -89,16 +89,18 @@ function! functions#toggleComment() abort
 			\ 'c': '//',
 			\ 'conf': '#',
 			\ 'cpp': '//',
+			\ 'dockerfile': '#',
 			\ 'dosbatch': '::',
 			\ 'dot': '//',
 			\ 'gitconfig': '#',
 			\ 'gnuplot': '#',
 			\ 'haskell': '--',
 			\ 'java': '//',
+			\ 'javascript': '//',
 			\ 'lua': '--',
 			\ 'mail': '>',
 			\ 'make': '#',
-			\ 'markdown': '<!--',
+			\ 'markdown': ['<!--', '-->'],
 			\ 'perl': '#',
 			\ 'python': '#',
 			\ 'ruby': '#',
@@ -106,12 +108,26 @@ function! functions#toggleComment() abort
 			\ 'tex': '%',
 			\ 'vim': '"',
 			\ 'zsh': '#',
-			\ }
+	\ }
 	if has_key(dict, &filetype)
-		let c = dict[&filetype]
-		exe 's@^@'.c.' @ | s@^'.c.' '.c.' @@e'
-		call histdel('search', -1)
-		call histdel('search', -1)
+		let char = dict[&filetype]
+		" keeppatterns exe 's@^@'.char.' @ | s@^'.char.' '.char.' @@e'
+		let line = getline('.')
+		let is_commented = match(line, '^\s*' . char[0] . ' .* \?' . char[1])
+		if is_commented >= 0
+			if type(char) == v:t_list
+				let newline = substitute(line, '^\(\s*\)' . char[0] . ' \(.*\) \?' . char[1], '\1\2', '')
+			else
+				let newline = substitute(line, '^\(\s*\)' . char . ' \(.*\)', '\1\2', '')
+			endif
+		else
+			if type(char) == v:t_list
+				let newline = substitute(line, '^\(\s*\)\(.*\)', '\1' . char[0] . ' \2 ' . char[1], '')
+			else
+				let newline = substitute(line, '^\(\s*\)\(.*\)', '\1' . char . ' \2', '')
+			endif
+		endif
+		call setline('.', newline)
 	else
 		echo &filetype . ': no comment char.'
 	endif
@@ -188,7 +204,7 @@ function! functions#smart_TabComplete() abort
 	endif
 
 	" Otherwise, default completion
-" 	return "\<c-x>\<c-u>"
+"	return "\<c-x>\<c-u>"
 	return "\<c-n>"
 endfunction
 
@@ -229,7 +245,80 @@ function! functions#Wall(quiet) abort
 	if !a:quiet
 		echo 'Wrote buffers:'
 		for buf in buflist
-			echo '    ' . buf
+			echo '	  ' . buf
 		endfor
 	endif
+endfunction
+
+" Sort selection {{{1
+function! functions#sort_motion(mode) abort
+	if a:mode == 'line'
+		'[,']sort
+	elseif a:mode == 'char'
+
+	elseif a:mode == 'V'
+		'<,'>sort
+	endif
+endfunction
+
+" Indent sort {{{1
+" Sorts blocks of lines using the indentation of the first line as the block
+" delimiter. Useful for sorting things like yaml dicts where the indentation
+" represents different keys.
+function! functions#sort_indent() range abort
+	let indent = substitute(getline('.'), '\(\s\+\).*', '\1', '')
+	'>put ='END_OF_RANGE'
+	exe "silent '<+1,'>substitute/^\\(" . indent . "\\S\\)/SORT_LINE\\1/"
+	silent '<+1,'>vglobal/SORT_LINE/substitute/^/SOL_MARKER/
+	'<,'>join!
+	silent '<,'>substitute/SORT_LINE/\r/g
+	'<,/^END_OF_RANGE$/sort
+	silent '<,/^END_OF_RANGE$/substitute/SOL_MARKER/\r/ge
+	/^END_OF_RANGE$/delete
+endfunction
+
+
+" Cadd - populate qflist with filename pattern {{{1
+function! functions#cadd(cmd) abort
+	let flist = systemlist(a:cmd)
+	let list = []
+	for f in flist
+		call add(list, {"filename": f, "lnum": 1})
+	endfor
+	call setqflist(list)
+	cfirst
+endfunction
+
+" popup_cmd - run an interactive command in a popup window {{{1
+function! functions#popup_cmd(cmd, relative, callback)
+	autocmd TermClose * ++once :bd!
+
+	let popup_width = 100
+	let popup_height = 45
+
+	let opts = {
+		\ 'relative': 'editor',
+		\ 'row': (&lines - popup_height) / 2,
+		\ 'col': (&columns - popup_width) / 2,
+		\ 'width': popup_width,
+		\ 'height': popup_height,
+		\ 'style': 'minimal'
+		\ }
+	if a:relative == "win"
+		let opts = {
+			\ 'relative': 'win',
+			\ 'row': 0,
+			\ 'col': 0,
+			\ 'width': winwidth(0),
+			\ 'height': winheight(0),
+			\ 'style': 'minimal'
+			\ }
+	endif
+
+	let buf = nvim_create_buf(v:false, v:true)
+	let float_win = nvim_open_win(buf, v:true, opts)
+	"call nvim_win_set_option(float_win, 'winhl', 'Normal:Visual')
+
+	call termopen(a:cmd, a:callback)
+	startinsert
 endfunction
