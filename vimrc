@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Thu 15 Apr 2021
+" Modified: Fri 30 Jul 2021
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -53,14 +53,19 @@ set smartcase
 set ignorecase
 set wildignorecase
 set fileignorecase
+silent set inccommand=nosplit
 
 " 4 displaying text
-set scrolloff=5
+augroup Scrolloff
+	autocmd TermOpen,TermEnter * setlocal scrolloff=0
+	autocmd TermLeave * setlocal scrolloff=5
+augroup END
+
 set linebreak
 set breakindent
 set breakindentopt=min:10,shift:2,sbr
 set display=lastline,uhex
-set fillchars=vert: 
+set fillchars=vert:│
 set lazyredraw
 set list
 set listchars=tab:·\ ,trail:▸,nbsp:_,extends:»,precedes:«
