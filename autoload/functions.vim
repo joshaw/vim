@@ -299,14 +299,6 @@ function! functions#popup_cmd(cmd, relative, callback)
 	let popup_width = 100
 	let popup_height = 45
 
-	let opts = {
-		\ 'relative': 'editor',
-		\ 'row': (&lines - popup_height) / 2,
-		\ 'col': (&columns - popup_width) / 2,
-		\ 'width': popup_width,
-		\ 'height': popup_height,
-		\ 'style': 'minimal'
-		\ }
 	if a:relative == "win"
 		let opts = {
 			\ 'relative': 'win',
@@ -314,6 +306,15 @@ function! functions#popup_cmd(cmd, relative, callback)
 			\ 'col': 0,
 			\ 'width': winwidth(0),
 			\ 'height': winheight(0),
+			\ 'style': 'minimal'
+			\ }
+	else
+		let opts = {
+			\ 'relative': 'editor',
+			\ 'row': (&lines - popup_height) / 2,
+			\ 'col': (&columns - popup_width) / 2,
+			\ 'width': popup_width,
+			\ 'height': popup_height,
 			\ 'style': 'minimal'
 			\ }
 	endif
