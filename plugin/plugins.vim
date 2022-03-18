@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Tue 30 Mar 2021
+" Modified: Tue 26 Oct 2021
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -69,6 +69,7 @@ command! -nargs=0 -range SortIndent :call functions#sort_indent()
 
 " Bitbucket links
 command! -range -bang Bitbucket silent exe "!bitbucket " ("<bang>" == "!" ? "--use-commit " : "") "--git-dir" expand("%:h") expand("%") "<line1>:<line2>" | redraw!
+command! -range -bang Github silent exe "!github " ("<bang>" == "!" ? "--use-commit " : "") "--git-dir" expand("%:h") expand("%") "L<line1>-L<line2>" | redraw!
 
 " Populate qflist with filename pattern
 command! -nargs=1 Cadd :call functions#cadd("git ls-files <args>")
@@ -88,14 +89,17 @@ function! Formatexpr_prg(cmd)
 endfunction
 
 " Run tig
-function! <SID>Tig(...)
-	let cmd = ["tig", "status"]
-	if a:0 > 0
+function! <SID>Tig(bang, ...)
+	if a:bang > 0
+		let cmd = ["tig", expand('%')]
+	elseif a:0 > 0
 		let cmd = ["tig"] + a:000
+	else
+		let cmd = ["tig", "status"]
 	endif
 	call functions#popup_cmd(cmd, "win", {})
 endfunction
-command! -nargs=* Tig call <SID>Tig(<f-args>)
+command! -bang -nargs=* Tig call <SID>Tig(<bang>0, <f-args>)
 
 " View a diff of the current file
 function! <SID>Diff()
