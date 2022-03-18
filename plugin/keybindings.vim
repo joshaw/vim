@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Wed 13 Oct 2021
+" Modified: Mon 01 Nov 2021
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -30,6 +30,7 @@ nnoremap <silent> gs :<C-U>set opfunc=functions#sort_motion<CR>g@
 
 " Open
 nnoremap gx :<c-u>!xdg-open <c-r><c-f><cr>
+xnoremap gx "ay:<c-u>!xdg-open <c-r>a<cr>
 
 " Align with easy align
 xnoremap gl :call align#align_getchar()<cr>
