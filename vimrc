@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Fri 30 Jul 2021
+" Modified: Fri 18 Mar 2022
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -136,7 +136,7 @@ set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 set isfname-==
 
 "27 various
-set clipboard+=unnamedplus
+set clipboard=
 set virtualedit=block
 if !has('nvim')
 	set viminfo=!,'2000,<50,s10,h
