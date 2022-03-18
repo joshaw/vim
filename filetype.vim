@@ -1,5 +1,5 @@
 " Created:  Thu 07 Aug 2014
-" Modified: Fri 26 Mar 2021
+" Modified: Thu 11 Nov 2021
 " Author:   Josh Wainwright
 " Filename: filetype.vim
 
@@ -23,11 +23,12 @@ augroup filetypedetect
 	FT *.dotf dot
 	FT *.pp puppet
 	FT Jenkinsfile* jenkins
-	FT *.tf terraform
+	FT *.tf,*.tfvars terraform
 	FT pom.xml xml.pom
 	FT [dD]ockerfile* dockerfile
 	FT *.kts kotlin
 	FT docker-compose*.{yaml,yml}* yaml.docker-compose
+	FT */aws/config,*/.aws/config dosini
 augroup END
 
 delfunction s:FT
