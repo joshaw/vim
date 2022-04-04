@@ -1,7 +1,11 @@
 " Created:  Wed 17 Feb 2016
-" Modified: Wed 02 Mar 2016
+" Modified: Tue 29 Mar 2022
 " Author:   Josh Wainwright
 " Filename: zip.vim
+
+if !executable("zipinfo")
+	finish
+endif
 
 command! -nargs=1 -complete=file Zip :call zip#zip(<q-args>)
 
