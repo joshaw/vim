@@ -229,10 +229,14 @@ function! functions#cadd(cmd) abort
 	let flist = systemlist(a:cmd)
 	let list = []
 	for f in flist
-		call add(list, {"filename": f, "lnum": 1})
+		call add(list, {"filename": f})
 	endfor
-	call setqflist(list)
-	cfirst
+	if len(list) > 0
+		call setqflist(list)
+		cfirst
+	else
+		echomsg "No files to add"
+	endif
 endfunction
 
 " popup_cmd - run an interactive command in a popup window {{{1
