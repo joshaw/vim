@@ -1,5 +1,5 @@
 " Created:	Mon 12 Jan 2015
-" Modified: Wed 26 Jan 2022
+" Modified: Wed 30 Mar 2022
 " Author:	Josh Wainwright
 " Filename: functions.vim
 
@@ -82,63 +82,6 @@ function! functions#Oldfiles() abort
 	nnoremap <buffer> <cr> :let f=expand('<cfile>') \| pclose \| exe 'e 'f<cr>
 endfunction
 
-" Toggle Comment {{{1
-function! functions#toggleComment() abort
-	let dict = {
-			\ 'bash': '#',
-			\ 'c': '//',
-			\ 'conf': '#',
-			\ 'cpp': '//',
-			\ 'dockerfile': '#',
-			\ 'dosbatch': '::',
-			\ 'dot': '//',
-			\ 'gitconfig': '#',
-			\ 'gnuplot': '#',
-			\ 'haskell': '--',
-			\ 'java': '//',
-			\ 'javascript': '//',
-			\ 'lua': '--',
-			\ 'mail': '>',
-			\ 'make': '#',
-			\ 'markdown': ['<!--', '-->'],
-			\ 'perl': '#',
-			\ 'python': '#',
-			\ 'ruby': '#',
-			\ 'sh': '#',
-			\ 'terraform': '#',
-			\ 'tex': '%',
-			\ 'vim': '"',
-			\ 'zsh': '#',
-	\ }
-
-	if !has_key(dict, &filetype)
-		echoerr &filetype . ': no comment char.'
-		return
-	endif
-
-	let char = dict[&filetype]
-	" keeppatterns exe 's@^@'.char.' @ | s@^'.char.' '.char.' @@e'
-	let line = getline('.')
-	let is_commented = match(line, '^\s*' . char[0] . ' .* \?' . char[1])
-	if is_commented >= 0
-		if type(char) == v:t_list
-			let newline = substitute(line, '^\(\s*\)' . char[0] . ' \(.*\) \?' . char[1], '\1\2', '')
-		else
-			let newline = substitute(line, '^\(\s*\)' . char . ' \(.*\)', '\1\2', '')
-		endif
-	else
-		if type(char) == v:t_list
-			let newline = substitute(line, '^\(\s*\)\(.*\)', '\1' . char[0] . ' \2 ' . char[1], '')
-		else
-			let newline = substitute(line, '^\(\s*\)\(.*\)', '\1' . char . ' \2', '')
-		endif
-	endif
-	call setline('.', newline)
-endfun
-function! functions#toggleCommentmap(type) abort
-	let [lnum1, lnum2] = [line("'["), line("']")]
-	exe lnum1 . ',' . lnum2. 'call functions#toggleComment()'
-endfunction
 
 " NextFileinDir {{{1
 function! functions#nextFileInDir(direction) abort

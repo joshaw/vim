@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Mon 01 Nov 2021
+" Modified: Mon 21 Mar 2022
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -18,11 +18,6 @@ inoremap <s-tab> <c-p>
 " Change some options (Taken from unimpaired.vim - TPope)
 nnoremap cow :set wrap!<bar>set wrap?<cr>
 nnoremap cos :set spell!<bar>set spell?<cr>
-
-" Toggle Comment
-nnoremap <silent> gcc :call functions#toggleComment()<CR>
-nnoremap <silent> gc :<c-u>set opfunc=functions#toggleCommentmap<cr>g@
-xnoremap <silent> gc :call functions#toggleComment()<cr>
 
 " Sort
 xnoremap <silent> gs :<C-U>call functions#sort_motion(visualmode())<CR>
