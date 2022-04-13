@@ -1,5 +1,5 @@
 " Created:  Sat 24 Jan 2015
-" Modified: Fri 20 Nov 2015
+" Modified: Tue 05 Apr 2022
 " Author:   Josh Wainwright
 " Filename: times.vim
 
@@ -31,7 +31,7 @@ endfunction
 
 nnoremap <buffer> <cr> :<c-u>call Log_work_times()<cr>
 
-augroup log_work_times
-	au!
-	au BufReadPost,BufEnter times.txt call Log_work_times()
-augroup END
+"augroup log_work_times
+"	au!
+"	au BufReadPost,BufEnter times.txt call Log_work_times()
+"augroup END
