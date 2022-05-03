@@ -1,5 +1,5 @@
 " Created:  Wed 04 Mar 2020
-" Modified: Fri 18 Mar 2022
+" Modified: Thu 14 Apr 2022
 " Author:   Josh Wainwright
 " Filename: sh.vim
 
@@ -8,8 +8,8 @@ if executable('shellcheck')
 	setlocal errorformat=%f:%l:%c:\ %m
 endif
 
-if executable('split-cmd')
-	setlocal formatprg=split-cmd
+if executable('shfmt')
+	setlocal formatprg=shfmt
 endif
 
 setlocal keywordprg=help
