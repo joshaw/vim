@@ -1,13 +1,16 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Wed 17 Mar 2021
+" Modified: Tue 14 Mar 2023
 " Author:   Josh Wainwright
 " Filename: python.vim
+
+ let g:pyindent_open_paren = 'shiftwidth()'
+ let g:pyindent_nested_paren = 'shiftwidth()'
+ let g:pyindent_continue = 'shiftwidth()'
 
 setlocal expandtab
 setlocal keywordprg=pydoc
 
 if executable('black')
-	setlocal equalprg=black\ --quiet\ --fast\ -
 "	setlocal makeprg=black\ --fast\ %
 "	setlocal errorformat=error:\ cannot\ format\ %f:\ Cannot\ parse:\ %l:%c:\ %m
 "	setlocal errorformat+=%-G%*\\d\ file\ failed\ to\ reformat.
@@ -15,7 +18,7 @@ if executable('black')
 "	setlocal errorformat+=%-GOh\ no%.%#
 "	setlocal errorformat+=%-GAll\ done%.%#
 
-	setlocal formatexpr=Formatexpr_prg('black\ --quiet\ --fast\ -')
+	setlocal formatprg=black\ --quiet\ --fast\ -
 endif
 
 if executable('pylint')

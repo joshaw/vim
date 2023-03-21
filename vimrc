@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Fri 18 Mar 2022
+" Modified: Fri 03 Mar 2023
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -34,6 +34,9 @@ let did_install_default_menus = 1
 let skip_loading_mswin = 1
 let g:loaded_ruby_provider    = 0
 let g:loaded_node_provider    = 0
+let g:load_black = 1
+let g:loaded_fzf = 1
+let g:loaded_redact_pass = 1
 
 " Settings
 "
@@ -42,8 +45,7 @@ filetype plugin on
 filetype indent on
 syntax on
 let g:vim_monokai_tasty_italic=1
-colorscheme monokai
-set encoding=utf-8 " character encoding used in Vim: "latin1", "utf-8"
+colorscheme terminal
 
 " 2 moving around, searching and patterns
 set whichwrap=b,s,h,l,<,>,[,]
@@ -53,7 +55,6 @@ set smartcase
 set ignorecase
 set wildignorecase
 set fileignorecase
-silent set inccommand=nosplit
 
 " 4 displaying text
 augroup Scrolloff
@@ -66,7 +67,6 @@ set breakindent
 set breakindentopt=min:10,shift:2,sbr
 set display=lastline,uhex
 set fillchars=vert:│
-set lazyredraw
 set list
 set listchars=tab:·\ ,trail:▸,nbsp:_,extends:»,precedes:«
 augroup vimrc_trailing
@@ -77,20 +77,15 @@ augroup END
 set number
 
 " 5 syntax, highlighting and spelling
-set hlsearch
+set spell
 set colorcolumn=+1
 
 " 6 multiple windows
-set laststatus=2
-set hidden
-set switchbuf=useopen
 set splitbelow
 set splitright
 
 " 9 using the mouse
 set mouse=a
-set mousehide
-silent! set ttymouse=xterm2
 
 "12 messages and info
 set shortmess=aoOstTI
@@ -101,11 +96,12 @@ set statusline=%f\ %m%=%p%%\ %l/%L\ %c%V
 
 "14 editing text
 set textwidth=79
-set formatoptions=tcrqln
-silent! set formatoptions+=j
+set formatoptions=tcrqlnj
 set infercase
 set showmatch
-set nojoinspaces
+set complete-=t
+set completeopt-=preview
+set nrformats=alpha,bin,hex,unsigned
 
 "15 tabs and indenting
 set tabstop=4
@@ -123,13 +119,11 @@ exe 'set directory='.g:vimhome.'/tmp/directory//'
 set noswapfile
 
 "21 command line editing
-set wildmode=full
-set wildmenu
 set undofile
 exe 'set undodir='.g:vimhome.'/tmp/undo//'
 
 "22 executing external commands
-set grepprg=git\ grep\ --line-number\ --column\ $*
+set grepprg=git\ grep\ --untracked\ --line-number\ --column\ $*
 set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 
 "25 language specific
@@ -156,16 +150,6 @@ augroup vimrc_line_return
 	au!
 	autocmd BufReadPost * :call <SID>restore_cursor()
 augroup END
-
-if has('autocmd') && exists('+omnifunc')
-	augroup Vimrc
-		au!
-		autocmd Filetype *
-					\	if &omnifunc == "" |
-					\		setlocal omnifunc=syntaxcomplete#Complete |
-					\	endif
-	augroup END
-endif
 
 " }}}
 

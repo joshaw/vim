@@ -29,6 +29,18 @@ function! <SID>InteractiveOpen(cmd)
 	endif
 endfunction
 
-command! -nargs=? FGrep call <SID>InteractiveOpen("git grep -nI '<args>' | fzf --nth=3.. -d: | awk -F: '{printf \"edit +%i %s\", $2, $1}'")
-command! -nargs=? FOpen call <SID>InteractiveOpen("git ls-files -c -o --exclude-standard | grep '<args>' | fzf --preview='head -$LINES {}' --preview-window='right:30%' | awk '{printf \"edit %s\", $1}'")
-command! -nargs=? FTag call <SID>InteractiveOpen("grep -v '^!_TAG_' tags | grep '<args>' | fzf --nth=1 -d'\t' | awk '{printf \"tag %s\", $1}'")
+let s:fzf_sh = expand("<script>:h") . "/fzf.sh"
+command! -nargs=? FGrep call <SID>InteractiveOpen("sh " . s:fzf_sh . " fuzzy_grep " . shellescape("<args>"))
+command! -nargs=? FOpen call <SID>InteractiveOpen("sh " . s:fzf_sh . " fuzzy_open " . shellescape("<args>"))
+command! -nargs=? FTag call <SID>InteractiveOpen("sh " . s:fzf_sh . " fuzzy_tag " . shellescape("<args>"))
+
+function! <SID>FBuffers()
+	let buffers = filter(range(1, bufnr("$")), "bufexists(v:val)")
+	let list = map(buffers, "printf('%s %s', v:val, getbufinfo(v:val)[0].name)")
+
+	let tempfile = tempname()
+	call writefile(list, tempfile)
+	call <SID>InteractiveOpen("< " . tempfile . " fzf --nth=2 | awk '{printf \"buffer %s\", $1}'")
+endfunction
+
+command! -nargs=0 FBuf call <SID>FBuffers()

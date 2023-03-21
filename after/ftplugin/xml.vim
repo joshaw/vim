@@ -1,9 +1,8 @@
 " Created:  Thu 20 Aug 2020
-" Modified: Mon 15 Feb 2021
+" Modified: Tue 14 Mar 2023
 " Author:   Josh Wainwright
 " Filename: xml.vim
 
 if executable('xmllint')
-	setlocal equalprg=xmllint\ --format\ --recover\ -
-	setlocal formatexpr=Formatexpr_prg('xmllint\ --format\ --recover\ -')
+	setlocal formatexpr=xmllint\ --format\ --recover\ -
 endif

@@ -1,6 +1,14 @@
 function! <SID>Nnn()
 	let s:tempfile = tempname()
-	let pick_command = 'lf -selection-path ' . s:tempfile . ' ' . expand('%:p')
+	let hidden = expand("%:p:t")[0] == "." ? ['-command', '"set hidden"'] : []
+
+	let pick_command = join(flatten([
+		\ 'lf',
+		\ '-selection-path',
+		\ s:tempfile,
+		\ hidden,
+		\ expand('%:p')
+	\ ]), " ")
 
 	if has('nvim')
 		let callback = {}

@@ -1,5 +1,5 @@
 " Created:  Wed 16 Apr 2014
-" Modified: Tue 23 Feb 2021
+" Modified: Tue 29 Nov 2022
 " Author:   Josh Wainwright
 " Filename: markdown.vim
 
@@ -8,7 +8,7 @@
 "nnoremap <buffer> K :cgetexpr system('define ' . expand('<cword>'))<cr>
 
 " Automatic formating of paragraphs whenever text is inserted
-setlocal formatoptions=tcqwan1
+setlocal formatoptions=tcqan1
 setlocal nosmartindent
 setlocal tabstop=2
 setlocal shiftwidth=2

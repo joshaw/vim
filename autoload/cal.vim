@@ -1,5 +1,5 @@
 " Created:  Mon 11 Jan 2016
-" Modified: Thu 31 Mar 2016
+" Modified: Tue 21 Mar 2023
 " Author:   Josh Wainwright
 " Filename: cal.vim
 
@@ -221,7 +221,6 @@ function! cal#cal(wholeyear, ...)
 endfunction
 
 function! cal#calbuf(...)
-	call ScratchBuf()
 	setlocal conceallevel=1 concealcursor=nv filetype=calendar nocursorcolumn
 	setlocal nocursorline colorcolumn=0 nolist
 	let b:year = a:0 > 0 ? a:1 : strftime("%Y")
@@ -265,7 +264,6 @@ function! s:teardown()
 endfunction
 
 function! cal#clock()
-	call ScratchBuf()
 	call s:setup()
 	let s:secs = 1
 	if s:secs

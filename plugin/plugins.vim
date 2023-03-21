@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Wed 30 Mar 2022
+" Modified: Tue 21 Mar 2023
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -14,10 +14,6 @@ command! -range=% -nargs=0 StripTrailing :call whitespace#StripTrailing(<line1>,
 command! -nargs=0 TrimEndLines :call whitespace#TrimEndLines()
 command! -nargs=0 Fmt :call whitespace#Fmt()
 
-" DisplayMode
-command! -nargs=0 ReadingMode call display#Reading_mode_toggle()
-command! -nargs=0 DisplayMode call display#Display_mode_toggle()
-
 " Super Retab
 command! -nargs=? -range=% Space2Tab call super_retab#IndentConvert(<line1>,<line2>,0,<q-args>)
 command! -nargs=? -range=% Tab2Space call super_retab#IndentConvert(<line1>,<line2>,1,<q-args>)
@@ -26,12 +22,6 @@ command! -nargs=? -range=% RetabIndent call super_retab#IndentConvert(<line1>,<l
 " DiffOrig
 " View the difference between the buffer and the file the last time it was saved
 "command! Diff :w !diff --color=always --unified % - || true
-
-" BufGrep
-command! -nargs=1 BufGrep :call functions#BufGrep(<f-args>)
-
-" Sum
-command! -range -nargs=0 -bar Sum call functions#Sum()
 
 " Verbose
 command! -range=999998 -nargs=1 -complete=command Verbose
@@ -58,9 +48,6 @@ command! -nargs=0 Clock :call cal#clock()
 " Update all changed buffers
 command! -nargs=0 -bang Wall :call functions#Wall(<bang>0)
 
-" Get Patch for modifications
-command! -nargs=0 Patch :call patch#patch(expand('%'), '-u')
-
 " Custom one-sided folder markers
 command! -nargs=1 FoldMarker :set foldmethod=expr|set foldexpr=getline(v:lnum)=~'<args>'?'>1':'='
 
@@ -72,21 +59,23 @@ command! -range -bang Bitbucket silent exe "!bitbucket " ("<bang>" == "!" ? "--u
 command! -range -bang Github silent exe "!github " ("<bang>" == "!" ? "--use-commit " : "") "--git-dir" expand("%:h") expand("%") "L<line1>-L<line2>" | redraw!
 
 " Populate qflist with filename pattern
-command! -nargs=+ Cadd :call functions#cadd("git ls-files " . <q-args>)
-command! -nargs=+ CaddCmd :call functions#cadd(<q-args>)
+command! -nargs=+ -complete=file Cadd :call functions#cadd("git ls-files " . <q-args>)
+command! -nargs=+ -complet=shellcmd CaddCmd :call functions#cadd(<q-args>)
 
 " HightlightRepeats
 command! -range=% RepeatedLines normal /\%><line1>l\%<<line2>l^\(.*\)$\n\1$/\<CR>
 
 " Using a program with formatexpr
-function! Formatexpr_prg(cmd)
-	if v:char != ''
+function! <SID>FormatBuffer()
+	if &formatprg == ''
+		echo "No formatting program set. Use 'formatprg'"
 		return
 	endif
 	let l:s = winsaveview()
-	silent execute v:lnum . ',+' . (v:count - 1) . '!' . a:cmd
+	silent execute '%!' . &formatprg
 	call winrestview(l:s)
 endfunction
+command! FormatBuffer call <SID>FormatBuffer()
 
 " Run tig
 function! <SID>Tig(bang, ...)
@@ -118,3 +107,35 @@ function! <SID>GitDiff(...)
 	call functions#popup_cmd(cmd, "editor", {})
 endfunction
 command! -nargs=* GitDiff call <SID>GitDiff()
+
+" Highlight git merge conflicts
+function! ConflictsHighlight() abort
+	syn match conflictStart /^<<<<<<< .*$/
+	syn match conflictMiddle1 /^||||||| .*$/
+	syn match conflictMiddle2 /^=======$/
+	syn match conflictEnd /^>>>>>>> .*$/
+
+	highlight link conflictStart DiffDelete
+	highlight link conflictMiddle1 DiffChange
+	highlight link conflictMiddle2 DiffChange
+	highlight link conflictEnd DiffAdd
+endfunction
+
+augroup highlight_git_conflict_markers
+	autocmd!
+	autocmd BufEnter * call ConflictsHighlight()
+augroup END
+
+" Change buffer directory to the root of the current git directory
+function! <SID>RepoRoot()
+	let root = system(["git", "rev-parse", "--show-toplevel"])
+	if v:shell_error
+		echohl WarningMsg
+		echo "Could not find git repository root"
+		echohl None
+		return
+	endif
+	exe 'lcd' root
+	pwd
+endfunction
+command! -nargs=0 RepoRoot call <SID>RepoRoot()

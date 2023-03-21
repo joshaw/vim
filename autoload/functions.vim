@@ -1,43 +1,7 @@
 " Created:	Mon 12 Jan 2015
-" Modified: Wed 30 Mar 2022
+" Modified: Tue 21 Mar 2023
 " Author:	Josh Wainwright
 " Filename: functions.vim
-
-" BufGrep {{{1
-" Search and Replace through all buffers
-function! functions#BufGrep(search) abort
-	cclose
-	call setqflist([])
-	silent! exe 'bufdo vimgrepadd ' . a:search . ' %'
-	copen
-endfunction
-
-" Sum {{{1
-" Sum a visual selection of numbers
-function! functions#Sum() range abort
-	let s:reg_save = getreg('"')
-	let s:regtype_save = getregtype('"')
-	let s:cb_save = &clipboard
-	set clipboard&
-	silent! normal! ""gvy
-	let s:selection = getreg('"')
-	call setreg('"', s:reg_save, s:regtype_save)
-	let &clipboard = s:cb_save
-
-	let s:sum = 0
-	for s:n in split(s:selection, '[^0-9.-]')
-		let s:n = substitute(s:n, '\v^[^0-9-]*\ze([0-9]|$)', '', '')
-		if s:n ==# ''
-			continue
-		endif
-		let s:num = str2float(s:n)
-		if s:num != 0
-			echon string(s:num) . ', '
-			let s:sum = s:sum + s:num
-		endif
-	endfor
-	echon ' = ' . string(s:sum)
-endfunction
 
 " BlockIncr {{{1
 " Increment a blockwise selection
@@ -241,35 +205,63 @@ endfunction
 
 " popup_cmd - run an interactive command in a popup window {{{1
 function! functions#popup_cmd(cmd, relative, callback)
-	autocmd TermClose * ++once :bd!
+	autocmd TermClose * ++once :bw!
 
 	let popup_width = 100
 	let popup_height = 45
+	let winnr = winnr()
 
-	if a:relative == "win"
-		let opts = {
+	function! s:get_config() closure
+		return {
 			\ 'relative': 'win',
 			\ 'row': 0,
 			\ 'col': 0,
-			\ 'width': winwidth(0),
-			\ 'height': winheight(0),
-			\ 'style': 'minimal'
-			\ }
-	else
-		let opts = {
+			\ 'width': winwidth(winnr),
+			\ 'height': winheight(winnr),
+			\ 'style': 'minimal',
+		\ }
+	endfunction
+	function! s:get_config_centered()
+		let w = min([250, &columns-10])
+		let h = min([200, &lines-5])
+		let col = (&columns - w) / 2
+		let row = (&lines - h) / 2
+		return {
 			\ 'relative': 'editor',
-			\ 'row': (&lines - popup_height) / 2,
-			\ 'col': (&columns - popup_width) / 2,
-			\ 'width': popup_width,
-			\ 'height': popup_height,
-			\ 'style': 'minimal'
-			\ }
-	endif
+			\ 'row': row,
+			\ 'col': col,
+			\ 'width': w,
+			\ 'height': h,
+			\ 'style': 'minimal',
+			\ 'border': 'rounded'
+		\ }
+	endfunction
 
 	let buf = nvim_create_buf(v:false, v:true)
-	let float_win = nvim_open_win(buf, v:true, opts)
-	"call nvim_win_set_option(float_win, 'winhl', 'Normal:Visual')
+	let s:float_win = nvim_open_win(buf, v:true, s:get_config())
+	call nvim_win_set_option(s:float_win, 'winhl', 'NormalFloat:SignColumn')
 
 	call termopen(a:cmd, a:callback)
+	augroup popup_sigwinch
+		autocmd!
+		"autocmd Signal SIGWINCH silent! call nvim_win_set_config(s:float_win, s:get_config())
+		autocmd Vimresized <buffer> call nvim_win_set_config(s:float_win, s:get_config())
+	augroup END
 	startinsert
 endfunction
+
+" RemoveQFItem
+function! functions#RemoveQFItem() range abort
+	let qf_list = getqflist()
+
+	if len(qf_list) > 0
+		call remove(qf_list, a:firstline - 1, a:lastline - 1)
+		call setqflist([], "r", {"items": qf_list})
+		call cursor(a:firstline, 1)
+	endif
+
+	if len(qf_list) == 0
+		cclose
+	endif
+endfunction
+

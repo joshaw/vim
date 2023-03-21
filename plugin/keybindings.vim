@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Mon 21 Mar 2022
+" Modified: Tue 14 Mar 2023
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -24,8 +24,8 @@ xnoremap <silent> gs :<C-U>call functions#sort_motion(visualmode())<CR>
 nnoremap <silent> gs :<C-U>set opfunc=functions#sort_motion<CR>g@
 
 " Open
-nnoremap gx :<c-u>!xdg-open <c-r><c-f><cr>
-xnoremap gx "ay:<c-u>!xdg-open <c-r>a<cr>
+nnoremap gx :<c-u>call system("xdg-open " .. shellescape(expand("<cWORD>")))<cr>
+xnoremap gx "ay:<c-u>call system("xdg-open " .. shellescape("<c-r>a"))<cr>
 
 " Align with easy align
 xnoremap gl :call align#align_getchar()<cr>
@@ -54,8 +54,8 @@ nnoremap ; :
 nnoremap , ;
 
 " Search for visually highlighted text
-vnoremap * y/<C-R>"<CR>
-vnoremap # y?<C-R>"<CR>
+vnoremap * y/\V<C-R>=escape(@",'/\')<CR><CR>
+vnoremap * y?\V<C-R>=escape(@",'/\')<CR><CR>
 
 nnoremap <silent> [<space> :put! _<cr>j
 nnoremap <silent> ]<space> :put _<cr>k
@@ -76,12 +76,18 @@ nnoremap [q :cprevious<cr>zz:cc!<cr>
 nnoremap ]l :lnext<cr>zz:ll!<cr>
 nnoremap [l :lprevious<cr>zz:ll!<cr>
 
+" Tabs
+nnoremap ]t :tabnext<cr>
+nnoremap [t :tabprevious<cr>
+
 nnoremap - :Nnn<cr>
-nnoremap _ :Tig status<cr>
+nnoremap _ :exe 'FGrep ' . expand("<cword>")<cr>
 
 " Surroundings
 nnoremap <silent> ys :call surroundings#surroundings(0)<cr>
 xnoremap <silent> S :call surroundings#surroundings(visualmode() ==# 'v'? 1: 2)<cr>
+
+nnoremap <space>f :FormatBuffer<cr>
 
 " Control Keys {{{1
 
@@ -91,7 +97,7 @@ nnoremap <silent> <C-Down> :move+  <CR>
 xnoremap <silent> <C-Up>   :move-2 <CR>gv
 xnoremap <silent> <C-Down> :move'>+<CR>gv
 
-nnoremap <c-g> :grep<space><C-r><C-w>
+nnoremap <c-g> :grep!<space><C-r><C-w>
 
 " Dmenu Open
 if executable('fzf')

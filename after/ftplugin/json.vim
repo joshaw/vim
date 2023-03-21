@@ -1,9 +1,8 @@
 " Created:  Thu 20 Aug 2020
-" Modified: Mon 15 Feb 2021
+" Modified: Tue 14 Mar 2023
 " Author:   Josh Wainwright
 " Filename: json.vim
 
 if executable('jq')
-	setlocal equalprg=jq\ -S\ .
-	setlocal formatexpr=Formatexpr_prg('jq\ -S\ .')
+	setlocal formatprg=jq\ .
 endif
