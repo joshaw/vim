@@ -1182,6 +1182,7 @@ syn keyword terraKeyword
     \ local
     \ locals
     \ module
+    \ output
     \ provider
     \ providers
     \ required_providers
