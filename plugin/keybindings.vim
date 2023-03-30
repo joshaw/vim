@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Tue 14 Mar 2023
+" Modified: Thu 23 Mar 2023
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -123,6 +123,17 @@ inoremap <C-a> <esc>I
 inoremap <C-e> <esc>A
 cnoremap <c-a> <home>
 cnoremap <c-e> <end>
+
+" Move between + resize windows
+nnoremap <A-l> <C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-k> <C-w>k
+nnoremap <A-j> <C-w>j
+
+nnoremap <A-L> 4<C-w>>
+nnoremap <A-H> 4<C-w><
+nnoremap <A-K> <C-w>-
+nnoremap <A-J> <C-w>+
 
 " Leaders {{{1
 
