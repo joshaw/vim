@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Tue 21 Mar 2023
+" Modified: Wed 29 Mar 2023
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -139,3 +139,14 @@ function! <SID>RepoRoot()
 	pwd
 endfunction
 command! -nargs=0 RepoRoot call <SID>RepoRoot()
+
+" Base64 decode highlighted text
+function! <SID>Base64Decode() range
+	let l:paste = &paste
+	set paste
+	normal! gv
+	execute "normal! c\<c-r>=system(\"base64 --decode\", @\")\<cr>\<esc>"
+	normal! `[v`]h
+	let &paste = l:paste
+endfunction
+command! -nargs=0 -range Base64Decode call <SID>Base64Decode()
