@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Wed 29 Mar 2023
+" Modified: Thu 01 Jun 2023
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -59,7 +59,7 @@ command! -range -bang Bitbucket silent exe "!bitbucket " ("<bang>" == "!" ? "--u
 command! -range -bang Github silent exe "!github " ("<bang>" == "!" ? "--use-commit " : "") "--git-dir" expand("%:h") expand("%") "L<line1>-L<line2>" | redraw!
 
 " Populate qflist with filename pattern
-command! -nargs=+ -complete=file Cadd :call functions#cadd("git ls-files " . <q-args>)
+command! -nargs=+ -complete=file Cadd :call functions#cadd("git ls-files --cached --others " . <q-args>)
 command! -nargs=+ -complet=shellcmd CaddCmd :call functions#cadd(<q-args>)
 
 " HightlightRepeats
