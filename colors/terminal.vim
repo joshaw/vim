@@ -81,10 +81,16 @@ hi DiffAdd ctermfg=darkgreen ctermbg=black cterm=NONE
 hi DiffChange ctermfg=cyan ctermbg=black cterm=NONE
 hi DiffDelete ctermfg=darkred ctermbg=NONE cterm=NONE
 hi DiffText ctermfg=darkyellow ctermbg=black cterm=NONE
+
 hi diffAdded ctermfg=darkgreen ctermbg=NONE cterm=NONE
 hi diffChanged ctermfg=darkyellow ctermbg=NONE cterm=NONE
 hi diffRemoved ctermfg=darkred ctermbg=NONE cterm=NONE
 hi diffSubname ctermfg=darkmagenta ctermbg=NONE cterm=NONE
+
+hi DiffConflictBegin ctermfg=red ctermbg=black cterm=NONE
+hi DiffConflictCommonAncestors ctermfg=cyan ctermbg=black cterm=NONE
+hi DiffConflictSeparator ctermfg=cyan ctermbg=black cterm=NONE
+hi DiffConflictEnd ctermfg=green ctermbg=black cterm=NONE
 
 " Quickfix
 hi QuickFixLine ctermfg=NONE ctermbg=black cterm=bold,italic

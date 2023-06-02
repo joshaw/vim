@@ -110,15 +110,10 @@ command! -nargs=* GitDiff call <SID>GitDiff()
 
 " Highlight git merge conflicts
 function! ConflictsHighlight() abort
-	syn match conflictStart /^<<<<<<< .*$/
-	syn match conflictMiddle1 /^||||||| .*$/
-	syn match conflictMiddle2 /^=======$/
-	syn match conflictEnd /^>>>>>>> .*$/
-
-	highlight link conflictStart DiffDelete
-	highlight link conflictMiddle1 DiffChange
-	highlight link conflictMiddle2 DiffChange
-	highlight link conflictEnd DiffAdd
+	call matchadd("DiffConflictBegin", "^<<<<<<< .*$")
+	call matchadd("DiffConflictCommonAncestors", "^|||||||$")
+	call matchadd("DiffConflictSeparator", "^=======$")
+	call matchadd("DiffConflictEnd", "^>>>>>>> .*$")
 endfunction
 
 augroup highlight_git_conflict_markers
