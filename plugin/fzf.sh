@@ -5,8 +5,6 @@ fzf() {
 	command fzf \
 		--info=hidden \
 		--preview-window="~1,+{2}/2,right,40%,border-left,<50(down,40%,border-top)" \
-		--bind pgup:preview-half-page-up \
-		--bind pgdn:preview-half-page-down \
 		--bind "ctrl-s:toggle-sort" \
 		"$@"
 }
