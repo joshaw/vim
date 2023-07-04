@@ -1,5 +1,5 @@
 " Created:  Mon 27 Apr 2015
-" Modified: Thu 23 Mar 2023
+" Modified: Sun 11 Jun 2023
 " Author:   Josh Wainwright
 " Filename: keybindings.vim
 
@@ -12,6 +12,9 @@ map <F10>  magg=G`a
 
 inoremap <expr> <tab> functions#smart_TabComplete()
 inoremap <s-tab> <c-p>
+
+vnoremap <tab> >gv
+vnoremap <s-tab> <gv
 
 " Letters {{{1
 
