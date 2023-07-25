@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Thu 01 Jun 2023
+" Modified: Thu 20 Jul 2023
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -71,9 +71,27 @@ function! <SID>FormatBuffer()
 		echo "No formatting program set. Use 'formatprg'"
 		return
 	endif
-	let l:s = winsaveview()
+	let curw = winsaveview()
+
+	" Make a fake change so that the undo point is right.
+	normal! ix
+	normal! "_x
+
+	let tmpfile = tempname()
+	let shellredir_save = &shellredir
+	let &shellredir = '>%s 2>'.tmpfile
 	silent execute '%!' . &formatprg
-	call winrestview(l:s)
+	let &shellredir = shellredir_save
+
+	" If there was an error, undo any changes and show stderr.
+	if v:shell_error != 0
+		silent undo
+		let output = readfile(tmpfile)
+		echo join(output, "\n")
+	endif
+
+	call delete(tmpfile)
+	call winrestview(curw)
 endfunction
 command! FormatBuffer call <SID>FormatBuffer()
 
