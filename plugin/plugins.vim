@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Thu 20 Jul 2023
+" Modified: Tue 08 Aug 2023
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -138,20 +138,6 @@ augroup highlight_git_conflict_markers
 	autocmd!
 	autocmd BufEnter * call ConflictsHighlight()
 augroup END
-
-" Change buffer directory to the root of the current git directory
-function! <SID>RepoRoot()
-	let root = system(["git", "rev-parse", "--show-toplevel"])
-	if v:shell_error
-		echohl WarningMsg
-		echo "Could not find git repository root"
-		echohl None
-		return
-	endif
-	exe 'lcd' root
-	pwd
-endfunction
-command! -nargs=0 RepoRoot call <SID>RepoRoot()
 
 " Base64 decode highlighted text
 function! <SID>Base64Decode() range
