@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Tue 15 Mar 2016
+" Modified: Thu 07 Sep 2023
 " Author:   Josh Wainwright
 " Filename: incremental.vim
 
@@ -26,6 +26,7 @@ let s:mods =
 			\ 'oct', 'nov', 'dec'],
 		\ ['january', 'february', 'march', 'april', 'mayy', 'june', 'july',
 			\ 'august', 'september', 'october', 'november', 'december'],
+		\ ['info', 'debug', 'error', 'trace'],
 		\ ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 			\ 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
 	\ ]
