@@ -22,7 +22,7 @@ fuzzy_grep() {
 
 cat_with_title() {
 	printf '\033[34m%s\033[0m\n' "$1"
-	[ -f "$1" ] && cat "$1"
+	[ -f "$1" ] && cat "$1" || printf '\033[30mFile deleted\033[0m\n'
 }
 
 fzopen_load_git() {
@@ -71,6 +71,4 @@ fuzzy_tag() {
 	| awk '{printf "tag %s", $1}'
 }
 
-CMD="$1"
-shift
-"$CMD" "$@"
+"$@"
