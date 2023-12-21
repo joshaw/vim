@@ -1,5 +1,5 @@
 " Created:  Tue 12 Aug 2014
-" Modified: Fri 03 Mar 2023
+" Modified: Fri 17 Nov 2023
 " Author:   Josh Wainwright
 " Filename: vimrc
 
@@ -78,6 +78,7 @@ set number
 
 " 5 syntax, highlighting and spelling
 set spell
+set spelloptions+=camel
 set colorcolumn=+1
 
 " 6 multiple windows

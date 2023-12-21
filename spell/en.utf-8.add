@@ -31,3 +31,8 @@ SSO
 IAM
 CloudFront
 wildcard
+aws
+iam
+arn
+sns
+ses
