@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Tue 14 Mar 2023
+" Modified: Tue 30 Jan 2024
 " Author:   Josh Wainwright
 " Filename: python.vim
 
@@ -18,7 +18,10 @@ if executable('black')
 "	setlocal errorformat+=%-GOh\ no%.%#
 "	setlocal errorformat+=%-GAll\ done%.%#
 
-	setlocal formatprg=black\ --quiet\ --fast\ -
+	if !exists("$BLACK_LINE_LENGTH")
+		let $BLACK_LINE_LENGTH=88
+	endif
+	setlocal formatprg=black\ --quiet\ --fast\ --line-length=$BLACK_LINE_LENGTH\ -
 endif
 
 if executable('pylint')
