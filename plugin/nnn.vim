@@ -23,7 +23,8 @@ function! <SID>Nnn()
 			endtry
 		endfunction
 
-		call functions#popup_cmd(pick_command, "win", callback)
+		let buf = functions#popup_cmd(pick_command, "win", callback)
+		tnoremap <buffer> <c-z> :echo "Suspend disabled"<cr>
 
 	else
 		silent execute '!' . pick_command

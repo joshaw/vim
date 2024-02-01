@@ -1,5 +1,5 @@
 " Created:	Mon 12 Jan 2015
-" Modified: Tue 21 Mar 2023
+" Modified: Wed 31 Jan 2024
 " Author:	Josh Wainwright
 " Filename: functions.vim
 
@@ -248,6 +248,7 @@ function! functions#popup_cmd(cmd, relative, callback)
 		autocmd Vimresized <buffer> call nvim_win_set_config(s:float_win, s:get_config())
 	augroup END
 	startinsert
+	return buf
 endfunction
 
 " RemoveQFItem
