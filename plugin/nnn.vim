@@ -25,6 +25,10 @@ function! <SID>Nnn()
 
 		let buf = functions#popup_cmd(pick_command, "win", callback)
 		tnoremap <buffer> <c-z> :echo "Suspend disabled"<cr>
+		augroup nnn
+			autocmd!
+			autocmd BufLeave <buffer> quit
+		augroup END
 
 	else
 		silent execute '!' . pick_command
