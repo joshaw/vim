@@ -31,9 +31,10 @@ hi TabLine ctermfg=NONE ctermbg=black cterm=NONE
 hi TabLineFill ctermfg=black ctermbg=NONE cterm=NONE
 hi TabLineSel ctermfg=black ctermbg=grey cterm=bold
 hi Title ctermfg=cyan ctermbg=NONE cterm=bold
-hi VertSplit ctermfg=black ctermbg=NONE cterm=NONE
 hi WarningMsg ctermfg=darkred ctermbg=NONE cterm=NONE
 hi WildMenu ctermfg=black ctermbg=darkyellow cterm=NONE
+hi WinSeparator ctermfg=black ctermbg=NONE cterm=NONE
+hi link VertSplit WinSeparator
 
 " Virtual Text
 hi Conceal ctermfg=grey ctermbg=NONE cterm=NONE
@@ -50,8 +51,10 @@ hi Character ctermfg=yellow ctermbg=NONE cterm=NONE
 hi Comment ctermfg=darkgrey ctermbg=NONE cterm=italic,bold
 hi Constant ctermfg=yellow ctermbg=NONE cterm=bold
 hi Debug ctermfg=darkcyan ctermbg=NONE cterm=NONE
+hi Delimiter ctermfg=darkcyan ctermbg=NONE cterm=NONE
 hi Directory ctermfg=darkcyan ctermbg=NONE cterm=bold
 hi Error ctermfg=white ctermbg=darkred cterm=bold
+hi Function ctermfg=blue ctermbg=None cterm=bold
 hi Identifier ctermfg=blue ctermbg=NONE cterm=NONE
 hi Ignore ctermfg=NONE ctermbg=NONE cterm=NONE
 hi NonText ctermfg=grey ctermbg=NONE cterm=bold
