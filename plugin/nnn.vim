@@ -7,9 +7,7 @@ function! <SID>Nnn()
 		let start_path = expand('%:p:h')
 	endif
 
-	let pick_command = join(flatten([
-		\ 'lf', '-selection-path', s:tempfile, hidden, start_path
-	\ ]), " ")
+	let pick_command = flatten(['lf', '-selection-path', s:tempfile, hidden, start_path])
 
 	if has('nvim')
 		let callback = {}
@@ -31,7 +29,7 @@ function! <SID>Nnn()
 		augroup END
 
 	else
-		silent execute '!' . pick_command
+		silent execute '!' . join(pick_command, " ")
 		try
 			if filereadable(s:tempfile)
 				silent execute 'edit ' . readfile(s:tempfile, '', 1)[0]
