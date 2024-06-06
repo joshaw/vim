@@ -36,14 +36,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
-local servers = {
-	'terraformls',
-}
-for _, lsp in pairs(servers) do
-  require('lspconfig')[lsp].setup {
-    flags = {}
-  }
-end
+local lspconfig = require('lspconfig')
+lspconfig['terraformls'].setup({autostart = false})
 
 vim.diagnostic.config({
   virtual_text = true,
