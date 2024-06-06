@@ -26,18 +26,17 @@ cat_with_title() {
 }
 
 fzopen_load_git() {
-	git status --short --untracked-files=all \
-	| sed \
-		-e 's/^.D /\x1b[31m/' \
-		-e 's/^.M /\x1b[33m/' \
-		-e 's/^?? /\x1b[34m/' \
-		-e 's/$/\x1b[0m/' \
-		-e 's/^[A-Z ]. //'
+	git ls-files -t -z --others --modified --deleted \
+	| sed -z \
+		-e 's/^R /\x1b[31m/' \
+		-e 's/^C /\x1b[33m/' \
+		-e 's/^? /\x1b[34m/' \
+		-e 's/$/\x1b[0m/'
 }
 
 fzopen_load_orig() {
 	fzopen_load_git
-	git ls-files --cached
+	git ls-files -z --cached
 }
 
 fzopen_preview_git() {
@@ -51,6 +50,7 @@ fzopen_preview_git() {
 fuzzy_open() {
 	fzopen_load_orig \
 	| fzf \
+		--read0 \
 		--ansi \
 		--tiebreak=index \
 		--scheme=path \
@@ -58,7 +58,7 @@ fuzzy_open() {
 		--bind="ctrl-g:change-preview(sh $0 fzopen_preview_git {})+reload(sh $0 fzopen_load_git)" \
 		--bind="ctrl-f:change-preview(sh $0 cat_with_title {})+reload(sh $0 fzopen_load_orig)" \
 		--preview="sh $0 cat_with_title {}" \
-	| awk '{printf "edit %s", $1}'
+	| awk '{gsub(/ /, "\\ ", $0); printf "edit %s", $1}'
 }
 
 fuzzy_tag() {
