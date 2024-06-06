@@ -58,7 +58,7 @@ fuzzy_open() {
 		--bind="ctrl-g:change-preview(sh $0 fzopen_preview_git {})+reload(sh $0 fzopen_load_git)" \
 		--bind="ctrl-f:change-preview(sh $0 cat_with_title {})+reload(sh $0 fzopen_load_orig)" \
 		--preview="sh $0 cat_with_title {}" \
-	| awk '{gsub(/ /, "\\ ", $0); printf "edit %s", $1}'
+	| awk '{gsub(/ /, "\\ ", $0); printf "edit %s", $0}'
 }
 
 fuzzy_tag() {
