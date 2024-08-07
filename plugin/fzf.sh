@@ -26,7 +26,7 @@ cat_with_title() {
 }
 
 fzopen_load_git() {
-	git ls-files -t -z --others --modified --deleted \
+	git ls-files -t -z --modified --deleted \
 	| sed -z \
 		-e 's/^R /\x1b[31m/' \
 		-e 's/^C /\x1b[33m/' \
