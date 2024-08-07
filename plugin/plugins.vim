@@ -1,5 +1,5 @@
 " Created:  Sun 26 Apr 2015
-" Modified: Tue 08 Aug 2023
+" Modified: Thu 13 Jun 2024
 " Author:   Josh Wainwright
 " Filename: plugins.vim
 
@@ -18,10 +18,6 @@ command! -nargs=0 Fmt :call whitespace#Fmt()
 command! -nargs=? -range=% Space2Tab call super_retab#IndentConvert(<line1>,<line2>,0,<q-args>)
 command! -nargs=? -range=% Tab2Space call super_retab#IndentConvert(<line1>,<line2>,1,<q-args>)
 command! -nargs=? -range=% RetabIndent call super_retab#IndentConvert(<line1>,<line2>,&et,<q-args>)
-
-" DiffOrig
-" View the difference between the buffer and the file the last time it was saved
-"command! Diff :w !diff --color=always --unified % - || true
 
 " Verbose
 command! -range=999998 -nargs=1 -complete=command Verbose
@@ -108,23 +104,21 @@ function! <SID>Tig(bang, ...)
 endfunction
 command! -bang -nargs=* Tig call <SID>Tig(<bang>0, <f-args>)
 
+" DiffOrig
+" View the difference between the buffer and the file the last time it was saved
+"command! Diff :w !diff --color=always --unified % - || true
+
 " View a diff of the current file
 function! <SID>Diff()
-	let filename = expand('%')
-	let tempfile = tempname()
-	execute "write " . tempfile
-
-	let cmd = "diff -u --color=always " . tempfile . " '" . filename . "' | less -SR +g"
-	call functions#popup_cmd(cmd, "editor", {})
+	if &diff | echo "Already in diff mode" | return | endif
+	let filetype = &filetype
+	diffthis
+	vnew | r # | normal! 1Gdd
+	diffthis
+	setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile
+	exe 'setlocal filetype=' . filetype
 endfunction
-command! -nargs=0 Diff call <SID>Diff()
-
-" View a git diff of the current file
-function! <SID>GitDiff(...)
-	let cmd = "git diff --color " . expand('%') . " | less -SR +g"
-	call functions#popup_cmd(cmd, "editor", {})
-endfunction
-command! -nargs=* GitDiff call <SID>GitDiff()
+command! -nargs=* Diff call <SID>Diff()
 
 " Highlight git merge conflicts
 function! ConflictsHighlight() abort
