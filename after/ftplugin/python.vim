@@ -1,5 +1,5 @@
 " Created:  Thu 09 Jul 2015
-" Modified: Tue 30 Jan 2024
+" Modified: Mon 09 Sep 2024
 " Author:   Josh Wainwright
 " Filename: python.vim
 
@@ -10,17 +10,13 @@
 setlocal expandtab
 setlocal keywordprg=pydoc
 
-if executable('black')
-"	setlocal makeprg=black\ --fast\ %
-"	setlocal errorformat=error:\ cannot\ format\ %f:\ Cannot\ parse:\ %l:%c:\ %m
-"	setlocal errorformat+=%-G%*\\d\ file\ failed\ to\ reformat.
-"	setlocal errorformat+=%-G%*\\d\ file\ left\ unchanged.
-"	setlocal errorformat+=%-GOh\ no%.%#
-"	setlocal errorformat+=%-GAll\ done%.%#
+if !exists("$BLACK_LINE_LENGTH")
+	let $BLACK_LINE_LENGTH=88
+endif
 
-	if !exists("$BLACK_LINE_LENGTH")
-		let $BLACK_LINE_LENGTH=88
-	endif
+if executable('ruff')
+	setlocal formatprg=ruff\ format\ --line-length=$BLACK_LINE_LENGTH\ -
+elseif executable('black')
 	setlocal formatprg=black\ --quiet\ --fast\ --line-length=$BLACK_LINE_LENGTH\ -
 endif
 
