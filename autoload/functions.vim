@@ -1,5 +1,5 @@
 " Created:	Mon 12 Jan 2015
-" Modified: Wed 31 Jan 2024
+" Modified: Mon 09 Sep 2024
 " Author:	Josh Wainwright
 " Filename: functions.vim
 
@@ -193,7 +193,7 @@ function! functions#cadd(cmd) abort
 	let flist = systemlist(a:cmd)
 	let list = []
 	for f in flist
-		call add(list, {"filename": f})
+		call add(list, {"filename": f, "lnum": 1})
 	endfor
 	if len(list) > 0
 		call setqflist(list)
