@@ -1,6 +1,6 @@
 function! <SID>Nnn()
 	let s:tempfile = tempname()
-	let hidden = expand("%:p:t")[0] == "." ? ['-command', '"set hidden"'] : []
+	let hidden = expand("%:p:t")[0] == "." ? ['-command', 'set hidden'] : []
 
 	let start_path = expand('%:p')
 	if ! filereadable(start_path)
