@@ -14,7 +14,7 @@ function! <SID>Nnn()
 		function! callback.on_exit(id, code, type)
 			try
 				if filereadable(s:tempfile)
-					silent execute 'edit ' . readfile(s:tempfile, '', 1)[0]
+					silent execute 'edit ' . fnameescape(readfile(s:tempfile, '', 1)[0])
 				endif
 			finally
 				call delete(s:tempfile)
